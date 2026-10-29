@@ -117,9 +117,9 @@ Sources: [Bouchet](https://docs.ycrc.yale.edu/clusters/bouchet/),
   120,018 prompt tokens. `31252212` completed in 2 minutes 19 seconds; both
   indexed extraction settings produced three valid judgments out of four.
 - `31252906` prepared a screen of 20 benign and 20 successful attack development
-  records, covering 26 tasks. `31252913` is a 2-hour-30-minute H200 screen of one
-  setting per method. At last inspection it was running: single, think and
-  average each produced 40 valid results; indexed extraction produced 29 valid
-  and 11 invalid; the chunked setting was in progress. The requested pilot ceiling
-  is four GPU-hours, including earlier GPU jobs. Full-study execution and freeze
-  also require the user-specified full-study GPU-hour cap.
+  records, covering 26 tasks. H200 screen `31252913` completed successfully in
+  2 hours 20 minutes 24 seconds. Single, think, average and chunked review each
+  produced 40 valid results; indexed extraction produced 29 valid and 11 invalid,
+  exceeding the prespecified 5% invalid threshold. All listed GPU jobs used about
+  3 hours 31 minutes in total, within the four-hour pilot ceiling. Full-study
+  execution and freeze also require the user-specified full-study GPU-hour cap.
