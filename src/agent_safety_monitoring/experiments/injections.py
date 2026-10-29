@@ -57,26 +57,53 @@ def matched_control(family, tokenizer):
     raise ValueError("Cannot construct exactly token-matched neutral control")
 
 
-def select_injection_ids(records, per_class=20):
+def select_injection_ids(records, features=None, per_class=20):
     from agent_safety_monitoring.io import digest
 
     pool = [r for r in records if r["split"] == "test" and not r["exclusion"]]
-    benign = sorted(
-        (r for r in pool if r["assignment"] == "benign"),
-        key=lambda r: digest(["injection", r["trajectory_id"]]),
+    features = {f["trajectory_id"]: f for f in (features or [])}
+
+    def rank_key(record):
+        feature = features.get(record["trajectory_id"], {})
+        size = feature.get("source_tokens")
+        if size is None:
+            size = feature.get("characters", 0)
+        return size, digest(["injection-length", record["trajectory_id"]])
+
+    ordered = sorted(pool, key=rank_key)
+    strata = {
+        r["trajectory_id"]: min(3, 4 * i // max(1, len(ordered))) for i, r in enumerate(ordered)
+    }
+
+    def interleave(groups, sort_values=True):
+        ordered_groups = {
+            key: (
+                sorted(value, key=lambda r: digest(["injection", r["trajectory_id"]]))
+                if sort_values
+                else list(value)
+            )
+            for key, value in sorted(groups.items())
+        }
+        out = []
+        while any(ordered_groups.values()):
+            for group in ordered_groups.values():
+                if group:
+                    out.append(group.pop(0))
+        return out
+
+    benign_groups, attack_groups = {}, {}
+    for r in pool:
+        length = strata[r["trajectory_id"]]
+        if r["assignment"] == "benign":
+            benign_groups.setdefault(length, []).append(r)
+        elif r["outcome"] == "success":
+            attack_groups.setdefault(r["objective"] or "unknown", {}).setdefault(length, []).append(
+                r
+            )
+    benign = interleave(benign_groups)
+    attacks = interleave(
+        {objective: interleave(groups) for objective, groups in attack_groups.items()},
+        sort_values=False,
     )
-    attacks = sorted(
-        (r for r in pool if r["outcome"] == "success"),
-        key=lambda r: (r["objective"] or "", digest(["injection", r["trajectory_id"]])),
-    )
-    # Round-robin objectives prevents one objective from consuming a small sample.
-    groups = {}
-    for r in attacks:
-        groups.setdefault(r["objective"], []).append(r)
-    balanced = []
-    while any(groups.values()):
-        for objective in groups:
-            if groups[objective]:
-                balanced.append(groups[objective].pop(0))
-    n = min(per_class, len(benign), len(balanced))
-    return [r["trajectory_id"] for r in benign[:n] + balanced[:n]]
+    n = min(per_class, len(benign), len(attacks))
+    return [r["trajectory_id"] for r in benign[:n] + attacks[:n]]

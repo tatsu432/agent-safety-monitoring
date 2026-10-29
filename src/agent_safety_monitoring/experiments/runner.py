@@ -77,6 +77,17 @@ def create_freeze(data: Path, configuration: dict, output: Path):
     from agent_safety_monitoring.inference.backend import Tokenizer
 
     tokenizer = Tokenizer(model)
+    audit_path = data / "audit.json"
+    features = read_json(audit_path)["features"] if audit_path.exists() else []
+    singles = sorted(
+        (m for m in methods if m.method == "single"), key=lambda m: digest(m.model_dump())
+    )
+    eaes = sorted(
+        (m for m in methods if m.method == "eae"),
+        key=lambda m: (m.quote_tokens, digest(m.model_dump())),
+        reverse=True,
+    )
+    selected_methods = singles[:1] + eaes[:1]
 
     body = {
         "version": 1,
@@ -93,7 +104,8 @@ def create_freeze(data: Path, configuration: dict, output: Path):
         "injections": {
             "payloads": PAYLOADS,
             "controls": {family: matched_control(family, tokenizer) for family in PAYLOADS},
-            "trajectory_ids": select_injection_ids(manifest["records"]),
+            "trajectory_ids": select_injection_ids(manifest["records"], features),
+            "method_hashes": [digest(m.model_dump()) for m in selected_methods],
         },
         "analysis": {
             "target_fpr": 0.05,

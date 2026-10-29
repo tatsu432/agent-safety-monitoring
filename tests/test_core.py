@@ -373,3 +373,28 @@ def test_eae_retries_citations_not_available_to_judge(tmp_path):
         assert len(result.calls) == 3
 
     asyncio.run(check())
+
+
+def test_injection_selection_balances_classes_objectives_and_lengths():
+    from agent_safety_monitoring.experiments.injections import select_injection_ids
+
+    records, features = [], []
+    for label in [0, 1]:
+        for objective in range(4):
+            for length in range(4):
+                uid = f"{label}-{objective}-{length}"
+                records.append(
+                    {
+                        "trajectory_id": uid,
+                        "split": "test",
+                        "exclusion": None,
+                        "assignment": "attack" if label else "benign",
+                        "outcome": "success" if label else "not_applicable",
+                        "objective": str(objective),
+                    }
+                )
+                features.append({"trajectory_id": uid, "source_tokens": length * 100 + objective})
+    chosen = select_injection_ids(records, features, per_class=4)
+    assert len(chosen) == 8
+    assert {uid.split("-")[1] for uid in chosen[4:]} == {"0", "1", "2", "3"}
+    assert {uid.split("-")[2] for uid in chosen[:4]} == {"0", "1", "2", "3"}

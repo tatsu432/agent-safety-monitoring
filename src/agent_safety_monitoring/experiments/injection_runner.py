@@ -21,7 +21,8 @@ async def run_injections(data: Path, root: Path, frozen: dict, primary_report: P
     methods = [
         MethodConfig.model_validate(c)
         for c in frozen["body"]["config"]["methods"]
-        if c["method"] in {"single", "eae"}
+        if digest(MethodConfig.model_validate(c).model_dump())
+        in frozen["body"]["injections"]["method_hashes"]
     ]
     selected = set(frozen["body"]["injections"]["trajectory_ids"])
     records = [
