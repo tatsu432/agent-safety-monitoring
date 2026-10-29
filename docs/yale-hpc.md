@@ -2,12 +2,17 @@
 
 ## Verified status (October 28, 2026)
 
-The user authorizes existing SSH alias `yale-hpc-cpsc4710` for CPSC 5710 (same
-course designation). Its local SSH configuration targets `bouchet.ycrc.yale.edu`
-as `cpsc4710_ts2236`. A batch-mode read-only connection reached the host but was
-rejected with `Permission denied (keyboard-interactive)`. No jobs were submitted.
-Slurm account/QOS, partitions, quotas, writable roots, GPU fit, engine and container
-compatibility remain **unverified**. Do not infer them from the username.
+Interactive Duo login succeeded as `cpsc4710_ts2236` on Bouchet, via the authorized
+`yale-hpc-cpsc4710` alias. Slurm association: account `cpsc4710`, QOS
+`interactive,normal`; no partition restriction reported. Project root:
+`/nfs/roberts/project/cpsc4710/cpsc4710_ts2236/agent-safety-monitoring`.
+Personal scratch root: `/nfs/roberts/scratch/cpsc4710/cpsc4710_ts2236`.
+The feature branch is cloned at the project root. Group quota inspection succeeded.
+
+A single 10-minute, one-H200 inventory job was accepted as **31239245**. It was
+pending because nodes were down, drained or reserved when inspected. Reconcile with
+`squeue` and `sacct` before submitting another job; do not create duplicates.
+GPU execution, model compatibility and actual cost remain unverified.
 
 The original [transferable HPC handoff](reference/yale-hpc-handoff.md) is preserved
 as historical operational knowledge. Its other account's paths, jobs and 24 GPU-hour

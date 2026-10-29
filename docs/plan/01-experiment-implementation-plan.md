@@ -29,8 +29,7 @@ experiment counts as completed without an actual job and validated artifacts.
 - Foundation, importer and source/tokenizer audits: implemented and exercised on the real release.
 - Five methods, freeze/resume, calibration/statistics, structure/injection diagnostics:
   implemented and tested with deterministic software fixtures.
-- Yale compatibility, measured method budgets and scientific freeze: awaiting Duo
-  authentication and a physical pilot; no GPU use so far.
+- Yale compatibility, measured method budgets and scientific freeze: Duo authenticated; GPU inventory job 31239245 is pending, and the physical pilot remains outstanding.
 - Held-out real-model evaluation, independent evidence annotations, scientific
   figures/results and final report: pending the pilot and full-study resource cap.
 
