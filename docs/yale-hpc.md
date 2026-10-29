@@ -99,6 +99,12 @@ Sources: [Bouchet](https://docs.ycrc.yale.edu/clusters/bouchet/),
 - `31245255`: CPU audit of the corrected prompts, submitted from `733615b`,
   completed in 6 minutes 41 seconds; 1,200 records, zero overflows, maximum
   116,597 prompt tokens.
-- `31244999`: one-H200, 2-hour-45-minute development benchmark, released after
-  the refreshed audit passed. It stops if every output in a workload is invalid. The
-  requested pilot ceiling is four GPU-hours, including earlier GPU jobs.
+- `31244999`: one-H200 development benchmark stopped after 15 minutes 39 seconds
+  when all four results in an extraction configuration were invalid. Six earlier
+  configurations had no invalid results; extraction failures prompted a development
+  correction. Its measurements are preserved as `pilot-measurements-31244999.json`.
+- `31247071`: audit after that correction completed in 6 minutes 42 seconds;
+  1,200 records, zero overflows, maximum 116,597 prompt tokens.
+- `31247072`: replacement one-H200, 2-hour-45-minute benchmark released after the
+  audit passed. It stops if every output in a workload is invalid. The requested
+  pilot ceiling is four GPU-hours, including earlier GPU jobs.
