@@ -5,7 +5,7 @@ set -euo pipefail
 cd "${SLURM_SUBMIT_DIR:?}"
 mkdir -p "${ASM_OUTPUT:-runs}/hardware"
 nvidia-smi --query-gpu=name,uuid,memory.total,driver_version --format=csv
-python - <<'PY'
+python3 - <<'PY'
 import json, os, time
 from pathlib import Path
 import torch

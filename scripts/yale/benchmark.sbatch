@@ -14,7 +14,7 @@ export ASM_MODEL_REVISION=6cee5e81ee83917806bbde320786a8fb61efebee
 export ASM_GPUS=1 ASM_DATA=data/pilot ASM_OUTPUT=runs/pilot ASM_ACTION=benchmark ASM_LIMIT=4
 mkdir -p runs
 uv run --locked --extra tokenizer asm experiment configure --output runs/development-config.json
-python - <<'PY'
+python3 - <<'PY'
 import json
 from pathlib import Path
 p=Path('runs/development-config.json')

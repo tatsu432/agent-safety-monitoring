@@ -22,7 +22,7 @@ cleanup() {
 }
 trap cleanup EXIT
 trap 'exit 130' INT TERM USR1
-python - "$output/jobs/$SLURM_JOB_ID-allocation.json" <<'PY'
+python3 - "$output/jobs/$SLURM_JOB_ID-allocation.json" <<'PY'
 import json, os, sys
 with open(sys.argv[1], 'w') as stream:
     json.dump({key: os.environ.get(key) for key in (
@@ -44,7 +44,7 @@ done
 [[ "$ready" == 1 ]] || { echo 'Server readiness timeout' >&2; exit 1; }
 curl -fsS "http://127.0.0.1:${ASM_PORT:-8000}/version" > "$output/jobs/$SLURM_JOB_ID-version.json"
 curl -fsS "http://127.0.0.1:${ASM_PORT:-8000}/v1/models" > "$output/jobs/$SLURM_JOB_ID-models.json"
-python - "$output/jobs/$SLURM_JOB_ID-version.json" "$output/jobs/$SLURM_JOB_ID-models.json" "${ASM_CONFIG:-${ASM_FREEZE:-}}" <<'PY'
+python3 - "$output/jobs/$SLURM_JOB_ID-version.json" "$output/jobs/$SLURM_JOB_ID-models.json" "${ASM_CONFIG:-${ASM_FREEZE:-}}" <<'PY'
 import json, sys
 with open(sys.argv[1]) as stream:
     version = json.load(stream)['version']
@@ -69,7 +69,7 @@ else
       > "$output/jobs/$SLURM_JOB_ID-client.json"
     cat "$output/jobs/$SLURM_JOB_ID-client.json"
     if [[ "${SLURM_JOB_NAME:-}" == asm-pilot ]]; then
-        python - "$output/jobs/$SLURM_JOB_ID-client.json" <<'PY'
+        python3 - "$output/jobs/$SLURM_JOB_ID-client.json" <<'PY'
 import json, sys
 with open(sys.argv[1]) as stream:
     result = json.load(stream)
