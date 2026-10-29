@@ -25,9 +25,10 @@ Inputs preserve genuine tasks and visible messages/actions/results, while exclud
 private instructions, grader metadata, submission tool markers, and source-message
 indices that could disclose conversion artifacts. Canonical segment identifiers,
 exact text, source positions and immutable raw sources support evidence tracing.
-The pinned tokenizer's complete-prompt audit found a maximum of 116,555 prompt
-tokens and no overflow at the configured 131,072 limit including generation/retry
-headroom. This is not proof of physical GPU memory fit.
+The complete-prompt audit is being refreshed after a development-pilot prompt
+format correction. The initial audit found no context overflow, and a synthetic
+115,229-token prompt ran successfully on an H200; the refreshed audit determines
+whether the final prompts fit for every included record.
 
 ## Methods
 

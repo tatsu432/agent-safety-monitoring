@@ -80,31 +80,23 @@ Sources: [Bouchet](https://docs.ycrc.yale.edu/clusters/bouchet/),
 [containers](https://docs.ycrc.yale.edu/clusters-at-yale/guides/containers/),
 [storage](https://docs.ycrc.yale.edu/data/hpc-storage/).
 
-## Job ledger (October 28, 2026)
+## Job ledger (October 28–29, 2026)
 
-- `31239245`: one H200, 10-minute GPU inventory; pending at last inspection,
-  nodes down/drained/reserved. Does not test model inference.
-- `31239250`: 30-minute CPU environment setup and pytest on `education`; pending
-  for resources at last inspection. Log: `logs/cpu-setup-31239250.out`.
-
-Both were submitted from the project-specific checkout at commit `1726573`. Check
-job states and logs before any retries. These jobs have not yet validated execution.
-- `31241189`: CPU preparation of the digest-pinned vLLM Apptainer image, pinned
-  model snapshot and audited dataset; submitted from `c512526`, running when last checked.
-- `31241259`: one-H200, one-hour representative single-review pilot, dependent on
-  successful completion of `31241189`; submitted from `2d7ce5e`. Budget reservation:
-  one GPU-hour, in addition to the one-second inventory job. The pilot has not yet run.
-- `31242503`: one-H200, 2-hour-45-minute ten-configuration development benchmark,
-  dependent on successful completion of `31241259`. The two reservations together
-  total 3.75 GPU-hours plus the one-second inventory, within the four-hour pilot
-  ceiling. Benchmark stops if every output in a workload is invalid.
-- `31243770`: parallel CPU preload of the pinned model's vLLM-compatible files,
-  independent of image conversion; running when last inspected. Its shared cache
-  uses Hugging Face file locks and may be reused by preparation.
-- `31243770` subsequently completed successfully in 28 seconds; the pinned model
-  files are cached on project scratch.
-- `31243971`: parallel locked download of the public benchmark logs; running when
-  last inspected. Its destination is the ignored `data/raw` under the project root.
-- `31243971` completed successfully in 3 minutes 5 seconds; both raw logs and
-  their source checksums are present in the Yale project checkout. Canonical import
-  and token audits remain scheduled in `31241189` after the image is built.
+- `31239245`: one-H200 inventory, completed in one second; no inference.
+- `31239250`: CPU setup and tests; see `logs/cpu-setup-31239250.out`.
+- `31241189`: CPU preparation completed, including the digest-pinned Apptainer
+  image, pinned model, dataset import and initial context audit.
+- `31243770` and `31243971`: model preload and raw-log download completed in
+  28 seconds and 3 minutes 5 seconds respectively.
+- `31241259`: initial one-H200 pilot failed in one second because host `python`
+  was unavailable. Its dependent benchmark `31242503` was cancelled. Scripts
+  now use `python3`; CPU image check `31244978` completed successfully.
+- `31244996`: corrected one-H200 pilot completed in 2 minutes 56 seconds: four
+  real development judgments were valid, and a synthetic 115,229-token prompt
+  completed. Startup and workload took 85 and 89 seconds respectively. Two
+  judgments needed a retry for JSON field names; prompts were corrected before
+  the development benchmark and the context audit is being refreshed.
+- `31245255`: CPU audit of the corrected prompts, submitted from `733615b`.
+- `31244999`: one-H200, 2-hour-45-minute development benchmark, held pending
+  the refreshed audit. It stops if every output in a workload is invalid. The
+  requested pilot ceiling is four GPU-hours, including earlier GPU jobs.
