@@ -96,7 +96,9 @@ Sources: [Bouchet](https://docs.ycrc.yale.edu/clusters/bouchet/),
   completed. Startup and workload took 85 and 89 seconds respectively. Two
   judgments needed a retry for JSON field names; prompts were corrected before
   the development benchmark and the context audit is being refreshed.
-- `31245255`: CPU audit of the corrected prompts, submitted from `733615b`.
-- `31244999`: one-H200, 2-hour-45-minute development benchmark, held pending
-  the refreshed audit. It stops if every output in a workload is invalid. The
+- `31245255`: CPU audit of the corrected prompts, submitted from `733615b`,
+  completed in 6 minutes 41 seconds; 1,200 records, zero overflows, maximum
+  116,597 prompt tokens.
+- `31244999`: one-H200, 2-hour-45-minute development benchmark, released after
+  the refreshed audit passed. It stops if every output in a workload is invalid. The
   requested pilot ceiling is four GPU-hours, including earlier GPU jobs.
