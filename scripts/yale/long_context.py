@@ -40,12 +40,15 @@ async def main():
         await backend.close()
     output = Path("runs/jobs") / f"{os.environ['SLURM_JOB_ID']}-long-context.json"
     atomic_json(output, {"synthetic": True, "source_tokens": count, "result": result.model_dump()})
+    call = result.calls[-1] if result.calls else None
     print(
         json.dumps(
             {
                 "synthetic": True,
                 "source_tokens": count,
                 "status": result.status,
+                "local_prompt_tokens": call.estimated_input_tokens if call else None,
+                "server_prompt_tokens": call.usage.input_tokens if call else None,
                 "output": str(output),
             }
         )
