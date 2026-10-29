@@ -105,3 +105,6 @@ job states and logs before any retries. These jobs have not yet validated execut
   files are cached on project scratch.
 - `31243971`: parallel locked download of the public benchmark logs; running when
   last inspected. Its destination is the ignored `data/raw` under the project root.
+- `31243971` completed successfully in 3 minutes 5 seconds; both raw logs and
+  their source checksums are present in the Yale project checkout. Canonical import
+  and token audits remain scheduled in `31241189` after the image is built.
