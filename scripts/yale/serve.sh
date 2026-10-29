@@ -15,8 +15,8 @@ if [[ -n "${ASM_IMAGE:-}" ]]; then
     [[ "${actual%% *}" == "$ASM_IMAGE_SHA256" ]] || { echo 'Image checksum mismatch' >&2; exit 1; }
     exec apptainer exec --nv --cleanenv --bind "${HF_HOME:?}:$HF_HOME" \
       --env "HF_HOME=$HF_HOME" --env "CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES" \
-      "$ASM_IMAGE" python -m vllm.entrypoints.openai.api_server "${args[@]}"
+      "$ASM_IMAGE" python3 -m vllm.entrypoints.openai.api_server "${args[@]}"
 else
     # First pilot may use a separately verified site environment.
-    exec python -m vllm.entrypoints.openai.api_server "${args[@]}"
+    exec python3 -m vllm.entrypoints.openai.api_server "${args[@]}"
 fi
