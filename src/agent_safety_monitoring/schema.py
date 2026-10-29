@@ -87,6 +87,7 @@ class CallRecord(StrictModel):
     started: str
     completed: str
     latency_seconds: float
+    estimated_input_tokens: int | None = None
     usage: Usage = Field(default_factory=Usage)
     cached: bool = False
     response: str | None = None

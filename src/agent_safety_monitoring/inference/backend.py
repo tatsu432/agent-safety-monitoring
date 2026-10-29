@@ -162,6 +162,7 @@ class Backend:
                         started=start,
                         completed=now(),
                         latency_seconds=time.perf_counter() - clock,
+                        estimated_input_tokens=prompt_tokens,
                         usage=usage,
                         response=output,
                         error=error,

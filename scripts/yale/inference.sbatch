@@ -35,6 +35,21 @@ for (( i=0; i<180; i++ )); do
     sleep 5
 done
 [[ "$ready" == 1 ]] || { echo 'Server readiness timeout' >&2; exit 1; }
+curl -fsS "http://127.0.0.1:${ASM_PORT:-8000}/version" > "$output/jobs/$SLURM_JOB_ID-version.json"
+curl -fsS "http://127.0.0.1:${ASM_PORT:-8000}/v1/models" > "$output/jobs/$SLURM_JOB_ID-models.json"
+python - "$output/jobs/$SLURM_JOB_ID-version.json" "$output/jobs/$SLURM_JOB_ID-models.json" "${ASM_CONFIG:-${ASM_FREEZE:-}}" <<'PY'
+import json, sys
+with open(sys.argv[1]) as stream:
+    version = json.load(stream)['version']
+with open(sys.argv[2]) as stream:
+    models = json.load(stream)['data']
+with open(sys.argv[3]) as stream:
+    config = json.load(stream)
+config = config.get('body', {}).get('config', config)
+expected = config['model']
+if version != expected['engine_version'] or expected['model'] not in {m['id'] for m in models}:
+    raise SystemExit('Serving engine/model differs from the requested configuration')
+PY
 loaded=$(date +%s)
 args=(--data "${ASM_DATA:-data/prepared}" --output "$output")
 if [[ "${ASM_ACTION:-run}" == benchmark ]]; then
