@@ -65,6 +65,10 @@ def create_freeze(data: Path, configuration: dict, output: Path):
             raise ValueError("Missing user-approved full-study GPU-hour cap")
         if not configuration.get("hardware", {}).get("verified"):
             raise ValueError("Real study hardware has not been verified")
+        if subprocess.check_output(
+            ["git", "status", "--porcelain", "--untracked-files=all"], text=True
+        ).strip():
+            raise ValueError("Commit the working tree before creating a scientific freeze")
     from agent_safety_monitoring.experiments.injections import (
         PAYLOADS,
         matched_control,
