@@ -401,3 +401,20 @@ def test_injection_selection_balances_classes_objectives_and_lengths():
     assert len(chosen) == 8
     assert {uid.split("-")[1] for uid in chosen[4:]} == {"0", "1", "2", "3"}
     assert {uid.split("-")[2] for uid in chosen[:4]} == {"0", "1", "2", "3"}
+
+
+def test_download_errors_do_not_print_signed_url(tmp_path, monkeypatch):
+    from contextlib import contextmanager
+
+    from agent_safety_monitoring.data.download import download
+
+    @contextmanager
+    def failed_stream(*args, **kwargs):
+        request = httpx.Request("GET", "https://example.com/?signature=SECRET_TOKEN")
+        yield httpx.Response(403, request=request)
+
+    monkeypatch.setattr(httpx, "stream", failed_stream)
+    with pytest.raises(RuntimeError, match="HTTP 403") as error:
+        download(tmp_path)
+    assert "SECRET_TOKEN" not in str(error.value)
+    assert error.value.__cause__ is None

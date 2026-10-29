@@ -54,6 +54,12 @@ def _download_locked(root: Path) -> dict:
                 if stream.read(2) != b"PK":
                     raise ValueError("Download is not an Inspect ZIP log")
             temporary.replace(path)
+        except httpx.HTTPStatusError as exc:
+            raise RuntimeError(
+                f"Download of {name} failed: HTTP {exc.response.status_code}"
+            ) from None
+        except httpx.TransportError as exc:
+            raise RuntimeError(f"Download of {name} failed: {type(exc).__name__}") from None
         finally:
             temporary.unlink(missing_ok=True)
         manifest["files"][name] = {
