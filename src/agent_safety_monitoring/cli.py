@@ -199,6 +199,18 @@ def structural(
     show(structural_report(data, run_root, read_json(frozen), output, replicates))
 
 
+@experiment_app.command("select")
+def select(
+    measurements: Annotated[Path, typer.Option()],
+    config: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Choose fixed-budget candidates using development timing and labels only."""
+    from agent_safety_monitoring.experiments.selection import select as choose
+
+    show(choose(measurements, config, output))
+
+
 @experiment_app.command("annotation-sample")
 def annotation_sample(
     frozen: Annotated[Path, typer.Option()],

@@ -139,3 +139,14 @@ Sample selection includes detected/missed outcomes, objectives and length bins.
 Annotation templates do not show monitor-selected evidence or scores. Spans are
 verified against canonical text before aggregation; unresolved annotations remain
 unreviewed and are not fabricated. Keep annotation files private with run artifacts.
+
+After a completed development benchmark, `asm experiment select --measurements
+runs/pilot/pilot-measurements.json --config runs/development-config.json --output
+runs/selection.json` selects one feasible configuration per method/budget using
+only development outcomes. Small budget is twice measured single-review cost;
+large is at least small and at least the cheapest feasible configuration of every
+available method. Selection maximizes valid-score development AUROC, requires at
+most 5% invalid outputs, and uses invalid rate, cost and configuration hash as
+tie-breakers. Unavailable methods remain explicit. Review the result, copy its
+`configuration` object into the study configuration, and add the verified
+prerequisite proofs and user-approved full-study cap before freezing.
