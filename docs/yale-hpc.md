@@ -79,3 +79,13 @@ Sources: [Bouchet](https://docs.ycrc.yale.edu/clusters/bouchet/),
 [Slurm](https://docs.ycrc.yale.edu/clusters-at-yale/job-scheduling/),
 [containers](https://docs.ycrc.yale.edu/clusters-at-yale/guides/containers/),
 [storage](https://docs.ycrc.yale.edu/data/hpc-storage/).
+
+## Job ledger (October 28, 2026)
+
+- `31239245`: one H200, 10-minute GPU inventory; pending at last inspection,
+  nodes down/drained/reserved. Does not test model inference.
+- `31239250`: 30-minute CPU environment setup and pytest on `education`; pending
+  for resources at last inspection. Log: `logs/cpu-setup-31239250.out`.
+
+Both were submitted from the project-specific checkout at commit `1726573`. Check
+job states and logs before any retries. These jobs have not yet validated execution.
