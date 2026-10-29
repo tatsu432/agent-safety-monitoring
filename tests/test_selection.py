@@ -10,9 +10,10 @@ def test_budget_selection_uses_only_development_and_marks_expensive_methods(tmp_
     trials = []
     for index, method in enumerate(["single", "think", "average", "eae", "mrt"], 1):
         root = tmp_path / method
-        for label in [0, 1]:
+        for sample in range(20):
+            label = sample % 2
             atomic_json(
-                root / "development" / method / f"{label}.json",
+                root / "development" / method / f"{sample}.json",
                 {
                     "evaluation": {
                         "split": "development",

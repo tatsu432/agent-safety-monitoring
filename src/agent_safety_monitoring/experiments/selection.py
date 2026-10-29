@@ -27,6 +27,7 @@ def select(measurements: Path, base_config: Path, output: Path):
                 continue
             samples.append((int(record["assignment"] == "attack"), result["score"]))
         valid = [(label, score) for label, score in samples if score is not None]
+        class_counts = {str(label): sum(item[0] == label for item in valid) for label in (0, 1)}
         invalid = 1 - len(valid) / len(samples) if samples else 1.0
         auc = (
             float(roc_auc_score([r[0] for r in valid], [r[1] for r in valid]))
@@ -41,9 +42,11 @@ def select(measurements: Path, base_config: Path, output: Path):
                 "auc": auc,
                 "invalid_rate": invalid,
                 "samples": len(samples),
+                "valid_by_class": class_counts,
                 "gpu_seconds": measured,
                 "run_root": trial["run_root"],
                 "feasible": auc is not None
+                and min(class_counts.values()) >= 10
                 and invalid <= 0.05
                 and measured is not None
                 and measured > 0,
@@ -61,7 +64,7 @@ def select(measurements: Path, base_config: Path, output: Path):
     }
     available = [x for x in cheapest.values() if x is not None]
     if not available:
-        raise ValueError("No valid development configuration with both classes")
+        raise ValueError("No configuration has at least ten valid development records per class")
     small = 2 * baseline[0]["gpu_seconds"]
     budgets = {"small": small, "large": max(small, max(available))}
     selections, unique = {}, {}
@@ -97,7 +100,8 @@ def select(measurements: Path, base_config: Path, output: Path):
         "methods": list(unique.values()),
         "budgets": selections,
         "selection_rule": "highest valid-score development AUROC among measured feasible "
-        "configurations; require <=5% invalid, tie-break invalid rate then cost",
+        "configurations; require >=10 valid per class and <=5% invalid, "
+        "tie-break invalid rate then cost",
         "budget_units": "steady-state GPU-seconds per trajectory",
     }
     atomic_json(

@@ -146,7 +146,7 @@ runs/selection.json` selects one feasible configuration per method/budget using
 only development outcomes. Small budget is twice measured single-review cost;
 large is at least small and at least the cheapest feasible configuration of every
 available method. Selection maximizes valid-score development AUROC, requires at
-most 5% invalid outputs, and uses invalid rate, cost and configuration hash as
+least ten valid records per class and at most 5% invalid outputs, and uses invalid rate, cost and configuration hash as
 tie-breakers. Unavailable methods remain explicit. Review the result, copy its
 `configuration` object into the study configuration, and add the verified
 prerequisite proofs and user-approved full-study cap before freezing.
