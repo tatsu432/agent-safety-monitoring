@@ -16,10 +16,8 @@ context overflow without truncation. Cache successes atomically; separate logica
 procedure costs from physical allocation time. Freeze data/cohort, code, prompts,
 methods, budgets, retries, statistics, and payloads before held-out inference.
 
-Use authorized existing alias `yale-hpc-cpsc4710`. Initial read-only SSH reached
-Bouchet but required keyboard-interactive/Duo authentication. Inspect permissions,
-storage and GPU availability after login. Pilot ceiling: 4 allocated GPU-hours.
-Full-study allowance follows measured pilot estimates.
+Use authorized existing alias `yale-hpc-cpsc4710`. Pilot ceiling: 4 allocated
+GPU-hours. Full-study allowance follows measured pilot estimates.
 
 Progress and exact checks appear in `../task_completion/`. No planned physical
 experiment counts as completed without an actual job and validated artifacts.
@@ -29,7 +27,9 @@ experiment counts as completed without an actual job and validated artifacts.
 - Foundation, importer and source/tokenizer audits: implemented and exercised on the real release.
 - Five methods, freeze/resume, calibration/statistics, structure/injection diagnostics:
   implemented and tested with deterministic software fixtures.
-- Yale compatibility, measured method budgets and scientific freeze: Duo authenticated; GPU inventory job 31239245 is pending, and the physical pilot remains outstanding.
+- Yale compatibility: authenticated, prepared the pinned environment, and completed
+  an H200 smoke test including a synthetic 115,229-token prompt. A refreshed CPU
+  context audit and development benchmark precede budget estimation and freeze.
 - Held-out real-model evaluation, independent evidence annotations, scientific
   figures/results and final report: pending the pilot and full-study resource cap.
 
