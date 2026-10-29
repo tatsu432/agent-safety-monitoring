@@ -101,3 +101,7 @@ job states and logs before any retries. These jobs have not yet validated execut
 - `31243770`: parallel CPU preload of the pinned model's vLLM-compatible files,
   independent of image conversion; running when last inspected. Its shared cache
   uses Hugging Face file locks and may be reused by preparation.
+- `31243770` subsequently completed successfully in 28 seconds; the pinned model
+  files are cached on project scratch.
+- `31243971`: parallel locked download of the public benchmark logs; running when
+  last inspected. Its destination is the ignored `data/raw` under the project root.
