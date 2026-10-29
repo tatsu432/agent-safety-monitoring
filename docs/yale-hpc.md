@@ -114,5 +114,9 @@ Sources: [Bouchet](https://docs.ycrc.yale.edu/clusters/bouchet/),
   were valid on four records, taking 554 and 361 workload seconds. All four
   extraction results were invalid despite more specific retry feedback.
 - `31252211`: indexed-passage extractor audit passed all 1,200 records, maximum
-  120,018 prompt tokens. `31252212` tests extraction on an H200. The requested
-  pilot ceiling is four GPU-hours, including earlier GPU jobs.
+  120,018 prompt tokens. `31252212` completed in 2 minutes 19 seconds; both
+  indexed extraction settings produced three valid judgments out of four.
+- `31252906` prepared a screen of 20 benign and 20 successful attack development
+  records, covering 26 tasks. `31252913` is a 2-hour-30-minute H200 screen of one
+  setting per method, pending node availability. The requested pilot ceiling is
+  four GPU-hours, including earlier GPU jobs.
