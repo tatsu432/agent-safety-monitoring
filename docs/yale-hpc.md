@@ -94,3 +94,7 @@ job states and logs before any retries. These jobs have not yet validated execut
 - `31241259`: one-H200, one-hour representative single-review pilot, dependent on
   successful completion of `31241189`; submitted from `2d7ce5e`. Budget reservation:
   one GPU-hour, in addition to the one-second inventory job. The pilot has not yet run.
+- `31242503`: one-H200, 2-hour-45-minute ten-configuration development benchmark,
+  dependent on successful completion of `31241259`. The two reservations together
+  total 3.75 GPU-hours plus the one-second inventory, within the four-hour pilot
+  ceiling. Benchmark stops if every output in a workload is invalid.
