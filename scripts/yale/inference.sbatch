@@ -54,5 +54,6 @@ with open(sys.argv[1]) as stream:
 if result['completed'] != 4 or result['invalid'] != 0:
     raise SystemExit('Pilot failed: four valid judgments are required')
 PY
+        uv run --locked --extra tokenizer python scripts/yale/long_context.py
     fi
 fi
