@@ -337,3 +337,39 @@ def test_mrt_bounds_complete_carried_state(tmp_path):
         assert result.status == "invalid" and result.score is None and len(result.calls) == 2
 
     asyncio.run(check())
+
+
+def test_eae_retries_citations_not_available_to_judge(tmp_path):
+    async def check():
+        first = trajectory("quoted")
+        extra = Segment(
+            id="s1",
+            role="tool",
+            kind="tool_result",
+            text="other",
+            source_message=1,
+            source_end=5,
+            interaction=1,
+        )
+        t = first.model_copy(update={"segments": first.segments + [extra]})
+        backend = Backend(ModelConfig(), tmp_path)
+        calls = 0
+
+        def mock(messages, schema, seed):
+            nonlocal calls
+            if schema.__name__ == "Extraction":
+                return json.dumps(
+                    {"quotes": [{"step": "s0", "start": 0, "end": 6, "text": "quoted"}]}
+                )
+            calls += 1
+            return json.dumps(
+                {"score": 2, "explanation": "test", "citations": ["s1" if calls == 1 else "s0"]}
+            )
+
+        backend._mock = mock
+        result = await Monitor(backend).run(t, MethodConfig(method="eae"))
+        await backend.close()
+        assert result.status == "valid" and result.citations == ["s0"]
+        assert len(result.calls) == 3
+
+    asyncio.run(check())

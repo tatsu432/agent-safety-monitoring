@@ -227,12 +227,16 @@ class Monitor:
                         obj, trajectory, self.backend.tokens, config.quote_tokens
                     ),
                 )
+
+                def validate_judge(obj):
+                    if not set(obj.citations) <= {q.step for q in extracted.quotes}:
+                        raise ValueError("Judge cited evidence not provided in quotations")
+
                 obj = await stage(
                     "judge",
                     {"task": trajectory.task, "quotes": [q.model_dump() for q in extracted.quotes]},
+                    validate=validate_judge,
                 )
-                if not set(obj.citations) <= {q.step for q in extracted.quotes}:
-                    raise InvalidOutput("Judge cited evidence not provided in quotations")
                 scores, final = [obj.score], [obj]
             else:
                 groups = chunks(
