@@ -199,6 +199,35 @@ def structural(
     show(structural_report(data, run_root, read_json(frozen), output, replicates))
 
 
+@experiment_app.command("annotation-sample")
+def annotation_sample(
+    frozen: Annotated[Path, typer.Option()],
+    run_root: Annotated[Path, typer.Option()],
+    primary_report: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    data: Path = Path("data/prepared"),
+    limit: int = 30,
+):
+    """Prepare an independent, stratified evidence annotation template."""
+    from agent_safety_monitoring.evaluation.annotations import prepare_annotations
+
+    show(prepare_annotations(data, run_root, read_json(frozen), primary_report, output, limit))
+
+
+@experiment_app.command("annotation-report")
+def annotation_report(
+    frozen: Annotated[Path, typer.Option()],
+    run_root: Annotated[Path, typer.Option()],
+    annotations: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    data: Path = Path("data/prepared"),
+):
+    """Verify independent reference spans and aggregate evidence retention."""
+    from agent_safety_monitoring.evaluation.annotations import analyze_annotations
+
+    show(analyze_annotations(data, run_root, read_json(frozen), annotations, output))
+
+
 @app.command()
 def report(
     run_root: Annotated[Path, typer.Option()],

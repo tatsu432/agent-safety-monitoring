@@ -28,6 +28,36 @@ def test_full_workflow_freeze_resume_injections_and_coverage(tmp_path):
         data, tmp_path / "secondary", frozen, tmp_path / "report" / "metrics.json"
     )
     assert injected["comparisons"] == 12 * 2 * 3 * 2
+    from agent_safety_monitoring.evaluation.annotations import (
+        analyze_annotations,
+        prepare_annotations,
+    )
+
+    run_root = Path(resumed["run_root"])
+    annotations = tmp_path / "annotations.json"
+    selection = prepare_annotations(
+        data, run_root, frozen, tmp_path / "report" / "metrics.json", annotations
+    )
+    assert selection["selected"] == 6
+    template = read_json(annotations)
+    sample = template["records"][0]
+    canonical = read_json(data / "trajectories" / f"{sample['trajectory_id']}.json")
+    text = canonical["segments"][0]["text"][:9]
+    sample["references"] = [
+        {
+            "step": "step0",
+            "start": 0,
+            "end": len(text),
+            "text": text,
+            "provenance": "human_reviewed",
+        }
+    ]
+    sample["review_status"] = "reviewed"
+    atomic_json(annotations, template)
+    diagnostic = analyze_annotations(
+        data, run_root, frozen, annotations, tmp_path / "evidence.json"
+    )
+    assert diagnostic["reviewed_records"] == 1 and len(diagnostic["methods"]) == 5
     # Never tune/reconfigure the held-out run without a new freeze.
     with pytest.raises(ValueError, match="Configuration differs"):
         run_sync(

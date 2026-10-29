@@ -123,3 +123,19 @@ Independent reference annotations for missed-attack evidence remain a human or
 separately audited grader-evidence task. `evaluation.evidence.retention` validates
 exact annotated spans and checks retention/citations; it does not invent reference
 evidence or infer semantic understanding from a missing citation.
+
+Prepare a stratified independent annotation file only after primary results exist:
+
+```bash
+uv run asm experiment annotation-sample --frozen runs/study-freeze.json \
+  --run-root RUN_DIRECTORY --primary-report runs/report/metrics.json \
+  --output runs/annotations.json
+# Review canonical records locally and enter exact source spans with provenance.
+uv run asm experiment annotation-report --frozen runs/study-freeze.json \
+  --run-root RUN_DIRECTORY --annotations runs/annotations.json --output runs/evidence.json
+```
+
+Sample selection includes detected/missed outcomes, objectives and length bins.
+Annotation templates do not show monitor-selected evidence or scores. Spans are
+verified against canonical text before aggregation; unresolved annotations remain
+unreviewed and are not fabricated. Keep annotation files private with run artifacts.
