@@ -15,6 +15,49 @@ from agent_safety_monitoring.reporting.report import generate
 from agent_safety_monitoring.schema import CanonicalTrajectory
 
 
+def test_balanced_screen_excludes_heldout_and_unsuccessful(tmp_path):
+    from agent_safety_monitoring.experiments.pilot import prepare_balanced_screen
+
+    data = tmp_path / "source"
+    (data / "trajectories").mkdir(parents=True)
+    records = []
+    for label, outcome in [("benign", "not_applicable"), ("attack", "success")]:
+        for i in range(12):
+            uid = f"{label}-{i:02}"
+            records.append(
+                dict(
+                    trajectory_id=uid,
+                    split="development",
+                    exclusion=None,
+                    assignment=label,
+                    outcome=outcome,
+                )
+            )
+            atomic_json(data / "trajectories" / f"{uid}.json", {"id": uid})
+    records += [
+        dict(
+            trajectory_id="heldout",
+            split="test",
+            exclusion=None,
+            assignment="benign",
+            outcome="not_applicable",
+        ),
+        dict(
+            trajectory_id="failed",
+            split="development",
+            exclusion=None,
+            assignment="attack",
+            outcome="failure",
+        ),
+    ]
+    atomic_json(data / "manifest.json", {"records": records})
+    result = prepare_balanced_screen(data, tmp_path / "screen", per_class=10)
+    selected = read_json(tmp_path / "screen" / "manifest.json")["records"]
+    assert result["records"] == len(selected) == 20
+    assert sum(r["assignment"] == "benign" for r in selected) == 10
+    assert all(r["split"] == "development" and r["trajectory_id"] != "failed" for r in selected)
+
+
 def test_full_workflow_freeze_resume_injections_and_coverage(tmp_path):
     result = demo(tmp_path)
     assert result["software_only"] and result["last_run"]["invalid"] == 0
