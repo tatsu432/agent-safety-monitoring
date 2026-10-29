@@ -19,7 +19,8 @@ fi
 sha256sum "$image" > "$image.sha256"
 uv run --locked --extra data --extra tokenizer python - <<'PY'
 from huggingface_hub import snapshot_download
-snapshot_download(repo_id='openai/gpt-oss-20b', revision='6cee5e81ee83917806bbde320786a8fb61efebee')
+snapshot_download(repo_id='openai/gpt-oss-20b', revision='6cee5e81ee83917806bbde320786a8fb61efebee',
+                  ignore_patterns=['metal/*', 'original/*'])
 print('Pinned model snapshot downloaded')
 PY
 uv run --locked --extra data --extra tokenizer asm data download
