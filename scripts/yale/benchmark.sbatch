@@ -16,11 +16,17 @@ mkdir -p runs
 uv run --locked --extra tokenizer asm experiment configure --output runs/development-config.json
 python3 - <<'PY'
 import json
+import os
 from pathlib import Path
 p=Path('runs/development-config.json')
 config=json.loads(p.read_text())
 config['model']['engine_version']='0.11.0'
 config['logging']={'mode':'offline','project':'agent-safety-monitoring'}
+if os.environ.get('ASM_BENCHMARK_METHODS'):
+    names=os.environ['ASM_BENCHMARK_METHODS'].split(',')
+    if not set(names) <= {m['method'] for m in config['methods']}:
+        raise ValueError('Unknown benchmark method')
+    config['methods']=[m for name in names for m in config['methods'] if m['method']==name]
 p.write_text(json.dumps(config,indent=2))
 PY
 export ASM_CONFIG=runs/development-config.json
