@@ -52,4 +52,9 @@ def benchmark(data: Path, output: Path, configuration: dict, gpus: int, limit: i
                 ),
             },
         )
+        if completed == 0 or result["invalid"] == completed:
+            raise RuntimeError(
+                "Every judgment in a development workload was invalid; "
+                "diagnose before spending more GPU time"
+            )
     return {"output": str(output / "pilot-measurements.json"), "trials": len(trials)}
