@@ -6,6 +6,7 @@ from agent_safety_monitoring.inference.backend import ModelConfig, Tokenizer
 from agent_safety_monitoring.io import atomic_json, digest, read_json
 from agent_safety_monitoring.monitors.core import (
     evidence_payload,
+    extraction_payload,
     prompt,
     prompt_identity,
     stage_system,
@@ -29,7 +30,7 @@ def audit_context(data: Path, config: ModelConfig):
             for effort in ["low", "medium", "high"]
         }
         counts["extract"] = tokens.prompt(
-            prompt(stage_system(EvidenceSelection), {**payload, "quote_budget": 3000}), "low"
+            prompt(stage_system(EvidenceSelection), extraction_payload(t, 3000)), "low"
         )
         # Reserve both one generated answer and a previous maximal corrective answer.
         reserve = 2 * config.max_tokens + 128

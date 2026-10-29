@@ -122,17 +122,15 @@ def test_resolve_selected_quotes_checks_source_and_budget():
 
     t = trajectory("abc def abc")
     tok = Tokenizer(ModelConfig())
-    selection = EvidenceSelection(quotes=[SelectedQuotation(step="s0", text="abc")])
+    selection = EvidenceSelection(quotes=[SelectedQuotation(step="s0", chunk=0)])
     quote = resolve_quotes(selection, t, tok, 10).quotes[0]
-    assert (quote.start, quote.end) == (0, 3)
+    assert (quote.start, quote.end, quote.text) == (0, 11, "abc def abc")
     with pytest.raises(ValueError):
         resolve_quotes(
-            EvidenceSelection(quotes=[SelectedQuotation(step="s0", text="xyz")]), t, tok, 10
+            EvidenceSelection(quotes=[SelectedQuotation(step="s0", chunk=1)]), t, tok, 10
         )
     with pytest.raises(ValueError):
-        resolve_quotes(
-            EvidenceSelection(quotes=[SelectedQuotation(step="s0", text="abc def")]), t, tok, 1
-        )
+        resolve_quotes(selection, t, tok, 1)
 
 
 def test_chunking_preserves_every_character_and_offsets():
@@ -380,7 +378,7 @@ def test_eae_retries_citations_not_available_to_judge(tmp_path):
         def mock(messages, schema, seed):
             nonlocal calls
             if schema.__name__ == "EvidenceSelection":
-                return json.dumps({"quotes": [{"step": "s0", "text": "quoted"}]})
+                return json.dumps({"quotes": [{"step": "s0", "chunk": 0}]})
             calls += 1
             return json.dumps(
                 {"score": 2, "explanation": "test", "citations": ["s1" if calls == 1 else "s0"]}

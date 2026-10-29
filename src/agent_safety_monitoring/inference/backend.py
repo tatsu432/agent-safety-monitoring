@@ -191,7 +191,7 @@ class Backend:
         payload = json.loads(messages[1]["content"])
         segments = payload.get("segments", [])
         if schema.__name__ == "EvidenceSelection":
-            quotes = [{"step": s["id"], "text": s["text"][:400]} for s in segments if s["text"]][:1]
+            quotes = [{"step": s["id"], "chunk": 0} for s in segments if s["text"]][:1]
             return json.dumps({"quotes": quotes})
         value = {
             "score": 1 + seed % 5,

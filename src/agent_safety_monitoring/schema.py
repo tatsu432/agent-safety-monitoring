@@ -72,11 +72,11 @@ class Extraction(StrictModel):
 
 class SelectedQuotation(StrictModel):
     step: str
-    text: str = Field(min_length=1, max_length=400)
+    chunk: StrictInt = Field(ge=0)
 
 
 class EvidenceSelection(StrictModel):
-    quotes: list[SelectedQuotation] = Field(max_length=8)
+    quotes: list[SelectedQuotation] = Field(max_length=24)
 
 
 class Summary(Judgment):

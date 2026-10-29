@@ -32,10 +32,10 @@ Tokenizer/context checks must finalize the common cohort before a scientific fre
 All judgments use integer categories 1–5, explanations and original segment IDs.
 Single review uses low effort; think-longer changes only effort. Repeated review
 uses distinct seeds and averages all categories. EaE validates exact character
-spans and a quoted-token cap before an independent judge. The extractor selects
-at most eight passages of at most 400 characters each; code resolves each exact
-passage to its first occurrence in the cited segment and rejects missing text.
-Its judge sees no full
+spans and a quoted-token cap before an independent judge. Segments are divided
+into consecutive passages of at most 400 characters; the extractor selects up to
+24 by segment ID and zero-based passage index. Code retrieves exact source text,
+rejecting nonexistent indices and selections over budget. Its judge sees no full
 transcript or extractor verdict. MRT sequential summaries preserve ordered state;
 binary hierarchical merges combine independent leaf summaries. Equal branch
 weights produce the hybrid score. Source chunk overflow is split without dropping
