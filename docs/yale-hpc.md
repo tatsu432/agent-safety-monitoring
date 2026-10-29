@@ -106,5 +106,13 @@ Sources: [Bouchet](https://docs.ycrc.yale.edu/clusters/bouchet/),
 - `31247071`: audit after that correction completed in 6 minutes 42 seconds;
   1,200 records, zero overflows, maximum 116,597 prompt tokens.
 - `31247072`: replacement one-H200, 2-hour-45-minute benchmark released after the
-  audit passed. It stops if every output in a workload is invalid. The requested
+  audit passed; stopped after 23 minutes 19 seconds with extraction invalid on
+  all records of its second setting. The six single/thinking/repeated settings
+  were valid on all four development records.
+- `31249454`: subsequent prompt audit passed, with no overflow.
+- `31249455`: targeted benchmark ran 25 minutes 56 seconds. Both chunked settings
+  were valid on four records, taking 554 and 361 workload seconds. All four
+  extraction results were invalid despite more specific retry feedback.
+- `31252211`: indexed-passage extractor audit passed all 1,200 records, maximum
+  120,018 prompt tokens. `31252212` tests extraction on an H200. The requested
   pilot ceiling is four GPU-hours, including earlier GPU jobs.
