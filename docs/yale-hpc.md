@@ -89,3 +89,8 @@ Sources: [Bouchet](https://docs.ycrc.yale.edu/clusters/bouchet/),
 
 Both were submitted from the project-specific checkout at commit `1726573`. Check
 job states and logs before any retries. These jobs have not yet validated execution.
+- `31241189`: CPU preparation of the digest-pinned vLLM Apptainer image, pinned
+  model snapshot and audited dataset; submitted from `c512526`, running when last checked.
+- `31241259`: one-H200, one-hour representative single-review pilot, dependent on
+  successful completion of `31241189`; submitted from `2d7ce5e`. Budget reservation:
+  one GPU-hour, in addition to the one-second inventory job. The pilot has not yet run.
