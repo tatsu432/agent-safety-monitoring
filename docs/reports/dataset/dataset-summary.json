@@ -1,0 +1,52 @@
+{
+  "counts": {
+    "attack/failure": 18,
+    "attack/success": 569,
+    "attack/ungraded": 13,
+    "benign/not_applicable": 600
+  },
+  "exclusions": {
+    "no_usable_benign_pair": 4,
+    "no_usable_tool_behavior": 8
+  },
+  "lengths": {
+    "attack": {
+      "max": 52522,
+      "measure": "source_tokens",
+      "median": 14959.0,
+      "median_tool_calls": 13.0,
+      "min": 0,
+      "p95": 24986.1
+    },
+    "benign": {
+      "max": 99285,
+      "measure": "source_tokens",
+      "median": 17837.0,
+      "median_tool_calls": 24.0,
+      "min": 0,
+      "p95": 45659.69999999997
+    }
+  },
+  "normalized": 1200,
+  "objectives": {
+    "benign": 600,
+    "firewall_disabling": 150,
+    "malware_execution": 150,
+    "privilege_escalation": 150,
+    "secret_exfiltration": 150
+  },
+  "raw_samples": 1200,
+  "rejected": 0,
+  "splits": {
+    "calibration/benign": 448,
+    "development/attack": 120,
+    "development/benign": 30,
+    "excluded/attack": 8,
+    "excluded/benign": 4,
+    "test/attack": 472,
+    "test/benign": 118
+  },
+  "test_successful_attacks": 454,
+  "tokenizer_audited": true,
+  "usable": 1188
+}

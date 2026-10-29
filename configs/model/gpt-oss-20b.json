@@ -1,0 +1,13 @@
+{
+  "backend": "vllm",
+  "base_url": "http://127.0.0.1:8000/v1",
+  "concurrency": 1,
+  "context_limit": 131072,
+  "engine_version": "UNVERIFIED",
+  "max_tokens": 4096,
+  "model": "openai/gpt-oss-20b",
+  "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+  "temperature": 0.2,
+  "tokenizer_revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+  "transport_retries": 2
+}

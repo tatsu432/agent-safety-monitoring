@@ -3,20 +3,16 @@
 
 .DS_Store
 
-# Documentation
-!docs/
-docs/*
-!docs/methods.md
-!docs/operations.md
-!docs/yale-worker-support.md
-!docs/yale-launch-runbook.md
-!docs/plan/
-!docs/task/
-!docs/task_completion/
+# Research documentation and proposal PDFs are version controlled.
 
 # Experiment artifacts (authoritative local records, never source-controlled).
 runs/
 data/
+models/
+images/
+wandb/
+*.sif
+*.eval
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
