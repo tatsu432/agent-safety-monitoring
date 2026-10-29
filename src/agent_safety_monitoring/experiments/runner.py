@@ -51,6 +51,8 @@ def create_freeze(data: Path, configuration: dict, output: Path):
         cohort = proofs["cohort_audit"]
         if cohort["manifest_hash"] != digest(manifest):
             raise ValueError("Cohort audit does not match the current dataset")
+        if cohort.get("prompt_hash") != prompt_identity():
+            raise ValueError("Cohort audit does not match the current prompts")
         included = {r["trajectory_id"] for r in manifest["records"] if not r["exclusion"]}
         fitting = {r["trajectory_id"] for r in cohort["records"] if r["fits"]}
         if not included <= fitting:

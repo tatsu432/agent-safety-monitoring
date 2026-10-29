@@ -4,8 +4,13 @@ from pathlib import Path
 
 from agent_safety_monitoring.inference.backend import ModelConfig, Tokenizer
 from agent_safety_monitoring.io import atomic_json, digest, read_json
-from agent_safety_monitoring.monitors.core import EXTRACT, RUBRIC, evidence_payload, prompt
-from agent_safety_monitoring.schema import CanonicalTrajectory
+from agent_safety_monitoring.monitors.core import (
+    evidence_payload,
+    prompt,
+    prompt_identity,
+    stage_system,
+)
+from agent_safety_monitoring.schema import CanonicalTrajectory, Extraction, Judgment
 
 
 def audit_context(data: Path, config: ModelConfig):
@@ -20,10 +25,12 @@ def audit_context(data: Path, config: ModelConfig):
         )
         payload = evidence_payload(t)
         counts = {
-            effort: tokens.prompt(prompt(RUBRIC, payload), effort)
+            effort: tokens.prompt(prompt(stage_system(Judgment), payload), effort)
             for effort in ["low", "medium", "high"]
         }
-        counts["extract"] = tokens.prompt(prompt(EXTRACT, {**payload, "quote_budget": 3000}), "low")
+        counts["extract"] = tokens.prompt(
+            prompt(stage_system(Extraction), {**payload, "quote_budget": 3000}), "low"
+        )
         # Reserve both one generated answer and a previous maximal corrective answer.
         reserve = 2 * config.max_tokens + 128
         records.append(
@@ -38,6 +45,7 @@ def audit_context(data: Path, config: ModelConfig):
     report = {
         "model": config.model_dump(),
         "manifest_hash": digest(manifest),
+        "prompt_hash": prompt_identity(),
         "records": records,
         "total": len(records),
         "overflow": sum(not r["fits"] for r in records),
