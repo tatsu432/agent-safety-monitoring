@@ -43,5 +43,16 @@ if [[ "${ASM_ACTION:-run}" == benchmark ]]; then
 else
     args+=(--split "${ASM_SPLIT:-development}" --shard "${ASM_SHARD:-0}" --shards "${ASM_SHARDS:-1}")
     if [[ -n "${ASM_FREEZE:-}" ]]; then args+=(--frozen "$ASM_FREEZE"); else args+=(--config "${ASM_CONFIG:?}"); fi
-    uv run --locked --extra tokenizer --extra tracking asm experiment run "${args[@]}"
+    uv run --locked --extra tokenizer --extra tracking asm experiment run "${args[@]}" \
+      > "$output/jobs/$SLURM_JOB_ID-client.json"
+    cat "$output/jobs/$SLURM_JOB_ID-client.json"
+    if [[ "${SLURM_JOB_NAME:-}" == asm-pilot ]]; then
+        python - "$output/jobs/$SLURM_JOB_ID-client.json" <<'PY'
+import json, sys
+with open(sys.argv[1]) as stream:
+    result = json.load(stream)
+if result['completed'] != 4 or result['invalid'] != 0:
+    raise SystemExit('Pilot failed: four valid judgments are required')
+PY
+    fi
 fi
