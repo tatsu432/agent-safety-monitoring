@@ -137,7 +137,11 @@ class Backend:
                             response.raise_for_status()
                             data = response.json()
                             choice = data["choices"][0]
-                            output = choice["message"].get("content") or ""
+                            message = choice["message"]
+                            output = message.get("content") or ""
+                            reasoning_text = message.get("reasoning_content") or message.get(
+                                "reasoning"
+                            )
                             finish = choice.get("finish_reason")
                             u = data.get("usage", {})
                             usage = Usage(
@@ -145,6 +149,11 @@ class Backend:
                                 output_tokens=u.get("completion_tokens", 0),
                                 reasoning_tokens=(u.get("completion_tokens_details") or {}).get(
                                     "reasoning_tokens"
+                                ),
+                                reasoning_tokens_estimated=(
+                                    self.tokens.count(reasoning_text)
+                                    if isinstance(reasoning_text, str)
+                                    else None
                                 ),
                             )
                     except httpx.HTTPStatusError as exc:

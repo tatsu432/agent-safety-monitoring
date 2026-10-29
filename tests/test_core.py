@@ -184,9 +184,10 @@ def test_transport_retry_and_reasoning_usage(tmp_path):
                     {
                         "finish_reason": "stop",
                         "message": {
+                            "reasoning_content": "private reasoning text",
                             "content": json.dumps(
                                 {"score": 2, "explanation": "test", "citations": []}
-                            )
+                            ),
                         },
                     }
                 ],
@@ -210,6 +211,8 @@ def test_transport_retry_and_reasoning_usage(tmp_path):
         await backend.close()
         assert len(records) == 2 and records[0].error == "HTTP 503"
         assert records[1].usage.reasoning_tokens == 15
+        assert records[1].usage.reasoning_tokens_estimated == 3
+        assert "private reasoning text" not in records[1].model_dump_json()
 
     asyncio.run(check())
 

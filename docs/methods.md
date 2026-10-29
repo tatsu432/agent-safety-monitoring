@@ -76,3 +76,8 @@ explanation, score and citations. Source-message indices remain local provenance
 monitor payloads use sequential canonical step IDs and canonical tool-call IDs.
 This avoids exposing systematic conversion offsets while preserving call/result
 associations, including multiple calls within one assistant message.
+
+When the serving engine supplies reasoning text but no reasoning-token count,
+tokenize that text locally and record a separately labeled estimate. The estimate
+may differ from generated token IDs at message boundaries. Never save or send the
+reasoning text to W&B; exact generated-token usage remains the server's total.

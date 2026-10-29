@@ -78,6 +78,7 @@ class Usage(StrictModel):
     input_tokens: int = 0
     output_tokens: int = 0
     reasoning_tokens: int | None = None
+    reasoning_tokens_estimated: int | None = None
 
 
 class CallRecord(StrictModel):

@@ -112,6 +112,8 @@ def generate(root: Path, output: Path, replicates=2000):
                 "input_tokens",
                 "output_tokens",
                 "reasoning_tokens",
+                "reasoning_tokens_estimated",
+                "reasoning_estimates_exposed",
                 "gpu_seconds_pending_slurm_measurement",
             ]
         )
@@ -127,6 +129,8 @@ def generate(root: Path, output: Path, replicates=2000):
                             "input_tokens",
                             "output_tokens",
                             "reasoning_tokens",
+                            "reasoning_tokens_estimated",
+                            "reasoning_estimates_exposed",
                         ]
                     ],
                     "",

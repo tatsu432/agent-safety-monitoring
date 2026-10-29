@@ -326,6 +326,10 @@ def costs(results: Iterable[MonitoringResult]) -> dict:
         "output_tokens": sum(c.usage.output_tokens for c in calls),
         "reasoning_tokens_exposed": sum(c.usage.reasoning_tokens is not None for c in calls),
         "reasoning_tokens": sum(c.usage.reasoning_tokens or 0 for c in calls),
+        "reasoning_tokens_estimated": sum(c.usage.reasoning_tokens_estimated or 0 for c in calls),
+        "reasoning_estimates_exposed": sum(
+            c.usage.reasoning_tokens_estimated is not None for c in calls
+        ),
         "request_latency_sum_seconds": sum(c.latency_seconds for c in calls),
         "warning": "Request latency sum is NOT allocated GPU time.",
     }
