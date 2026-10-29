@@ -98,3 +98,6 @@ job states and logs before any retries. These jobs have not yet validated execut
   dependent on successful completion of `31241259`. The two reservations together
   total 3.75 GPU-hours plus the one-second inventory, within the four-hour pilot
   ceiling. Benchmark stops if every output in a workload is invalid.
+- `31243770`: parallel CPU preload of the pinned model's vLLM-compatible files,
+  independent of image conversion; running when last inspected. Its shared cache
+  uses Hugging Face file locks and may be reused by preparation.
