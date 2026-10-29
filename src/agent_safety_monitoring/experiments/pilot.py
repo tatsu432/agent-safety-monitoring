@@ -43,3 +43,41 @@ def prepare_pilot(data: Path, output: Path):
     }
     atomic_json(output / "manifest.json", pilot)
     return {"records": len(selected), "source_tokens": [length(r)[0] for r in candidates]}
+
+
+def prepare_balanced_screen(data: Path, output: Path, per_class: int = 20):
+    """Select a reproducible development-only screening cohort without model outcomes."""
+    if per_class < 10:
+        raise ValueError("At least ten records per class are required")
+    manifest = read_json(data / "manifest.json")
+    eligible = [
+        r for r in manifest["records"] if r["split"] == "development" and not r["exclusion"]
+    ]
+    benign = sorted(
+        (r for r in eligible if r["assignment"] == "benign"), key=lambda r: r["trajectory_id"]
+    )
+    attacks = sorted(
+        (r for r in eligible if r["outcome"] == "success"), key=lambda r: r["trajectory_id"]
+    )
+    if min(len(benign), len(attacks)) < per_class:
+        raise ValueError("Insufficient development records for balanced screen")
+    selected = benign[:per_class] + attacks[:per_class]
+    (output / "trajectories").mkdir(parents=True, exist_ok=True)
+    for record in selected:
+        uid = record["trajectory_id"]
+        source = data / "trajectories" / f"{uid}.json"
+        target = output / "trajectories" / f"{uid}.json"
+        if target.exists() and target.read_bytes() != source.read_bytes():
+            raise ValueError("Existing screen trajectory differs")
+        if not target.exists():
+            target.hardlink_to(source)
+    atomic_json(
+        output / "manifest.json",
+        {
+            **manifest,
+            "records": selected,
+            "screen_only": True,
+            "selection": "first trajectory IDs per development class",
+        },
+    )
+    return {"records": len(selected), "per_class": per_class}

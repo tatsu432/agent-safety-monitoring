@@ -151,6 +151,14 @@ def pilot_prep(data: Path = Path("data/prepared"), output: Path = Path("data/pil
 
 
 @experiment_app.command()
+def screen_prep(data: Path = Path("data/prepared"), output: Path = Path("data/screen")):
+    """Create a balanced development-only screening cohort."""
+    from agent_safety_monitoring.experiments.pilot import prepare_balanced_screen
+
+    show(prepare_balanced_screen(data, output))
+
+
+@experiment_app.command()
 def benchmark(
     config: Annotated[Path, typer.Option()],
     gpus: int = 1,
