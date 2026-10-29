@@ -118,5 +118,8 @@ Sources: [Bouchet](https://docs.ycrc.yale.edu/clusters/bouchet/),
   indexed extraction settings produced three valid judgments out of four.
 - `31252906` prepared a screen of 20 benign and 20 successful attack development
   records, covering 26 tasks. `31252913` is a 2-hour-30-minute H200 screen of one
-  setting per method, pending node availability. The requested pilot ceiling is
-  four GPU-hours, including earlier GPU jobs.
+  setting per method. At last inspection it was running: single, think and
+  average each produced 40 valid results; indexed extraction produced 29 valid
+  and 11 invalid; the chunked setting was in progress. The requested pilot ceiling
+  is four GPU-hours, including earlier GPU jobs. Full-study execution and freeze
+  also require the user-specified full-study GPU-hour cap.
