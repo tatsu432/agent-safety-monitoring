@@ -10,9 +10,9 @@ class Telemetry:
         if mode not in {"disabled", "offline", "online"}:
             raise ValueError("Unknown tracking mode")
         if mode != "disabled":
-            import wandb
-
             try:
+                import wandb
+
                 self.run = wandb.init(
                     project=configuration.get("project", "agent-safety-monitoring"),
                     mode=mode,
@@ -41,4 +41,7 @@ class Telemetry:
 
     def close(self):
         if self.run:
-            self.run.finish()
+            try:
+                self.run.finish()
+            except Exception:
+                warnings.warn("Tracking close failed; local artifacts preserved", stacklevel=2)

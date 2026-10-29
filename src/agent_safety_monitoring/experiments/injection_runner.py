@@ -27,7 +27,10 @@ async def run_injections(data: Path, root: Path, frozen: dict, primary_report: P
     records = [
         r for r in read_json(data / "manifest.json")["records"] if r["trajectory_id"] in selected
     ]
-    policies = read_json(primary_report)["methods"]
+    primary = read_json(primary_report)
+    if primary.get("freeze") != frozen["hash"]:
+        raise ValueError("Thresholds belong to a different frozen study")
+    policies = primary["methods"]
     saved_rows = []
     try:
         for config in methods:
@@ -120,6 +123,9 @@ async def run_injections(data: Path, root: Path, frozen: dict, primary_report: P
         root / "injection-metrics.json",
         {"freeze": frozen["hash"], "rows": saved_rows, "aggregate": aggregate},
     )
+    from agent_safety_monitoring.reporting.diagnostics import injection_figure
+
+    injection_figure(root / "injection-metrics.json", root / "injection-robustness.png")
     return {"comparisons": len(saved_rows), "output": str(root / "injection-metrics.json")}
 
 

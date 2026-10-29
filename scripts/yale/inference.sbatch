@@ -7,11 +7,25 @@ cd "${SLURM_SUBMIT_DIR:?}"
 output=${ASM_OUTPUT:-runs}
 mkdir -p "$output/jobs"
 server_pid=
-cleanup() { if [[ -n "$server_pid" ]]; then kill "$server_pid" 2>/dev/null || true; wait "$server_pid" || true; fi; }
+metrics_pid=
+: "${ASM_GPUS:?Set actual allocated GPU count}"
+start=$(date +%s)
+loaded=$start
+cleanup() {
+    status=$?
+    end=$(date +%s)
+    printf '{"job_id":"%s","startup_seconds":%s,"workload_seconds":%s,"gpus":%s,"exit_code":%s}\n' \
+      "$SLURM_JOB_ID" "$((loaded-start))" "$((end-loaded))" "$ASM_GPUS" "$status" \
+      > "$output/jobs/$SLURM_JOB_ID-timing.json"
+    if [[ -n "$metrics_pid" ]]; then kill "$metrics_pid" 2>/dev/null || true; wait "$metrics_pid" || true; fi
+    if [[ -n "$server_pid" ]]; then kill "$server_pid" 2>/dev/null || true; wait "$server_pid" || true; fi
+}
 trap cleanup EXIT
 trap 'exit 130' INT TERM USR1
-start=$(date +%s)
 nvidia-smi --query-gpu=uuid,name,memory.used,memory.total --format=csv > "$output/jobs/$SLURM_JOB_ID-gpu.csv"
+nvidia-smi --query-gpu=timestamp,uuid,utilization.gpu,memory.used --format=csv -l 5 \
+  > "$output/jobs/$SLURM_JOB_ID-utilization.csv" &
+metrics_pid=$!
 bash scripts/yale/serve.sh > "$output/jobs/$SLURM_JOB_ID-server.log" 2>&1 &
 server_pid=$!
 ready=0
@@ -24,13 +38,10 @@ done
 loaded=$(date +%s)
 args=(--data "${ASM_DATA:-data/prepared}" --output "$output")
 if [[ "${ASM_ACTION:-run}" == benchmark ]]; then
-    uv run --locked --extra tokenizer asm experiment benchmark --config "${ASM_CONFIG:?}" \
+    uv run --locked --extra tokenizer --extra tracking asm experiment benchmark --config "${ASM_CONFIG:?}" \
       --gpus "${ASM_GPUS:?}" --limit "${ASM_LIMIT:-4}" "${args[@]}"
 else
     args+=(--split "${ASM_SPLIT:-development}" --shard "${ASM_SHARD:-0}" --shards "${ASM_SHARDS:-1}")
     if [[ -n "${ASM_FREEZE:-}" ]]; then args+=(--frozen "$ASM_FREEZE"); else args+=(--config "${ASM_CONFIG:?}"); fi
-    uv run --locked --extra tokenizer asm experiment run "${args[@]}"
+    uv run --locked --extra tokenizer --extra tracking asm experiment run "${args[@]}"
 fi
-end=$(date +%s)
-printf '{"job_id":"%s","startup_seconds":%s,"workload_seconds":%s,"gpus":%s}\n' \
-  "$SLURM_JOB_ID" "$((loaded-start))" "$((end-loaded))" "${ASM_GPUS:?}" > "$output/jobs/$SLURM_JOB_ID-timing.json"

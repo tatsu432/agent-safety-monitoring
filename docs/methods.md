@@ -70,3 +70,9 @@ medium/high effort, repetitions 2/3/5, EaE 1K/3K, MRT 5/10 interactions. Choose
 small/large budgets from measured costs; freeze one feasible setting per method
 and budget. No held-out output may influence these choices. Pre-freeze real
 readiness requires tokenizer audit, actual GPU pilot, and full-study budget cap.
+
+MRT's summary cap applies to the **entire serialized carried state**, including
+explanation, score and citations. Source-message indices remain local provenance;
+monitor payloads use sequential canonical step IDs and canonical tool-call IDs.
+This avoids exposing systematic conversion offsets while preserving call/result
+associations, including multiple calls within one assistant message.

@@ -61,3 +61,65 @@ normally with Duo. Do not reuse the previous project's resource allowance.
 Initial pilot cap is four allocated GPU-hours; larger runs require a measured cap.
 Secrets belong in user-owned mode-600 files outside Git, configs and Slurm arguments.
 W&B may receive aggregates only. Keep local artifacts authoritative when tracking fails.
+
+## Development configurations and physical pilot
+
+```bash
+uv run asm experiment configure --output runs/development-config.json
+uv run --extra tokenizer asm data context --model-config configs/model/gpt-oss-20b.json
+```
+
+The composer combines separate science, model, hardware, environment and logging
+files. The ten initial development configurations cover both effort settings,
+2/3/5 repetitions, 1K/3K quotations, and 5/10 interaction chunks. Hardware and
+engine values remain explicitly unverified until inspected. W&B is optional;
+use `--extra tracking` for online/offline tracking, or logging mode `disabled`.
+
+`asm experiment benchmark --config CONFIG --gpus N --limit K` requires Slurm and
+a loaded real server. It uses fresh request caches for each homogeneous method
+workload. The wrapper records startup, workload duration, exit status and GPU
+telemetry. Prefix caching is disabled for the initial controlled timing study.
+Actual allocation time from sacct remains authoritative, including failed jobs.
+No workload estimate or script has yet been validated on Yale in this project.
+
+A real freeze requires checksummed proof artifacts in the resolved study config:
+
+```json
+{
+  "cohort_audit": {"path": "data/prepared/context-audit.json", "sha256": "ACTUAL_SHA256"},
+  "pilot_measurement": {"path": "runs/pilot/pilot-measurements.json", "sha256": "ACTUAL_SHA256"},
+  "budget_approval": {"approved_by": "user", "gpu_hours": 0}
+}
+```
+
+The zero is a placeholder and is rejected. Record the actual user-approved total
+cap after the pilot. Accept the pilot only after checking all methods, low/medium/high
+reasoning, short/median/longest development cases, valid final answers, GPU mapping,
+peak memory, workload timing and resume. Preserve the original measurements and
+record acceptance as a separately versioned artifact with `backend_validated: true`.
+Also set the verified hardware profile and engine version. Context proof must match
+model/tokenizer revisions, limits and the current manifest; every included source
+must fit. A freeze protects dependency locks as well as Python source and prompts.
+
+## Secondary diagnostics
+
+After frozen primary results exist:
+
+```bash
+uv run asm experiment structural --frozen runs/study-freeze.json \
+  --run-root RUN_DIRECTORY --output runs/structural
+uv run asm experiment injections --frozen runs/study-freeze.json \
+  --primary-report runs/report/metrics.json --output runs/secondary
+```
+
+Structural models fit development features only. The length diagnostic uses bins
+chosen from development lengths, class-balanced weights inside each bin, overlap
+reporting, and task-cluster bootstrap with recalibration. Injection thresholds must
+come from the same frozen study. The sample IDs, token-matched neutral controls,
+payloads and methods are frozen; authentic evidence remains unchanged. The runner
+saves paired outcomes and generates an injection figure.
+
+Independent reference annotations for missed-attack evidence remain a human or
+separately audited grader-evidence task. `evaluation.evidence.retention` validates
+exact annotated spans and checks retention/citations; it does not invent reference
+evidence or infer semantic understanding from a missing citation.

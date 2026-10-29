@@ -53,6 +53,9 @@ def demo(root: Path):
             "sources": {"synthetic": digest("synthetic")},
         },
     )
+    from agent_safety_monitoring.data.ingest import audit
+
+    audit(data)
     config = {
         "model": {"backend": "mock"},
         "methods": [{"method": m} for m in ["single", "think", "average", "eae", "mrt"]],
@@ -69,4 +72,9 @@ def demo(root: Path):
     from agent_safety_monitoring.reporting.report import generate
 
     report = generate(Path(result["run_root"]), root / "report", replicates=100)
+    from agent_safety_monitoring.experiments.injection_runner import run_injections_sync
+    from agent_safety_monitoring.reporting.diagnostics import structural_report
+
+    structural_report(data, Path(result["run_root"]), frozen, root / "structural", replicates=30)
+    run_injections_sync(data, root / "secondary", frozen, root / "report" / "metrics.json")
     return {"software_only": True, "last_run": result, "report": report}

@@ -4,7 +4,7 @@ set -euo pipefail
 : "${ASM_MODEL_REVISION:?Set verified model commit}"
 args=(--model openai/gpt-oss-20b --revision "$ASM_MODEL_REVISION"
       --tokenizer-revision "$ASM_MODEL_REVISION"
-      --disable-log-requests --host 127.0.0.1 --port "${ASM_PORT:-8000}"
+      --disable-log-requests --no-enable-prefix-caching --host 127.0.0.1 --port "${ASM_PORT:-8000}"
       --tensor-parallel-size "${ASM_TP:-1}"
       --max-model-len "${ASM_CONTEXT:-131072}"
       --max-num-seqs "${ASM_CONCURRENCY:-1}")

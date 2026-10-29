@@ -1,4 +1,10 @@
 {
+  "context": {
+    "max_prompt_tokens": 116555,
+    "overflow": 0,
+    "physical_backend_validated": false,
+    "total": 1200
+  },
   "counts": {
     "attack/failure": 18,
     "attack/success": 569,

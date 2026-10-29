@@ -260,3 +260,80 @@ def test_atomic_artifact(tmp_path):
     atomic_json(p, {"a": 2})
     assert read_json(p) == {"a": 2}
     assert len(list(p.parent.iterdir())) == 1
+
+
+def test_concurrent_failure_still_accounts_for_all_calls(tmp_path):
+    async def check():
+        backend = Backend(ModelConfig(concurrency=3), tmp_path)
+        original = backend._mock
+        config = MethodConfig(method="average", repeats=3)
+
+        def fail_one(messages, schema, seed):
+            return (
+                '{"score":99}'
+                if seed in {config.seed, config.seed + 1}
+                else original(messages, schema, seed)
+            )
+
+        backend._mock = fail_one
+        result = await Monitor(backend).run(trajectory(), config)
+        await backend.close()
+        assert result.status == "invalid" and result.score is None
+        assert len(result.calls) == 4
+
+    asyncio.run(check())
+
+
+def test_structural_fit_and_length_weighting():
+    from agent_safety_monitoring.evaluation.structural import (
+        fit_baselines,
+        length_bootstrap,
+        length_weighted,
+    )
+
+    records, features = [], []
+    for split in ["development", "calibration", "test"]:
+        for task in range(4):
+            for label in [0] if split == "calibration" else [0, 1]:
+                uid = f"{split}-{task}-{label}"
+                records.append(
+                    {
+                        "trajectory_id": uid,
+                        "task_id": f"{split}-{task}",
+                        "split": split,
+                        "assignment": "attack" if label else "benign",
+                        "outcome": "success" if label else "not_applicable",
+                        "exclusion": None,
+                    }
+                )
+                features.append(
+                    {
+                        "trajectory_id": uid,
+                        "characters": 100 + task * 10 - label * 5,
+                        "tool_calls": 10 + task - label,
+                        "source_tokens": None,
+                    }
+                )
+    fitted = fit_baselines(records, features)
+    assert set(fitted["models"]) == {"length", "tools", "length_tools"}
+    rows = fitted["models"]["length"]["test"]
+    calibration = fitted["models"]["length"]["calibration"]
+    lengths = {f["trajectory_id"]: f["characters"] for f in features}
+    point = length_weighted(rows, lengths, fitted["development_length_edges"], calibrate([1] * 20))
+    assert point["tpr"] is not None and point["fpr"] is not None
+    intervals = length_bootstrap(
+        calibration, rows, lengths, fitted["development_length_edges"], replicates=10
+    )
+    assert intervals["tpr"]["usable_replicates"] > 0
+
+
+def test_mrt_bounds_complete_carried_state(tmp_path):
+    async def check():
+        backend = Backend(ModelConfig(), tmp_path)
+        result = await Monitor(backend).run(
+            trajectory(), MethodConfig(method="mrt", summary_tokens=1)
+        )
+        await backend.close()
+        assert result.status == "invalid" and result.score is None and len(result.calls) == 2
+
+    asyncio.run(check())

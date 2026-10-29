@@ -18,6 +18,7 @@ class Segment(StrictModel):
     source_start: int = 0
     source_end: int
     interaction: int
+    tool_call_id: str | None = None
 
     @model_validator(mode="after")
     def exact_span(self):

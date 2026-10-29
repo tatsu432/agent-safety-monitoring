@@ -8,7 +8,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from agent_safety_monitoring.io import atomic_json, read_json
+from agent_safety_monitoring.io import atomic_json, digest, read_json
 
 
 def dataset_report(data: Path, output: Path):
@@ -16,6 +16,14 @@ def dataset_report(data: Path, output: Path):
     by_id = {r["trajectory_id"]: r for r in manifest["records"]}
     output.mkdir(parents=True, exist_ok=True)
     summary = {k: v for k, v in audit.items() if k != "features"}
+    context_path = data / "context-audit.json"
+    if context_path.exists():
+        context = read_json(context_path)
+        if context["manifest_hash"] == digest(manifest):
+            summary["context"] = {
+                k: context[k]
+                for k in ["total", "overflow", "max_prompt_tokens", "physical_backend_validated"]
+            }
     summary["lengths"] = {}
     length_key = "source_tokens" if audit["tokenizer_audited"] else "characters"
     groups = {}
@@ -57,7 +65,10 @@ def dataset_report(data: Path, output: Path):
     for assignment, lengths in groups.items():
         x = np.sort(lengths)
         axes[1].step(x, np.arange(1, len(x) + 1) / len(x), label=assignment)
-    axes[1].set(xlabel=length_key, ylabel="Empirical cumulative fraction")
+    axes[1].set(
+        xlabel="Visible source tokens" if length_key == "source_tokens" else "Visible characters",
+        ylabel="Empirical cumulative fraction",
+    )
     axes[1].legend()
     fig.tight_layout()
     fig.savefig(output / "dataset-characteristics.png", dpi=180)

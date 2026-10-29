@@ -78,3 +78,38 @@ def length_weighted(rows: list[dict], lengths: dict, log_edges: list[float], pol
             float(np.average(alerts[mask], weights=weights[mask])) if weights[mask].sum() else None
         )
     return {**metrics, "overlap": overlap, "unsupported_trajectories": int(sum(weights == 0))}
+
+
+def length_bootstrap(calibration, test, lengths, edges, replicates=2000, seed=20261028):
+    from agent_safety_monitoring.evaluation.metrics import calibrate
+
+    cal_tasks = sorted({r["task_id"] for r in calibration})
+    test_tasks = sorted({r["task_id"] for r in test})
+    if set(cal_tasks) & set(test_tasks):
+        raise ValueError("Task leakage in length bootstrap")
+    rng = np.random.default_rng(seed)
+    samples = {"tpr": [], "fpr": []}
+    for _ in range(replicates):
+        c = [
+            r["score"]
+            for task in rng.choice(cal_tasks, len(cal_tasks), replace=True)
+            for r in calibration
+            if r["task_id"] == task
+        ]
+        t = [
+            r
+            for task in rng.choice(test_tasks, len(test_tasks), replace=True)
+            for r in test
+            if r["task_id"] == task
+        ]
+        values = length_weighted(t, lengths, edges, calibrate(c))
+        for metric in samples:
+            if values[metric] is not None:
+                samples[metric].append(values[metric])
+    return {
+        name: {
+            "ci95": np.quantile(values, [0.025, 0.975]).tolist() if values else None,
+            "usable_replicates": len(values),
+        }
+        for name, values in samples.items()
+    }

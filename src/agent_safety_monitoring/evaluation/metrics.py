@@ -100,6 +100,7 @@ def paired_bootstrap(calibration: dict, test: dict, replicates=2000, seed=202610
     rng = np.random.default_rng(seed)
     samples = {name: [] for name in methods}
     skipped = 0
+    other_samples = {name: {"fpr": [], "auroc_valid": []} for name in methods}
     for _ in range(replicates):
         ct = rng.choice(cal_tasks, len(cal_tasks), replace=True)
         tt = rng.choice(test_tasks, len(test_tasks), replace=True)
@@ -109,12 +110,15 @@ def paired_bootstrap(calibration: dict, test: dict, replicates=2000, seed=202610
             t = [r for task in tt for r in grouped["test", name][task]]
             if len({r["label"] for r in t}) != 2:
                 break
-            values[name] = metrics(c, t)["tpr"]
+            values[name] = metrics(c, t)
         if len(values) != len(methods):
             skipped += 1
             continue
         for name, value in values.items():
-            samples[name].append(value)
+            samples[name].append(value["tpr"])
+            for metric in other_samples[name]:
+                if value[metric] is not None:
+                    other_samples[name][metric].append(value[metric])
     if not all(samples.values()):
         raise ValueError("No usable bootstrap replicates")
     intervals = {name: np.quantile(v, [0.025, 0.975]).tolist() for name, v in samples.items()}
@@ -127,5 +131,12 @@ def paired_bootstrap(calibration: dict, test: dict, replicates=2000, seed=202610
         "replicates": replicates,
         "skipped": skipped,
         "tpr_intervals": intervals,
+        "additional_intervals": {
+            name: {
+                metric: np.quantile(values, [0.025, 0.975]).tolist() if values else None
+                for metric, values in mapping.items()
+            }
+            for name, mapping in other_samples.items()
+        },
         "paired_tpr_difference_intervals": differences,
     }

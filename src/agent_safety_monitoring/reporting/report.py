@@ -10,12 +10,17 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve
 
 from agent_safety_monitoring.evaluation.metrics import metrics, paired_bootstrap
-from agent_safety_monitoring.io import atomic_json, read_json
-from agent_safety_monitoring.monitors.core import costs
+from agent_safety_monitoring.io import atomic_json, digest, read_json
+from agent_safety_monitoring.monitors.core import MethodConfig, costs
 from agent_safety_monitoring.schema import MonitoringResult
 
 
 def load_results(root):
+    study = read_json(root / "study.json")
+    expected_methods = {
+        f"{m.method}-{digest(m.model_dump())[:12]}"
+        for m in [MethodConfig.model_validate(c) for c in study["configuration"]["methods"]]
+    }
     tables = {}
     for split in ["calibration", "test"]:
         tables[split] = {}
@@ -44,7 +49,13 @@ def load_results(root):
                         "result": result,
                     }
                 )
+            if seen != set(study["expected"][split]):
+                raise ValueError(
+                    f"Incomplete or unexpected result coverage: {split}/{method_path.name}"
+                )
             tables[split][method_path.name] = rows
+    if any(set(methods) != expected_methods for methods in tables.values()):
+        raise ValueError("Incomplete method coverage")
     return tables
 
 
@@ -75,7 +86,14 @@ def generate(root: Path, output: Path, replicates=2000):
                 "tpr": float(AlertPolicy(**policy).alerts([r["score"] for r in selected]).mean()),
             }
     intervals = paired_bootstrap(cal, test, replicates=replicates)
-    atomic_json(output / "metrics.json", {"methods": results, "uncertainty": intervals})
+    atomic_json(
+        output / "metrics.json",
+        {
+            "methods": results,
+            "uncertainty": intervals,
+            "freeze": read_json(root / "study.json")["freeze"],
+        },
+    )
     with (output / "main-performance.csv").open("w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["method", "tpr", "fpr", "auroc_valid", "invalid_rate", "n"])
@@ -83,6 +101,36 @@ def generate(root: Path, output: Path, replicates=2000):
             row = values["primary"]
             writer.writerow(
                 [method, *[row[k] for k in ["tpr", "fpr", "auroc_valid", "invalid_rate", "n"]]]
+            )
+    with (output / "monitoring-costs.csv").open("w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(
+            [
+                "method",
+                "logical_calls",
+                "cache_hits",
+                "input_tokens",
+                "output_tokens",
+                "reasoning_tokens",
+                "gpu_seconds_pending_slurm_measurement",
+            ]
+        )
+        for method, values in results.items():
+            writer.writerow(
+                [
+                    method,
+                    *[
+                        values["cost"][k]
+                        for k in [
+                            "logical_calls",
+                            "cache_hits",
+                            "input_tokens",
+                            "output_tokens",
+                            "reasoning_tokens",
+                        ]
+                    ],
+                    "",
+                ]
             )
     fig, ax = plt.subplots(figsize=(7, 5))
     for method, rows in test.items():
@@ -116,13 +164,7 @@ def generate(root: Path, output: Path, replicates=2000):
     fig.tight_layout()
     fig.savefig(output / "token-cost-detection.png", dpi=180)
     plt.close(fig)
-    software = any(
-        r["result"].calls
-        and r["result"].calls[0].response
-        and "Synthetic mock" in r["result"].calls[0].response
-        for rows in test.values()
-        for r in rows
-    )
+    software = read_json(root / "study.json")["software_only"]
     title = (
         "SOFTWARE VALIDATION ONLY — synthetic judgments"
         if software

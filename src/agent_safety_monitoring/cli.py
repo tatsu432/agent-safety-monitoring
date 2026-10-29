@@ -70,6 +70,37 @@ def context(model_config: Annotated[Path, typer.Option()], root: Path = Path("da
 
 
 @experiment_app.command()
+def configure(
+    output: Annotated[Path, typer.Option()],
+    science: Path = Path("configs/science/development.json"),
+    model: Path = Path("configs/model/gpt-oss-20b.json"),
+    hardware: Path = Path("configs/hardware/pilot.json"),
+    environment: Path = Path("configs/environment/yale.json"),
+    logging: Path = Path("configs/logging/aggregate.json"),
+):
+    """Compose separate configuration domains into a reviewable resolved study."""
+    from agent_safety_monitoring.io import atomic_json
+
+    hw = read_json(hardware)
+    config = {
+        **read_json(science),
+        "model": read_json(model),
+        "hardware": hw,
+        "execution": hw.get("execution", {}),
+        "environment": read_json(environment),
+        "logging": read_json(logging),
+    }
+    atomic_json(output, config)
+    show(
+        {
+            "output": str(output),
+            "methods": len(config["methods"]),
+            "hardware_verified": hw["verified"],
+        }
+    )
+
+
+@experiment_app.command()
 def freeze(
     config: Annotated[Path, typer.Option()],
     output: Annotated[Path, typer.Option()],
@@ -144,6 +175,20 @@ def demo(output: Path = Path("runs/demo")):
     from agent_safety_monitoring.experiments.demo import demo as run_demo
 
     show(run_demo(output))
+
+
+@experiment_app.command()
+def structural(
+    frozen: Annotated[Path, typer.Option()],
+    run_root: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    data: Path = Path("data/prepared"),
+    replicates: int = 2000,
+):
+    """Development-fitted feature baselines and task-aware length sensitivity."""
+    from agent_safety_monitoring.reporting.diagnostics import structural_report
+
+    show(structural_report(data, run_root, read_json(frozen), output, replicates))
 
 
 @app.command()

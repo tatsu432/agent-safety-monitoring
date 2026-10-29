@@ -6,11 +6,11 @@
 # Research documentation and proposal PDFs are version controlled.
 
 # Experiment artifacts (authoritative local records, never source-controlled).
-runs/
-data/
-models/
-images/
-wandb/
+/runs/
+/data/
+/models/
+/images/
+/wandb/
 *.sif
 *.eval
 

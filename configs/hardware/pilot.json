@@ -1,0 +1,1 @@
+{"verified":false,"gpu_count":1,"tensor_parallel_size":1,"walltime_minutes":30,"host_memory_gib":32,"cpus":4,"partition":null,"gpu_gres":null,"execution":{"trajectory_concurrency":1}}

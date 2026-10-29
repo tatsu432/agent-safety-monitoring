@@ -12,10 +12,20 @@ from agent_safety_monitoring.schema import CanonicalTrajectory, MonitoringResult
 
 
 def source_identity():
-    return {str(p): file_hash(p) for p in sorted(Path("src").rglob("*.py"))}
+    paths = sorted(Path("src").rglob("*.py"))
+    if not paths:
+        raise ValueError("Run from the project checkout root")
+    paths += [Path(name) for name in ["pyproject.toml", "uv.lock", ".python-version"]]
+    return {str(p): file_hash(p) for p in paths}
 
 
 def create_freeze(data: Path, configuration: dict, output: Path):
+    if output.exists():
+        existing = read_json(output)
+        validate_freeze(existing, data)
+        if existing["body"]["config"] != configuration:
+            raise ValueError("Refusing to overwrite an existing freeze")
+        return existing
     model = ModelConfig.model_validate(configuration["model"])
     methods = [MethodConfig.model_validate(m) for m in configuration["methods"]]
     if not methods:
@@ -29,9 +39,32 @@ def create_freeze(data: Path, configuration: dict, output: Path):
     if model.backend != "mock":
         if "UNVERIFIED" in {model.revision, model.tokenizer_revision, model.engine_version}:
             raise ValueError("Real-model freeze requires pinned model/tokenizer/engine")
-        for prerequisite in ["cohort_audit", "pilot_measurement", "budget_approval"]:
-            if prerequisite not in configuration:
-                raise ValueError(f"Missing real-study prerequisite: {prerequisite}")
+        proofs = {}
+        for prerequisite in ["cohort_audit", "pilot_measurement"]:
+            proof = configuration.get(prerequisite)
+            if not isinstance(proof, dict) or not {"path", "sha256"} <= set(proof):
+                raise ValueError(f"Missing checksummed real-study prerequisite: {prerequisite}")
+            path = Path(proof["path"])
+            if file_hash(path) != proof["sha256"]:
+                raise ValueError(f"Prerequisite checksum mismatch: {prerequisite}")
+            proofs[prerequisite] = read_json(path)
+        cohort = proofs["cohort_audit"]
+        if cohort["manifest_hash"] != digest(manifest):
+            raise ValueError("Cohort audit does not match the current dataset")
+        included = {r["trajectory_id"] for r in manifest["records"] if not r["exclusion"]}
+        fitting = {r["trajectory_id"] for r in cohort["records"] if r["fits"]}
+        if not included <= fitting:
+            raise ValueError("Primary cohort contains records failing complete-prompt preflight")
+        for key in ["model", "revision", "tokenizer_revision", "max_tokens", "context_limit"]:
+            if cohort["model"][key] != getattr(model, key):
+                raise ValueError("Cohort audit uses different model/token limits")
+        if not proofs["pilot_measurement"].get("backend_validated"):
+            raise ValueError("Physical backend pilot has not been accepted")
+        budget = configuration.get("budget_approval", {})
+        if budget.get("approved_by") != "user" or budget.get("gpu_hours", 0) <= 0:
+            raise ValueError("Missing user-approved full-study GPU-hour cap")
+        if not configuration.get("hardware", {}).get("verified"):
+            raise ValueError("Real study hardware has not been verified")
     from agent_safety_monitoring.experiments.injections import (
         PAYLOADS,
         matched_control,
@@ -129,13 +162,33 @@ async def run(
         }
     )
     run_root = output / identity
+    study = {
+        "identity": identity,
+        "configuration": configuration,
+        "freeze": frozen["hash"] if frozen else None,
+        "software_only": model.backend == "mock",
+        "expected": {
+            name: sorted(
+                r["trajectory_id"]
+                for r in manifest["records"]
+                if r["split"] == name and not r["exclusion"]
+            )
+            for name in ["development", "calibration", "test"]
+        },
+    }
+    study_path = run_root / "study.json"
+    if study_path.exists() and read_json(study_path) != study:
+        raise ValueError("Existing study manifest differs")
+    atomic_json(study_path, study)
     start, clock = now(), time.perf_counter()
     results, resumed = [], 0
     try:
         for raw in configuration["methods"]:
             config = MethodConfig.model_validate(raw)
             method_id = f"{config.method}-{digest(config.model_dump())[:12]}"
-            for record in selected:
+
+            async def process(record, config=config, method_id=method_id):
+                nonlocal resumed
                 path = run_root / split / method_id / f"{record['trajectory_id']}.json"
                 if path.exists():
                     saved = read_json(path)
@@ -143,7 +196,7 @@ async def run(
                         raise ValueError("Incompatible saved result")
                     results.append(MonitoringResult.model_validate(saved["result"]))
                     resumed += 1
-                    continue
+                    return
                 t = CanonicalTrajectory.model_validate(
                     read_json(data / "trajectories" / f"{record['trajectory_id']}.json")
                 )
@@ -161,6 +214,25 @@ async def run(
                     output_tokens=usage["output_tokens"],
                     logical_calls=usage["logical_calls"],
                 )
+
+            concurrency = int(configuration.get("execution", {}).get("trajectory_concurrency", 1))
+            if not 1 <= concurrency <= 64:
+                raise ValueError("trajectory_concurrency must be in [1,64]")
+            queue = asyncio.Queue()
+            for record in selected:
+                queue.put_nowait(record)
+
+            async def worker(queue=queue, process=process):
+                while not queue.empty():
+                    record = queue.get_nowait()
+                    await process(record)
+
+            outcomes = await asyncio.gather(
+                *[worker() for _ in range(concurrency)], return_exceptions=True
+            )
+            for outcome in outcomes:
+                if isinstance(outcome, BaseException):
+                    raise outcome
     finally:
         await backend.close()
         telemetry.close()
