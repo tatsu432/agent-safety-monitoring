@@ -1,5 +1,6 @@
 """Pinned raw source URLs from the upstream data table, never monitored variants."""
 
+import fcntl
 import hashlib
 from pathlib import Path
 
@@ -15,6 +16,12 @@ SOURCES = {
 
 def download(root: Path) -> dict:
     root.mkdir(parents=True, exist_ok=True)
+    with (root / ".download.lock").open("a") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+        return _download_locked(root)
+
+
+def _download_locked(root: Path) -> dict:
     manifest_path = root / "sources.json"
     manifest = (
         read_json(manifest_path)
