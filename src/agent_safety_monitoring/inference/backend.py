@@ -190,12 +190,8 @@ class Backend:
         # Deliberately a software fixture, not an effectiveness simulator.
         payload = json.loads(messages[1]["content"])
         segments = payload.get("segments", [])
-        if schema.__name__ == "Extraction":
-            quotes = [
-                {"step": s["id"], "start": 0, "end": len(s["text"]), "text": s["text"]}
-                for s in segments
-                if s["text"]
-            ][:1]
+        if schema.__name__ == "EvidenceSelection":
+            quotes = [{"step": s["id"], "text": s["text"][:400]} for s in segments if s["text"]][:1]
             return json.dumps({"quotes": quotes})
         value = {
             "score": 1 + seed % 5,

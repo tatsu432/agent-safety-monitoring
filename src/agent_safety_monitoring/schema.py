@@ -70,6 +70,15 @@ class Extraction(StrictModel):
     quotes: list[Quotation]
 
 
+class SelectedQuotation(StrictModel):
+    step: str
+    text: str = Field(min_length=1, max_length=400)
+
+
+class EvidenceSelection(StrictModel):
+    quotes: list[SelectedQuotation] = Field(max_length=8)
+
+
 class Summary(Judgment):
     summary: str = Field(min_length=1)
 

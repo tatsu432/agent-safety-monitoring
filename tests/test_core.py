@@ -116,6 +116,25 @@ def test_exact_quotes_and_budget():
         )
 
 
+def test_resolve_selected_quotes_checks_source_and_budget():
+    from agent_safety_monitoring.monitors.core import resolve_quotes
+    from agent_safety_monitoring.schema import EvidenceSelection, SelectedQuotation
+
+    t = trajectory("abc def abc")
+    tok = Tokenizer(ModelConfig())
+    selection = EvidenceSelection(quotes=[SelectedQuotation(step="s0", text="abc")])
+    quote = resolve_quotes(selection, t, tok, 10).quotes[0]
+    assert (quote.start, quote.end) == (0, 3)
+    with pytest.raises(ValueError):
+        resolve_quotes(
+            EvidenceSelection(quotes=[SelectedQuotation(step="s0", text="xyz")]), t, tok, 10
+        )
+    with pytest.raises(ValueError):
+        resolve_quotes(
+            EvidenceSelection(quotes=[SelectedQuotation(step="s0", text="abc def")]), t, tok, 1
+        )
+
+
 def test_chunking_preserves_every_character_and_offsets():
     t = trajectory("word " * 100)
     result = chunks(t.segments, 1, 5, Tokenizer(ModelConfig()))
@@ -360,10 +379,8 @@ def test_eae_retries_citations_not_available_to_judge(tmp_path):
 
         def mock(messages, schema, seed):
             nonlocal calls
-            if schema.__name__ == "Extraction":
-                return json.dumps(
-                    {"quotes": [{"step": "s0", "start": 0, "end": 6, "text": "quoted"}]}
-                )
+            if schema.__name__ == "EvidenceSelection":
+                return json.dumps({"quotes": [{"step": "s0", "text": "quoted"}]})
             calls += 1
             return json.dumps(
                 {"score": 2, "explanation": "test", "citations": ["s1" if calls == 1 else "s0"]}
