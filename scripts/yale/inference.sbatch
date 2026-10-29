@@ -22,7 +22,14 @@ cleanup() {
 }
 trap cleanup EXIT
 trap 'exit 130' INT TERM USR1
-nvidia-smi --query-gpu=uuid,name,memory.used,memory.total --format=csv > "$output/jobs/$SLURM_JOB_ID-gpu.csv"
+python - "$output/jobs/$SLURM_JOB_ID-allocation.json" <<'PY'
+import json, os, sys
+with open(sys.argv[1], 'w') as stream:
+    json.dump({key: os.environ.get(key) for key in (
+        'SLURM_JOB_ID', 'SLURM_JOB_GPUS', 'SLURM_GPUS_ON_NODE',
+        'CUDA_VISIBLE_DEVICES', 'SLURM_JOB_NODELIST')}, stream, indent=2)
+PY
+nvidia-smi --query-gpu=index,uuid,name,memory.used,memory.total --format=csv > "$output/jobs/$SLURM_JOB_ID-gpu.csv"
 nvidia-smi --query-gpu=timestamp,uuid,utilization.gpu,memory.used --format=csv -l 5 \
   > "$output/jobs/$SLURM_JOB_ID-utilization.csv" &
 metrics_pid=$!
