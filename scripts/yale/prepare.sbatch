@@ -7,6 +7,7 @@ cd "${SLURM_SUBMIT_DIR:?}"
 mkdir -p "$ASM_SCRATCH"/{apptainer-cache,apptainer-tmp,huggingface,uv-cache,tmp} images data
 export APPTAINER_CACHEDIR="$ASM_SCRATCH/apptainer-cache"
 export APPTAINER_TMPDIR="$ASM_SCRATCH/apptainer-tmp"
+export APPTAINER_MKSQUASHFS_ARGS="${ASM_MKSQUASHFS_ARGS:--processors 4 -mem 8G}"
 export HF_HOME="$ASM_SCRATCH/huggingface"
 export UV_CACHE_DIR="$ASM_SCRATCH/uv-cache"
 export TMPDIR="$ASM_SCRATCH/tmp"
