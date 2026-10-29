@@ -142,6 +142,14 @@ def run(
     show(run_sync(data, output, configuration, split, lock, shard, shards, limit))
 
 
+@experiment_app.command("pilot-prep")
+def pilot_prep(data: Path = Path("data/prepared"), output: Path = Path("data/pilot")):
+    """Select short, median and long development examples for hardware testing."""
+    from agent_safety_monitoring.experiments.pilot import prepare_pilot
+
+    show(prepare_pilot(data, output))
+
+
 @experiment_app.command()
 def benchmark(
     config: Annotated[Path, typer.Option()],
