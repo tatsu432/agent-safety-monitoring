@@ -13,11 +13,16 @@ The frozen configuration, accepted pilot evidence and freeze are retained under
 `runs/` in that checkout, and copied into the ignored local `runs/readiness/`.
 The checkout is separate from the user's working tree and original Yale checkout.
 
-The new checkout's locked environment setup stalled in Yale NFS I/O both on
-project storage and scratch; both attempts were terminated without allocating a GPU.
-The scratch environment is incomplete. The freeze was created using the existing
-locked Python 3.12.15 environment with the clean checkout source on `PYTHONPATH`.
-Complete the checkout environment setup before allocating a GPU.
+The original checkout environment setup was interrupted while processing many files
+on Yale NFS. Tracing on October 29 showed progress through per-file NFS operations,
+including removal of an unnecessary partial `inspect-ai` installation; it was not
+evidence of an NFS outage. A fresh inference-only locked environment was installed successfully from
+the cached packages on project scratch, with 72 packages, Python 3.12.15 and a clean
+`uv sync --locked` and import check. The freeze was created using the existing locked
+Python 3.12.15 environment with the clean checkout source on `PYTHONPATH`.
+Development-only frozen-runtime smoke job `31344058` is queued, with CPU verification
+job `31344065` dependent on its success; neither has run yet. Do not resubmit while
+these jobs remain active.
 
 To satisfy the project requirement for online monitoring, configure Yale's W&B
 credentials through a secure interactive login or environment mechanism without
