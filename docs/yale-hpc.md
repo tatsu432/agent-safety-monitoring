@@ -1,7 +1,11 @@
 # Yale execution runbook
 
 Current pre-main evidence and resource accounting appear in the
-[readiness report](reports/pre-main-experiment-readiness.md) and the final ledger section below.
+[readiness report](reports/pre-main-experiment-readiness.md). The frozen primary
+study is ready under the user-authorized 90 GPU-hour total cap. GPU jobs through
+31344058 consumed 6h 20m 10s; the initial four-hour limit and the unverified status
+in historical entries below are superseded. The current launch procedure is in
+[operations](operations.md#current-frozen-yale-launch-procedure).
 
 ## Verified status (October 28, 2026)
 
