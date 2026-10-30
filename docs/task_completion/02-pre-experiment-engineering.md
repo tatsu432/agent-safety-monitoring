@@ -10,7 +10,7 @@ measured GPU timing, allocation accounting and submission reconciliation; fair
 selection and budget reporting; and a real freeze with verified prerequisites. A
 selection-boundary error at exactly 5% invalid was corrected with integer counting.
 
-Verified: 57 local CPU tests; Yale Linux readiness tests; prompt context audit on
+Verified: 59 local CPU tests; Yale Linux readiness tests; prompt context audit on
 1,200 records; a 40-record-per-method independent cold development screen;
 real Slurm drain/resume; an H200 frozen-runtime smoke across all five methods and
 independent freeze verification; and synthetic aggregate-only online W&B from a

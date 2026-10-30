@@ -46,7 +46,7 @@ and full intermediate outputs stay outside Git and W&B.
 
 ## Verification
 
-- Local suite: 57 tests passed; lint, build and shell checks passed. A later
+- Local suite: 59 tests passed; lint, build and shell checks passed. A later
   launcher for the secondary injection experiment passed shell syntax checks but
   has not yet been exercised on a GPU.
 - Full-cohort prompt audit: 1,200 records, no overflows, maximum 121,593 tokens,
