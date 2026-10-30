@@ -1,7 +1,10 @@
 # Pre-main-experiment readiness
 
 Assessment: October 29, 2026. **GO for the frozen primary study within the 90
-allocated GPU-hour total cap.** No calibration or test inference has been launched.
+allocated GPU-hour total cap.** The user subsequently authorized main inference;
+calibration shard 0 was submitted as Slurm job 31347741. A guarded dependent
+controller, job 31347875, checks coverage and the cap before continuing the serial
+calibration, test, report, structural and injection stages.
 This is engineering and feasibility readiness, not evidence of held-out performance.
 
 ## Frozen study and development selection
@@ -70,7 +73,7 @@ and full intermediate outputs stay outside Git and W&B.
 ## Resource plan and remaining work
 
 Reconciled `sacct -X` usage including failures is **22,810 GPU-seconds, 6h 20m 10s**;
-there are no active jobs. A **90 GPU-hour total cap** includes this consumption.
+before the main job starts. A **90 GPU-hour total cap** includes this consumption.
 The user authorized continued GPU use without further approval requests; the 90-hour
 number is an agent-selected cap based on the measured pilot, not a user-specified value.
 
@@ -89,5 +92,5 @@ The actionable, serial, cap-checked Slurm commands are in
 never execute trajectory commands. Run calibration and test, check complete coverage,
 then compute the report and secondary analyses. The injection Slurm launcher is a
 syntax-checked, separately checksummed operational artifact; its actual GPU behavior
-remains unverified until the secondary study is run. No training, held-out inference,
-or scientific results are implied by this readiness assessment.
+remains unverified until the secondary study is run. No training or scientific outcomes are implied by this readiness assessment.
+Check Slurm and the current artifacts for the latest main-study status.

@@ -307,8 +307,10 @@ do not reinterpret a resumed trial as an independent cold benchmark.
 The frozen checkout is at source commit `a0fd3fd`; the source hashes and Python
 patch version are fixed by `runs/study-freeze.json`. The current readiness assessment
 and 90 allocated GPU-hour total cap are in the [readiness report](reports/pre-main-experiment-readiness.md).
-No held-out jobs have been launched. The commands below are for the subsequent study;
-they do not imply it has already run.
+Calibration job `31347741` was submitted after the user authorized full execution.
+Dependent controller `31347875` verifies each completed shard and starts the next
+within the 90-hour cap. The manual commands below are recovery instructions; do
+not submit duplicates while the controller chain is active.
 
 Set the verified environment in a Yale shell, from the clean frozen checkout:
 
@@ -380,3 +382,22 @@ injection runner resumes persisted variants but does not have the primary runner
 shard locks or per-attempt W&B telemetry. Submit only one injection job at a time,
 retain the same output and freeze, and review infrastructure failures before reuse.
 GPU allocation accounting comes from `sacct`, including failed and interrupted jobs.
+
+
+## Active automated continuation
+
+The controller is `runs/study-controller.py` in the frozen checkout, matching the
+[versioned reference](reference/yale-study-controller.py), SHA-256
+`d5bf22915e94bdd59267688f53210a094847feec2011e0ddff1a5209c5da6581`.
+A dependent CPU job checks the prior Slurm exit, freeze identity and exact saved
+shard coverage before starting the next calibration/test shard. It accounts for
+all allocated GPU time, reserves each next allocation within 90 total GPU-hours,
+records submission intent before `sbatch`, and refuses duplicates or concurrent
+user jobs. After test coverage it runs the primary report and structural analysis,
+then submits the checksum-verified injection launcher and verifies the matched
+variant coverage. Completion is recorded in `runs/study-completion.json`.
+
+The chain deliberately stops on failed/incomplete jobs, ambiguous submissions,
+unexpected concurrent jobs, a failed analysis, or an exhausted cap. Inspect
+`logs/study-controller-*.out`, `runs/submissions.json`, `squeue` and `sacct` before
+any manual recovery. A successful submission alone is not evidence of completion.
