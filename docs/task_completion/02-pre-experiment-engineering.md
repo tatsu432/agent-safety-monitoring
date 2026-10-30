@@ -1,30 +1,23 @@
-# Pre-main engineering work — not scientific experiment completion
+# Pre-main engineering completion
 
-October 29, 2026. Working-tree implementation on `feat/monitoring-study`, starting
-at `c4a6ff1`; no new commit is claimed. The supplied instructions/spec were preserved.
+October 29, 2026. The implementation is committed at `a0fd3fd` on
+`feat/monitoring-study`; documentation updates follow separately. The supplied
+instruction and task-spec edits remain preserved. No held-out inference was launched.
 
-Implemented exact global EaE passage selection with token-cost feedback, private
-failure diagnostics, durable call/attempt journals, validated resume and shard locks,
-local heartbeat/status, aggregate W&B modes and job lineage, GPU CSV aggregation,
-stable benchmark trials, submission reconciliation and resource caps, comparable
-selection checks, measured GPU-cost reporting, and stronger real-freeze prerequisites.
+Completed: exact EaE passage resolution and diagnosis; durable attempt journals,
+validated recovery and shard ownership; local progress and aggregate-only W&B;
+measured GPU timing, allocation accounting and submission reconciliation; fair
+selection and budget reporting; and a real freeze with verified prerequisites. A
+selection-boundary error at exactly 5% invalid was corrected with integer counting.
 
-Actually verified: local lint, shell syntax, 55 CPU tests, all-method synthetic
-end-to-end demo/report, W&B 0.31.0 offline event creation, corrected full-context audit
-(1,200 records, zero overflow), pinned-tokenizer replay of the original screen and
-seven earlier EaE trials. All 20 final readiness cases passed on Yale Linux in 10.46 seconds.
+Verified: 57 local CPU tests; Yale Linux readiness tests; prompt context audit on
+1,200 records; a 40-record-per-method independent cold development screen;
+real Slurm drain/resume; an H200 frozen-runtime smoke across all five methods and
+independent freeze verification; and synthetic aggregate-only online W&B from a
+Slurm compute node. These checks do not prove held-out detection effectiveness.
+The separately staged injection launcher is syntax-checked, not GPU-validated.
 
-Real H200 development jobs `31302433` and `31304229` used 1,084 and 173 GPU-seconds.
-A Slurm warning interrupted the first job; the second reused 35 complete results and
-finished five missing records. EaE 1K: 30/40 valid, infeasible. EaE 3K: 38/40 valid,
-meeting the 5% threshold; its resumed timing is not independent cold selection proof.
-Final total usage is 3h 51m 32s, leaving 8m 28s under the original four-hour cap.
-
-Online W&B initialization failed, while local monitoring and inference continued.
-Successful online delivery, multistage GPU interruption, concurrency improvements and
-shell/telemetry fixes made after the staged snapshot remain unverified physically.
-
-Main inference, final development selection, accepted scientific freeze and full-study
-budget approval remain separate gates. See the
-[readiness report](../reports/pre-main-experiment-readiness.md) for measured results,
-resource accounting, current go/no-go and exact remaining actions.
+The study is ready for frozen primary execution within the agent-selected 90 total
+GPU-hour cap authorized by the user. GPU usage, selection, scientific caveats,
+remaining costs and instructions are in the [readiness report](../reports/pre-main-experiment-readiness.md)
+and [operations](../operations.md). The full evaluation remains future work.

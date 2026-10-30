@@ -301,3 +301,82 @@ This bounded development job uses the short warning rather than the long-run def
 so the warning does not stop scheduling 15 minutes before a 150-minute allocation ends.
 If the measured workload still exceeds its limit, preserve and report incomplete timing;
 do not reinterpret a resumed trial as an independent cold benchmark.
+
+## Current frozen Yale launch procedure
+
+The frozen checkout is at source commit `a0fd3fd`; the source hashes and Python
+patch version are fixed by `runs/study-freeze.json`. The current readiness assessment
+and 90 allocated GPU-hour total cap are in the [readiness report](reports/pre-main-experiment-readiness.md).
+No held-out jobs have been launched. The commands below are for the subsequent study;
+they do not imply it has already run.
+
+Set the verified environment in a Yale shell, from the clean frozen checkout:
+
+```bash
+cd /nfs/roberts/project/cpsc4710/cpsc4710_ts2236/agent-safety-monitoring-frozen-prep
+mkdir -p logs
+export ASM_SCRATCH=/nfs/roberts/scratch/cpsc4710/cpsc4710_ts2236/agent-safety-monitoring
+export HF_HOME="$ASM_SCRATCH/huggingface" UV_CACHE_DIR="$ASM_SCRATCH/uv-cache"
+export UV_PROJECT_ENVIRONMENT="$ASM_SCRATCH/frozen-inference-venv" UV_OFFLINE=1 HF_HUB_OFFLINE=1
+export ASM_IMAGE="$PWD/images/vllm-openai-v0.11.0.sif"
+export ASM_IMAGE_SHA256=056a8f8f182b1652c88ecf567d11dfa18a5b0a7ddd33d17b3fcc5d5869731c03
+export ASM_MODEL_REVISION=6cee5e81ee83917806bbde320786a8fb61efebee
+export ASM_GPUS=1 ASM_TP=1 ASM_CONTEXT=131072 ASM_CONCURRENCY=1
+export ASM_FREEZE=runs/study-freeze.json ASM_DATA=data/prepared ASM_TRACKING_MODE=online
+export ASM_ACTION=run ASM_OUTPUT=runs/study ASM_SHARDS=8 ASM_DRAIN_SECONDS=840
+```
+
+Run **one shard at a time** with the submission ledger. Use `calibration` first,
+then `test`; set `ASM_SHARD` to each integer from 0 through 7. For example, this
+submits the first calibration shard, with an eight-hour maximum:
+
+```bash
+export ASM_SPLIT=calibration ASM_SHARD=0
+.venv/bin/python scripts/yale/submit.py --ledger runs/submissions.json \
+  --identity "main-${ASM_SPLIT}-${ASM_SHARD}-attempt-1" \
+  --gpus 1 --minutes 480 --cap-hours 90 -- \
+  --account=cpsc4710 --partition=gpu_h200 --mem=48G --cpus-per-task=4 \
+  --output="logs/main-${ASM_SPLIT}-${ASM_SHARD}-%j.out" scripts/yale/inference.sbatch
+```
+
+Before submitting the next shard, check `squeue --me`, `sacct -j JOBID -X`,
+the shard summary and heartbeat. The ledger refuses to submit when any other user
+job is active. A completed allocation does not alone prove full shard coverage;
+inspect `state`, `expected` and `completed_results`. If interrupted or incomplete,
+inspect the existing results and logs first, then retain the same split, shard,
+shard count, output and freeze and use a fresh attempt identity. Never re-run a
+completed shard as a new timing trial. Adjust `--minutes` downward if the remaining
+cap cannot reserve eight hours. Any unexpected cost requires reassessment rather
+than silently exceeding the cap.
+
+When both splits have complete coverage, find the single `study.json` under
+`runs/study/`, set `RUN_ROOT` to its parent directory, and generate the report:
+
+```bash
+find runs/study -name study.json -print
+export RUN_ROOT=runs/study/REPLACE_WITH_STUDY_ID
+.venv/bin/asm report --run-root "$RUN_ROOT" --output runs/report
+.venv/bin/asm experiment structural --frozen "$ASM_FREEZE" \
+  --data "$ASM_DATA" --run-root "$RUN_ROOT" --output runs/structural
+```
+
+For the frozen matched-control injection study, the staged launcher is
+`runs/injections.sbatch` (copy of [the reference launcher](reference/yale-injections.sbatch),
+SHA-256 `6ebfa1165e63e3fbac8787475de7462a8298021d0609e84920adfe07561d2008`).
+It has passed shell syntax checks, but has not been run on a GPU. After generating the
+primary report, verify its checksum and submit it within the same cap:
+
+```bash
+sha256sum runs/injections.sbatch
+export ASM_PRIMARY_REPORT=runs/report/metrics.json ASM_OUTPUT=runs/secondary
+.venv/bin/python scripts/yale/submit.py --ledger runs/submissions.json \
+  --identity injections-attempt-1 --gpus 1 --minutes 480 --cap-hours 90 -- \
+  --account=cpsc4710 --partition=gpu_h200 --mem=48G --cpus-per-task=4 \
+  --output=logs/injections-%j.out runs/injections.sbatch
+```
+
+On interruption, inspect the per-variant artifacts and logs before retrying; the
+injection runner resumes persisted variants but does not have the primary runner's
+shard locks or per-attempt W&B telemetry. Submit only one injection job at a time,
+retain the same output and freeze, and review infrastructure failures before reuse.
+GPU allocation accounting comes from `sacct`, including failed and interrupted jobs.
