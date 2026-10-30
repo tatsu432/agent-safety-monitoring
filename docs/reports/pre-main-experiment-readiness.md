@@ -1,8 +1,34 @@
 # Pre-main-experiment readiness
 
-Assessment date: October 29, 2026. **NO-GO for main inference.**
-Engineering implementation and software tests do not establish real-model feasibility.
-No real held-out calibration/test inference or scientific freeze was performed.
+Assessment date: October 29, 2026. **Conditional NO-GO for main inference:**
+real online W&B is not authenticated, and the frozen-runtime guard changes have
+not yet been exercised on an allocated GPU. No held-out inference was performed.
+
+The real scientific freeze was created in the clean Yale checkout
+`/nfs/roberts/project/cpsc4710/cpsc4710_ts2236/agent-safety-monitoring-frozen-prep`
+at source commit `a0fd3fd19e7b64cd4b6a99f9ed8e2cec14d1ddbd` and Python 3.12.15.
+Its SHA-256 content identity is
+`b86533ed57f70956b55d8a5e26eac1f833dc622ef92b36060e1f71382c70ae5d`.
+The frozen configuration, accepted pilot evidence and freeze are retained under
+`runs/` in that checkout, and copied into the ignored local `runs/readiness/`.
+The checkout is separate from the user's working tree and original Yale checkout.
+
+The new checkout's locked environment setup stalled in Yale NFS I/O both on
+project storage and scratch; both attempts were terminated without allocating a GPU.
+The scratch environment is incomplete. The freeze was created using the existing
+locked Python 3.12.15 environment with the clean checkout source on `PYTHONPATH`.
+Complete the checkout environment setup before allocating a GPU.
+
+To satisfy the project requirement for online monitoring, configure Yale's W&B
+credentials through a secure interactive login or environment mechanism without
+putting secrets in Git, Slurm arguments or chat, then verify aggregate-only online
+telemetry. Perform a short Slurm development-only smoke check of the frozen-runtime
+guards before any held-out inference. Keep the 90 GPU-hour total cap, including
+all previous allocations; reconcile `sacct` again before submitting. The main
+calibration and test jobs have not been submitted.
+
+Engineering implementation and software tests do not by themselves establish
+held-out scientific effectiveness.
 
 ## Update: completed cold screen and corrected selection
 
@@ -46,11 +72,10 @@ GPU inference code; the original benchmark source identity remains in its artifa
 Local lint passed and the complete suite now has **57 passing tests**. Online W&B
 still has no Yale API key or netrc credential; local artifacts remain authoritative.
 
-**NO-GO until the corrected selection is assembled into a reviewed, immutable
-configuration with accepted pilot evidence, verified runtime details, the measured
-cap, and a clean reproducible source checkout, and the real freeze succeeds.**
-The correction and final frozen-runtime checks have not been physically re-run on a GPU.
-Do not claim the held-out study is ready or complete until the actual gate is satisfied.
+The corrected selection, reviewed pilot evidence, verified runtime details and measured
+cap are now included in the immutable freeze described above. The selection-only
+correction and final frozen-runtime checks have not been physically re-run on a GPU.
+Online W&B remains unauthenticated; no held-out study has been run.
 
 The remainder of this report records the earlier state and investigation; earlier
 unqualified GPU totals, cost estimates, selection status and proposed next actions
