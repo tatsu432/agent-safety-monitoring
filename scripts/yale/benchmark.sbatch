@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=asm-benchmark
-#SBATCH --signal=B:USR1@120
+#SBATCH --signal=B:USR1@900
 set -euo pipefail
 : "${SLURM_JOB_ID:?Must run under Slurm}"
 : "${ASM_SCRATCH:?Set project scratch directory}"
@@ -13,16 +13,18 @@ ASM_IMAGE_SHA256=$(awk '{print $1}' "$ASM_IMAGE.sha256")
 export ASM_MODEL_REVISION=6cee5e81ee83917806bbde320786a8fb61efebee
 export ASM_GPUS=1 ASM_ACTION=benchmark
 export ASM_DATA="${ASM_DATA:-data/pilot}" ASM_OUTPUT="${ASM_OUTPUT:-runs/pilot}" ASM_LIMIT="${ASM_LIMIT:-4}"
-mkdir -p runs
-uv run --locked --extra tokenizer asm experiment configure --output runs/development-config.json
+mkdir -p "$ASM_OUTPUT"
+uv run --locked --extra tokenizer asm experiment configure --output "$ASM_OUTPUT/development-config.json" \
+  --science "${ASM_SCIENCE_CONFIG:-configs/science/development.json}"
 python3 - <<'PY'
 import json
 import os
 from pathlib import Path
-p=Path('runs/development-config.json')
+p=Path(os.environ['ASM_OUTPUT'])/'development-config.json'
 config=json.loads(p.read_text())
 config['model']['engine_version']='0.11.0'
-config['logging']={'mode':'offline','project':'agent-safety-monitoring'}
+config['logging']={'mode':os.environ.get('ASM_TRACKING_MODE','online'),
+                   'project':'agent-safety-monitoring'}
 if os.environ.get('ASM_BENCHMARK_METHODS'):
     names=os.environ['ASM_BENCHMARK_METHODS'].split(',')
     if not set(names) <= {m['method'] for m in config['methods']}:
@@ -33,5 +35,5 @@ if os.environ.get('ASM_BENCHMARK_FIRST_ONLY') == '1':
     config['methods']=[m for m in config['methods'] if not (m['method'] in seen or seen.add(m['method']))]
 p.write_text(json.dumps(config,indent=2))
 PY
-export ASM_CONFIG=runs/development-config.json
+export ASM_CONFIG="$ASM_OUTPUT/development-config.json"
 exec bash scripts/yale/inference.sbatch

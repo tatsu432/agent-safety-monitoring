@@ -18,3 +18,5 @@ The demo uses synthetic judgments and does not measure monitor effectiveness.
 
 Benchmark commands are never executed. Data, caches and private run artifacts stay
 outside Git. Real GPU validation and held-out scientific runs are still pending.
+
+Pre-main status and remaining launch gates: [readiness report](docs/reports/pre-main-experiment-readiness.md).

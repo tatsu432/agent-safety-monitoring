@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=asm-pilot
-#SBATCH --signal=B:USR1@120
+#SBATCH --signal=B:USR1@900
 set -euo pipefail
 : "${SLURM_JOB_ID:?Must run under Slurm}"
 : "${ASM_SCRATCH:?Set project scratch directory}"

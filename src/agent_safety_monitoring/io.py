@@ -44,3 +44,35 @@ def atomic_json(path: Path, value: Any) -> None:
 
 def read_json(path: Path) -> Any:
     return json.loads(path.read_text())
+
+
+class FileLock:
+    """Advisory exclusive ownership; kernel releases the lock after a crash."""
+
+    def __init__(self, path):
+        self.path = Path(path)
+        self.stream = None
+
+    def __enter__(self):
+        import fcntl
+
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.stream = self.path.open("a+")
+        try:
+            fcntl.flock(self.stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            self.stream.close()
+            raise RuntimeError(f"Already owned by another worker: {self.path.name}") from None
+        return self
+
+    def __exit__(self, *args):
+        self.stream.close()
+
+
+def immutable_json(path, value):
+    """Caller holds the manifest lock. Never replace an incompatible manifest."""
+    if path.exists():
+        if read_json(path) != value:
+            raise ValueError(f"Configuration or execution identity mismatch: {path.name}")
+    else:
+        atomic_json(path, value)

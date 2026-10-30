@@ -25,7 +25,7 @@ Inputs preserve genuine tasks and visible messages/actions/results, while exclud
 private instructions, grader metadata, submission tool markers, and source-message
 indices that could disclose conversion artifacts. Canonical segment identifiers,
 exact text, source positions and immutable raw sources support evidence tracing.
-The corrected complete-prompt audit found a maximum of 120,018 prompt tokens
+The corrected complete-prompt audit found a maximum of 121,593 prompt tokens
 and no overflow at the configured 131,072-token limit, including generation
 and retry headroom. A synthetic 115,229-token prompt ran successfully on an H200.
 
@@ -75,3 +75,15 @@ The repository provides a uv lock, source/data/configuration hashes, incremental
 Inspect ingestion, exact span checks, resumable call caches, immutable scientific
 freezes, and generated aggregate reports. Raw benchmark content remains local.
 See [operations](../operations.md) and [Yale execution](../yale-hpc.md).
+
+
+## Pre-main readiness update
+
+The repaired 3K EaE development screen produced 38/40 valid judgments (5% invalid),
+while 1K remained infeasible at 30/40. Slurm interruption/resume preserved 35 complete
+3K results and generated only the five missing records. Its timing spans two allocations
+and is not independent cold selection proof. Total allocation usage is 3h 51m 32s
+under the original four-hour cap. Main inference remains blocked on comparable timing,
+selection acceptance and explicit full-study resource approval. These development
+results do not establish held-out detection effectiveness. See the
+[readiness report](pre-main-experiment-readiness.md).

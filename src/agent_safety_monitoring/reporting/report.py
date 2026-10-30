@@ -33,6 +33,13 @@ def load_results(root):
                 saved = read_json(path)
                 result = MonitoringResult.model_validate(saved["result"])
                 record = saved["evaluation"]
+                if (
+                    saved["run_identity"] != study["identity"]
+                    or result.trajectory_id != record["trajectory_id"]
+                    or result.status == "error"
+                    or f"{result.method}-{result.config_hash[:12]}" != method_path.name
+                ):
+                    raise ValueError("Incompatible or infrastructure-failed scientific result")
                 if record["trajectory_id"] in seen:
                     raise ValueError("Duplicate result")
                 seen.add(record["trajectory_id"])
@@ -168,7 +175,61 @@ def generate(root: Path, output: Path, replicates=2000):
     fig.tight_layout()
     fig.savefig(output / "token-cost-detection.png", dpi=180)
     plt.close(fig)
-    software = read_json(root / "study.json")["software_only"]
+    study = read_json(root / "study.json")
+    budget_rows = []
+    for budget, definition in study["configuration"].get("budgets", {}).items():
+        for family, choice in definition["methods"].items():
+            if choice is None:
+                budget_rows.append({"budget": budget, "method": family, "available": False})
+                continue
+            cfg = MethodConfig.model_validate(choice["config"])
+            method_id = f"{cfg.method}-{digest(cfg.model_dump())[:12]}"
+            if method_id not in results:
+                raise ValueError("Budget references a missing method configuration")
+            budget_rows.append(
+                {
+                    "budget": budget,
+                    "method": family,
+                    "available": True,
+                    "method_id": method_id,
+                    "development_gpu_seconds_per_trajectory": choice["gpu_seconds_per_trajectory"],
+                    "tpr": results[method_id]["primary"]["tpr"],
+                    "cost_source": "development homogeneous workload measurement",
+                }
+            )
+    atomic_json(output / "budget-performance.json", budget_rows)
+    with (output / "gpu-cost-performance.csv").open("w", newline="") as stream:
+        fields = [
+            "budget",
+            "method",
+            "available",
+            "method_id",
+            "development_gpu_seconds_per_trajectory",
+            "tpr",
+            "cost_source",
+        ]
+        writer = csv.DictWriter(stream, fields)
+        writer.writeheader()
+        writer.writerows(budget_rows)
+    available = [r for r in budget_rows if r["available"]]
+    if available:
+        fig, ax = plt.subplots(figsize=(7, 5))
+        for row in available:
+            ax.scatter(
+                row["development_gpu_seconds_per_trajectory"],
+                row["tpr"],
+                label=f"{row['budget']}/{row['method']}",
+            )
+        ax.set(
+            xlabel="Measured development GPU-seconds per trajectory",
+            ylabel="Test TPR at calibrated policy",
+            ylim=(0, 1),
+        )
+        ax.legend(fontsize=7)
+        fig.tight_layout()
+        fig.savefig(output / "gpu-cost-detection.png", dpi=180)
+        plt.close(fig)
+    software = study["software_only"]
     title = (
         "SOFTWARE VALIDATION ONLY — synthetic judgments"
         if software

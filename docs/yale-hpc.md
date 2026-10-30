@@ -1,5 +1,8 @@
 # Yale execution runbook
 
+Current pre-main evidence and resource accounting appear in the
+[readiness report](reports/pre-main-experiment-readiness.md) and the final ledger section below.
+
 ## Verified status (October 28, 2026)
 
 Interactive Duo login succeeded as `cpsc4710_ts2236` on Bouchet, via the authorized
@@ -123,3 +126,24 @@ Sources: [Bouchet](https://docs.ycrc.yale.edu/clusters/bouchet/),
   exceeding the prespecified 5% invalid threshold. All listed GPU jobs used about
   3 hours 31 minutes in total, within the four-hour pilot ceiling. Full-study
   execution and freeze also require the user-specified full-study GPU-hour cap.
+
+## Pre-main readiness validation (October 29, 2026)
+
+Work was staged in the separate sibling `agent-safety-monitoring-readiness` worktree
+so the previous checkout and artifacts remained intact. Current account/QOS and course
+group quotas were reinspected. Explicit `getquota -g cpsc4710` succeeded.
+
+- `31302433`: H200, 20-minute maximum, interrupted by the requested USR1 warning;
+  consumed 1,084 allocated GPU-seconds. Saved 40 1K and 35 3K EaE results. An attempted
+  time extension was denied and did not change the allocation.
+- `31304229`: H200 resume, four-minute maximum; completed in 173 allocated seconds,
+  skipped 35 persisted results and generated only the five missing 3K outcomes.
+- EaE validity: 1K 30/40 (infeasible), 3K 38/40 (meets 5% rule). Resumed 3K timing
+  is explicitly ineligible as an independent cold benchmark. Online W&B initialization
+  failed, but local progress, GPU telemetry and inference continued.
+- Final `sacct -X` total: **13,892 GPU-seconds = 3h 51m 32s**, including failures;
+  **8m 28s** remain under the original four-hour cap. No jobs remained active.
+
+No held-out inference or real scientific freeze occurred. Comparable cold timing,
+selection acceptance and full-study resource approval remain outstanding. See the
+[readiness report](reports/pre-main-experiment-readiness.md) for the exact next steps.

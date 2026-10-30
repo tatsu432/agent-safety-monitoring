@@ -11,7 +11,7 @@ from agent_safety_monitoring.monitors.core import (
     prompt_identity,
     stage_system,
 )
-from agent_safety_monitoring.schema import CanonicalTrajectory, EvidenceSelection, Judgment
+from agent_safety_monitoring.schema import CanonicalTrajectory, Judgment, PassageSelection
 
 
 def audit_context(data: Path, config: ModelConfig):
@@ -30,7 +30,7 @@ def audit_context(data: Path, config: ModelConfig):
             for effort in ["low", "medium", "high"]
         }
         counts["extract"] = tokens.prompt(
-            prompt(stage_system(EvidenceSelection), extraction_payload(t, 3000)), "low"
+            prompt(stage_system(PassageSelection), extraction_payload(t, 3000, tokens)), "low"
         )
         # Reserve both one generated answer and a previous maximal corrective answer.
         reserve = 2 * config.max_tokens + 128

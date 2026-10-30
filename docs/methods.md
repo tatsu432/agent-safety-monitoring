@@ -34,8 +34,9 @@ Single review uses low effort; think-longer changes only effort. Repeated review
 uses distinct seeds and averages all categories. EaE validates exact character
 spans and a quoted-token cap before an independent judge. Segments are divided
 into consecutive passages of at most 400 characters; the extractor selects up to
-24 by segment ID and zero-based passage index. Code retrieves exact source text,
-rejecting nonexistent indices and selections over budget. Its judge sees no full
+24 distinct global passage IDs. Compact prefixes show each ID and its exact quoted-token
+cost. Code maps IDs to canonical segment/character spans, retrieves exact source text,
+and rejects nonexistent IDs and selections over budget. The 1K/3K budgets remain fixed. Its judge sees no full
 transcript or extractor verdict. MRT sequential summaries preserve ordered state;
 binary hierarchical merges combine independent leaf summaries. Equal branch
 weights produce the hybrid score. Source chunk overflow is split without dropping

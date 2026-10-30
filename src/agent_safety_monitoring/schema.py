@@ -79,6 +79,10 @@ class EvidenceSelection(StrictModel):
     quotes: list[SelectedQuotation] = Field(max_length=24)
 
 
+class PassageSelection(StrictModel):
+    passage_ids: list[StrictInt] = Field(max_length=24)
+
+
 class Summary(Judgment):
     summary: str = Field(min_length=1)
 

@@ -142,6 +142,51 @@ def run(
     show(run_sync(data, output, configuration, split, lock, shard, shards, limit))
 
 
+@experiment_app.command()
+def status(run_root: Annotated[Path, typer.Option()]):
+    """Read local progress and job-attempt identities without a running server."""
+    from agent_safety_monitoring.experiments.progress import status as inspect_status
+
+    show(inspect_status(run_root))
+
+
+@experiment_app.command()
+def diagnose(
+    run_root: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    data: Path = Path("data/prepared"),
+):
+    """Replay development EaE validation into a private diagnostic file."""
+    from agent_safety_monitoring.experiments.diagnose import diagnose as inspect_failures
+
+    show(inspect_failures(run_root, data, output))
+
+
+@experiment_app.command("resource-usage")
+def resource_usage(
+    sacct_file: Annotated[Path, typer.Option()], output: Annotated[Path, typer.Option()]
+):
+    """Read project-filtered sacct -X pipe-delimited allocation records."""
+    from agent_safety_monitoring.experiments.resources import allocation_usage
+    from agent_safety_monitoring.io import atomic_json
+
+    result = allocation_usage(sacct_file.read_text())
+    atomic_json(output, result)
+    show(result)
+
+
+@experiment_app.command("cost-estimate")
+def cost_estimate(
+    measurements: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    data: Path = Path("data/prepared"),
+):
+    """Project remaining costs from actual development measurements; not budget approval."""
+    from agent_safety_monitoring.experiments.resources import estimate
+
+    show(estimate(measurements, data, output))
+
+
 @experiment_app.command("pilot-prep")
 def pilot_prep(data: Path = Path("data/prepared"), output: Path = Path("data/pilot")):
     """Select short, median and long development examples for hardware testing."""
@@ -165,11 +210,12 @@ def benchmark(
     limit: int = 4,
     data: Path = Path("data/prepared"),
     output: Path = Path("runs/pilot"),
+    trial_id: str = "default",
 ):
     """Measure development workloads inside a Slurm allocation with a loaded server."""
     from agent_safety_monitoring.experiments.benchmark import benchmark as measure
 
-    show(measure(data, output, read_json(config), gpus, limit))
+    show(measure(data, output, read_json(config), gpus, limit, trial_id))
 
 
 @experiment_app.command()

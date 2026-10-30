@@ -3,6 +3,7 @@
 import asyncio
 import json
 import time
+import uuid
 from pathlib import Path
 from typing import Literal
 from urllib.parse import urlparse
@@ -71,6 +72,8 @@ class Backend:
             raise ValueError("Benchmark inference must use a local server, not a hosted API")
         self.config = config
         self.cache = cache
+        self.attempt_dir = cache / "attempts"
+        self.on_call = None
         self.tokens = tokenizer or Tokenizer(config)
         self.semaphore = asyncio.Semaphore(config.concurrency)
         self.client = httpx.AsyncClient(timeout=config.timeout_seconds, transport=transport)
@@ -115,16 +118,36 @@ class Backend:
         path = self.cache / f"{key}.json"
         async with self.locks.setdefault(key, asyncio.Lock()):
             if path.exists():
-                calls = [CallRecord.model_validate(c) for c in read_json(path)["calls"]]
-                # Original usage remains the logical cost; no physical generation occurs.
-                return [c.model_copy(update={"cached": True, "stage": stage}) for c in calls]
+                try:
+                    calls = [CallRecord.model_validate(c) for c in read_json(path)["calls"]]
+                    if not calls or calls[-1].error or any(c.key != key for c in calls):
+                        raise ValueError("Incompatible cache")
+                except (ValueError, KeyError, TypeError):
+                    path.rename(path.with_suffix(f".corrupt-{uuid.uuid4().hex}"))
+                else:
+                    reused = [c.model_copy(update={"cached": True, "stage": stage}) for c in calls]
+                    for call in reused:
+                        if self.on_call:
+                            self.on_call(call)
+                    return reused
             calls = []
             for attempt in range(self.config.transport_retries + 1):
                 start, clock = now(), time.perf_counter()
-                usage = Usage(input_tokens=prompt_tokens)
+                usage = Usage(input_tokens=prompt_tokens if self.config.backend == "mock" else 0)
                 output, error, finish = None, None, None
                 retryable = False
                 async with self.semaphore:
+                    journal = self.attempt_dir / f"{uuid.uuid4().hex}.json"
+                    atomic_json(
+                        journal,
+                        {
+                            "state": "in_flight",
+                            "key": key,
+                            "stage": stage,
+                            "started": start,
+                            "attempt": attempt,
+                        },
+                    )
                     try:
                         if self.config.backend == "mock":
                             output = self._mock(messages, schema, seed)
@@ -145,7 +168,7 @@ class Backend:
                             finish = choice.get("finish_reason")
                             u = data.get("usage", {})
                             usage = Usage(
-                                input_tokens=u.get("prompt_tokens", prompt_tokens),
+                                input_tokens=u.get("prompt_tokens", 0),
                                 output_tokens=u.get("completion_tokens", 0),
                                 reasoning_tokens=(u.get("completion_tokens_details") or {}).get(
                                     "reasoning_tokens"
@@ -178,6 +201,9 @@ class Backend:
                         finish_reason=finish,
                     )
                 )
+                atomic_json(journal, {"state": "finished", "call": calls[-1].model_dump()})
+                if self.on_call:
+                    self.on_call(calls[-1])
                 if error is None:
                     atomic_json(path, {"calls": [c.model_dump() for c in calls]})
                     return calls
@@ -190,6 +216,9 @@ class Backend:
         # Deliberately a software fixture, not an effectiveness simulator.
         payload = json.loads(messages[1]["content"])
         segments = payload.get("segments", [])
+        if schema.__name__ == "PassageSelection":
+            ids = [int(p.split("/", 1)[0]) for s in segments for p in s["text"]]
+            return json.dumps({"passage_ids": ids[:1]})
         if schema.__name__ == "EvidenceSelection":
             quotes = [{"step": s["id"], "chunk": 0} for s in segments if s["text"]][:1]
             return json.dumps({"quotes": quotes})

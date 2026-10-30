@@ -377,8 +377,8 @@ def test_eae_retries_citations_not_available_to_judge(tmp_path):
 
         def mock(messages, schema, seed):
             nonlocal calls
-            if schema.__name__ == "EvidenceSelection":
-                return json.dumps({"quotes": [{"step": "s0", "chunk": 0}]})
+            if schema.__name__ == "PassageSelection":
+                return json.dumps({"passage_ids": [0]})
             calls += 1
             return json.dumps(
                 {"score": 2, "explanation": "test", "citations": ["s1" if calls == 1 else "s0"]}

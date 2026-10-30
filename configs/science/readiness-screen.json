@@ -1,0 +1,10 @@
+{
+  "methods": [
+    {"method": "single"},
+    {"method": "think", "effort": "medium"},
+    {"method": "average", "repeats": 2},
+    {"method": "eae", "quote_tokens": 3000},
+    {"method": "mrt", "chunk_interactions": 5}
+  ],
+  "analysis": {"target_fpr": 0.05, "bootstrap_replicates": 2000, "invalid_policy": "referral_alert"}
+}
