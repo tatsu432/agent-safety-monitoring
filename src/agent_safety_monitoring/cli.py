@@ -306,5 +306,94 @@ def report(
     show(generate(run_root, output, replicates))
 
 
+analysis_app = typer.Typer(no_args_is_help=True, pretty_exceptions_show_locals=False)
+app.add_typer(analysis_app, name="analysis")
+
+
+@analysis_app.command("audit")
+def analysis_audit(
+    freeze: Annotated[Path, typer.Option()],
+    repository: Annotated[Path, typer.Option()],
+    data: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    run_root: Path | None = None,
+):
+    """Check frozen source objects/data without changing the original checkout."""
+    from agent_safety_monitoring.analysis.audit import audit
+
+    show(audit(freeze, repository, data, output, run_root))
+
+
+@analysis_app.command("aggregate")
+def analysis_aggregate(
+    bundle: Annotated[Path, typer.Option()],
+    freeze: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    replicates: int = 2000,
+):
+    """Publish numerical aggregates only; never export private injection rows."""
+    from agent_safety_monitoring.analysis.aggregate import generate
+
+    show(generate(bundle, freeze, output, replicates))
+
+
+@analysis_app.command("features")
+def analysis_features(
+    data: Annotated[Path, typer.Option()], output: Annotated[Path, typer.Option()]
+):
+    """Aggregate calibration/test source-feature distributions without private IDs."""
+    from agent_safety_monitoring.analysis.records import feature_shift
+
+    show(feature_shift(data, output))
+
+
+@analysis_app.command("records")
+def analysis_records(
+    freeze: Annotated[Path, typer.Option()],
+    repository: Annotated[Path, typer.Option()],
+    data: Annotated[Path, typer.Option()],
+    run_root: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    replicates: int = 2000,
+):
+    """Reconcile full frozen records before private post-hoc diagnostics."""
+    from agent_safety_monitoring.analysis.audit import audit
+    from agent_safety_monitoring.analysis.records import full_diagnostics
+
+    checked = audit(freeze, repository, data, output / "audit.json", run_root)
+    if not checked["integrity_passed"]:
+        raise typer.BadParameter("Frozen source/data integrity failed")
+    show(full_diagnostics(data, run_root, output, replicates))
+
+
+@analysis_app.command("review-prepare")
+def analysis_review_prepare(
+    freeze: Annotated[Path, typer.Option()],
+    data: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    sample: Path | None = None,
+    development: bool = False,
+):
+    """Prepare a private blinded packet from development or the existing diagnostic sample."""
+    from agent_safety_monitoring.analysis.model_review import prepare_packet
+
+    show(prepare_packet(data, read_json(freeze), output, sample, development))
+
+
+@analysis_app.command("review-run")
+def analysis_review_run(
+    packet: Annotated[Path, typer.Option()],
+    config: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    proof: Path | None = None,
+):
+    """Run local model-suggested annotation; held-out diagnostics require a development proof."""
+    import asyncio
+
+    from agent_safety_monitoring.analysis.model_review import run_review
+
+    show(asyncio.run(run_review(packet, config, output, proof)))
+
+
 if __name__ == "__main__":
     app()
