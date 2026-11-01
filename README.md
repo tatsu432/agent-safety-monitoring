@@ -18,8 +18,8 @@ The demo uses synthetic judgments and does not measure monitor effectiveness.
 
 Benchmark commands are never executed. Data, caches and private run artifacts stay
 outside Git. The frozen GPU study is reported complete. Local post-hoc analysis
-verifies frozen source/input hashes and consolidates saved results; full prediction
-reconciliation and model-based evidence diagnostics still require Yale access.
+verifies frozen source/input hashes and reconciles full prediction records. The
+model-based evidence review is awaiting its Yale GPU allocation.
 
 Current findings: [research report](docs/reports/report-draft.md) ·
 [artifact audit](docs/reports/artifact-audit.md) ·

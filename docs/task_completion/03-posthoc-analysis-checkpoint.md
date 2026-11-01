@@ -1,3 +1,5 @@
+> **Current status:** Full prediction reconciliation and Slurm accounting are complete. Reviewer weights are staged; one-H200 development validation job `31619759` is pending because eligible nodes are unavailable or reserved. No diagnostic-sample inference has run. CPU staging jobs `31619668` and `31619731` completed; the first also downloaded an unneeded Metal-format weight file.
+
 > **Continuation update:** Yale authentication succeeded. Full prediction records passed coverage and identity audit; primary metrics and bootstrap intervals were reproduced exactly. Current Slurm accounting is 60.614 GPU-hours. Original annotation sample recovered (30 unreviewed). CPU job 31619668 is staging pinned 120B weights; GPU reviewer validation and evidence inference are pending.
 
 # Post-hoc scientific analysis checkpoint
