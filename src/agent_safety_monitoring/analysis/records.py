@@ -262,6 +262,8 @@ def development_eae(data, run_root, output):
         "records": len(numbers),
         "valid": sum(r["valid"] for r in numbers),
         "extracted": len(extracted),
+        "records_without_nonempty_quotes": sum(not r["extracted"] for r in numbers),
+        "valid_empty_extractions": sum(r["valid"] and not r["extracted"] for r in numbers),
         "quote_budget": budget,
         "mean_quotes_when_extracted": float(np.mean([r["quotes"] for r in extracted])),
         "median_tokens_when_extracted": float(np.median([r["tokens"] for r in extracted])),

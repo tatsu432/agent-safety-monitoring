@@ -379,9 +379,7 @@ def annotation_retention(data, run_root, frozen, review_root, output):
             if len(matches) != 1:
                 raise ValueError("Reference missing from primary coverage")
             result = matches[0]["result"]
-            bucket = aggregates.setdefault(
-                method, {"references": 0, "full": 0, "partial": 0, "missing": 0, "cited": 0}
-            )
+            bucket = aggregates.setdefault(method, {"references": 0, "cited": 0})
             bucket["references"] += len(refs)
             bucket["cited"] += sum(r["step"] in result.citations for r in refs)
             if result.method == "eae":
@@ -392,7 +390,7 @@ def annotation_retention(data, run_root, frozen, review_root, output):
                     for q in a.get("output", {}).get("quotes", [])
                 ]
                 for key, count in coverage_status(refs, selected).items():
-                    bucket[key] += count
+                    bucket[key] = bucket.get(key, 0) + count
     result = {
         "freeze": frozen["hash"],
         "model_proposals": proposals,

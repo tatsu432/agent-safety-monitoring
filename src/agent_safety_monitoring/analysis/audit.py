@@ -55,6 +55,21 @@ def audit(freeze: Path, repository: Path, data: Path, output: Path, run_root: Pa
         groups[a] & groups[b] for i, a in enumerate(sorted(groups)) for b in sorted(groups)[:i]
     )
     counts = Counter((r["split"], r["assignment"], r["outcome"]) for r in manifest["records"])
+    proof_status = {}
+    for name in ["cohort_audit", "pilot_measurement"]:
+        proof = body["config"].get(name)
+        if proof:
+            candidates = [
+                repository / proof["path"],
+                freeze.parent / Path(proof["path"]).name,
+                data / Path(proof["path"]).name,
+            ]
+            available = next((p for p in candidates if p.exists()), None)
+            proof_status[name] = (
+                ("verified" if file_hash(available) == proof["sha256"] else "mismatch")
+                if available
+                else "missing"
+            )
     result = {
         "freeze": frozen["hash"],
         "source_commit": body["git_commit"],
@@ -68,6 +83,7 @@ def audit(freeze: Path, repository: Path, data: Path, output: Path, run_root: Pa
         "counts": {"/".join(k): v for k, v in sorted(counts.items())},
         "record_coverage": "unavailable",
         "cluster_accounting": "not_checked",
+        "prerequisite_proofs": proof_status,
     }
     if run_root is not None:
         study = read_json(run_root / "study.json")
@@ -96,7 +112,12 @@ def audit(freeze: Path, repository: Path, data: Path, output: Path, run_root: Pa
             for split, methods in tables.items()
         }
     result["integrity_passed"] = not (
-        source_failures or not manifest_matches or missing or mismatched or leakage
+        source_failures
+        or not manifest_matches
+        or missing
+        or mismatched
+        or leakage
+        or "mismatch" in proof_status.values()
     )
     atomic_json(output, result)
     return result

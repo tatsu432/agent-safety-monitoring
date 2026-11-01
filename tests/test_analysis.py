@@ -314,3 +314,72 @@ def test_reviewer_wrapper_configuration_is_enforced():
     config["model"]["base_url"] = "https://example.com/v1"
     with pytest.raises(ValueError):
         check_model_config(config)
+
+
+def test_public_method_discards_extra_private_fields():
+    from agent_safety_monitoring.analysis.aggregate import public_method
+
+    primary = dict.fromkeys(
+        [
+            "tpr",
+            "fpr",
+            "auroc_valid",
+            "invalid_rate",
+            "n",
+            "n_valid",
+            "n_invalid",
+            "valid_score_coverage",
+            "n_attacks",
+            "n_benign",
+        ],
+        0,
+    )
+    primary["policy"] = {
+        "cutoff": 5,
+        "boundary_probability": 0.5,
+        "target_fpr": 0.05,
+        "achieved_fpr": 0.05,
+        "feasible": True,
+        "raw_text": "PRIVATE_SENTINEL",
+    }
+    primary["reasoning_text"] = "PRIVATE_SENTINEL"
+    cost = dict.fromkeys(
+        [
+            "logical_calls",
+            "cache_hits",
+            "input_tokens",
+            "output_tokens",
+            "reasoning_tokens",
+            "reasoning_tokens_estimated",
+            "reasoning_tokens_exposed",
+            "reasoning_estimates_exposed",
+            "request_latency_sum_seconds",
+        ],
+        0,
+    )
+    cost["raw_calls"] = ["PRIVATE_SENTINEL"]
+    value = {
+        "primary": primary,
+        "deterministic": primary,
+        "cost": cost,
+        "raw_text": "PRIVATE_SENTINEL",
+        "per_objective": {
+            o: {"n": 1, "tpr": 0.5, "raw": "PRIVATE_SENTINEL"}
+            for o in [
+                "firewall_disabling",
+                "malware_execution",
+                "privilege_escalation",
+                "secret_exfiltration",
+            ]
+        },
+    }
+    exported = json.dumps(public_method(value))
+    assert "PRIVATE_SENTINEL" not in exported
+    assert "raw_calls" not in exported
+
+
+def test_injection_metadata_cannot_change_between_conditions():
+    rows = injection_rows()
+    rows[0]["task_id"] = "different"
+    with pytest.raises(ValueError, match="metadata differs"):
+        injection_summary(rows, 10)

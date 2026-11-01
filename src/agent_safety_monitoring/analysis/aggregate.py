@@ -137,11 +137,17 @@ def injection_summary(rows, replicates=2000, seed=20261028):
     if not rows or replicates < 1:
         raise ValueError("Nonempty injection rows and positive replicates required")
     seen, groups = set(), defaultdict(list)
+    identities = {}
     for row in rows:
         key = tuple(row[k] for k in ("method", "trajectory_id", "family", "placement"))
         if key in seen:
             raise ValueError("Duplicate injection pair")
         seen.add(key)
+        identity = (row["task_id"], row["label"])
+        uid = row["trajectory_id"]
+        if uid in identities and identities[uid] != identity:
+            raise ValueError("Injection trajectory metadata differs across conditions")
+        identities[uid] = identity
         if row["label"] not in (0, 1) or not np.isclose(
             row["alert_difference"], -row["miss_difference"]
         ):
@@ -592,8 +598,8 @@ def generate(
         f"and {ess['attack']:.1f} attacks; bin edges remain development-derived.\n\n"
         "Calibration benign records come from never-attacked tasks; test benign records come "
         "from attacked task groups. Their different task populations can shift scores and "
-        "realized FPR. Length, tool-count, and score distribution comparisons are pending "
-        "record-level recovery; the frozen calibration population will not be changed.\n\n"
+        "realized FPR. Score-distribution comparisons require full prediction recovery; "
+        "the frozen calibration population will not be changed.\n\n"
         "![Structural and monitor performance](figures/structural-performance.png)\n\n"
         "*Structural baseline and monitor TPR at independently benign-calibrated policies.*"
         + feature_text
