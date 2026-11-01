@@ -13,12 +13,19 @@ Read `docs/task/01-experiment-implementation-spec.md`, `docs/methods.md`, and
 - Keep raw data, inference caches, secrets, and private artifacts outside Git and W&B.
 - Keep README concise; maintain matching plans and honest milestone completion records.
 - Test relevant behavior. Mock tests do not establish GPU compatibility or scientific effectiveness.
+- Use W&B for online monitoring for important metrics
 
 ## Yale
 
 Read `docs/yale-hpc.md` before cluster actions. The user authorizes existing alias
 `yale-hpc-cpsc4710` for this CPSC 5710 project. Inspect current Slurm permissions
 and storage; never borrow another project's directories or resource allowance.
-Initial compatibility/pilot ceiling: 4 allocated GPU-hours including failures.
-Obtain a measured full-study cap before substantial jobs. Use ordinary Slurm and
-Apptainer or a supported environment; no generated-code execution worker is needed.
+The user grants standing authorization for GPU submissions needed to complete this
+project, including calibration, test, retries, and secondary experiments. Do not ask
+for GPU submission approval again. Reconcile allocations and maintain a measured
+resource cap; if more GPU time is needed, update the cap based on the evidence and
+document the change without requesting permission. The former four-hour pilot limit
+was superseded by this authorization. Preserve scientific freezes, existing results,
+project boundaries, and safeguards against duplicate or ambiguous submissions.
+Use ordinary Slurm and Apptainer or a supported environment; no generated-code
+execution worker is needed.

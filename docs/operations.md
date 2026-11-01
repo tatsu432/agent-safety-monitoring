@@ -58,7 +58,9 @@ by unique method/trajectory filenames. Summaries must show complete coverage.
 
 Read [Yale HPC](yale-hpc.md). Authorized alias: `yale-hpc-cpsc4710`. Authenticate
 normally with Duo. Do not reuse the previous project's resource allowance.
-Initial pilot cap is four allocated GPU-hours; larger runs require a measured cap.
+The former four-hour pilot cap is historical. The user authorizes GPU submissions
+needed for this project without further approval; maintain measured accounting and
+a documented resource cap, updating it based on evidence when necessary.
 Secrets belong in user-owned mode-600 files outside Git, configs and Slurm arguments.
 W&B may receive aggregates only. Keep local artifacts authoritative when tracking fails.
 
@@ -80,9 +82,9 @@ a loaded real server. It uses fresh request caches for each homogeneous method
 workload. The wrapper records startup, workload duration, exit status and GPU
 telemetry. Prefix caching is disabled for the initial controlled timing study.
 Actual allocation time from sacct remains authoritative, including failed jobs.
-Yale H200 compatibility and development execution have been exercised; the revised
-3K EaE screen meets the validity limit, while comparable cold timing/selection and
-full-study approval remain pending. See the readiness report for the exact evidence.
+Yale H200 compatibility and development execution have been exercised. The revised
+3K EaE screen meets the validity limit, and comparable cold timing and final selection
+were completed. See the readiness report for the exact evidence.
 
 A real freeze requires checksummed proof artifacts in the resolved study config:
 
@@ -94,8 +96,9 @@ A real freeze requires checksummed proof artifacts in the resolved study config:
 }
 ```
 
-The zero is a placeholder and is rejected. Record the actual user-approved total
-cap after the pilot. Accept the pilot only after checking all methods, low/medium/high
+The zero is a placeholder and is rejected. Record a measured total cap under the
+user’s standing authorization; do not represent an agent-selected number as
+user-specified. Accept the pilot only after checking all methods, low/medium/high
 reasoning, short/median/longest development cases, valid final answers, GPU mapping,
 peak memory, workload timing and resume. Preserve the original measurements and
 record acceptance as a separately versioned artifact with `backend_validated: true`.
@@ -151,7 +154,7 @@ available method. Selection maximizes valid-score development AUROC, requires at
 least ten valid records per class and at most 5% invalid outputs, and uses invalid rate, cost and configuration hash as
 tie-breakers. Unavailable methods remain explicit. Review the result, copy its
 `configuration` object into the study configuration, and add the verified
-prerequisite proofs and user-approved full-study cap before freezing.
+prerequisite proofs and the measured full-study cap before freezing.
 
 ## Pre-main readiness, progress and recovery
 
@@ -255,7 +258,7 @@ Real freeze acceptance additionally requires the accepted pilot artifact to name
 verified `container_sha256` and immutable registry `container_digest`. Acceptance remains
 a reviewed, versioned artifact; never set these fields just to bypass the gate.
 
-Only after those checks and actual user approval of the full-study cap:
+After those checks and the measured full-study cap are recorded:
 
 ```bash
 uv run --locked asm experiment freeze --config STUDY.json --output runs/study-freeze.json
@@ -348,8 +351,9 @@ inspect `state`, `expected` and `completed_results`. If interrupted or incomplet
 inspect the existing results and logs first, then retain the same split, shard,
 shard count, output and freeze and use a fresh attempt identity. Never re-run a
 completed shard as a new timing trial. Adjust `--minutes` downward if the remaining
-cap cannot reserve eight hours. Any unexpected cost requires reassessment rather
-than silently exceeding the cap.
+cap cannot reserve eight hours. If additional GPU time is needed, reassess and
+document an evidence-based revised cap without asking for GPU submission approval. Preserve the frozen science and
+record the budget amendment separately rather than changing an existing freeze.
 
 When both splits have complete coverage, find the single `study.json` under
 `runs/study/`, set `RUN_ROOT` to its parent directory, and generate the report:
@@ -398,6 +402,7 @@ then submits the checksum-verified injection launcher and verifies the matched
 variant coverage. Completion is recorded in `runs/study-completion.json`.
 
 The chain deliberately stops on failed/incomplete jobs, ambiguous submissions,
-unexpected concurrent jobs, a failed analysis, or an exhausted cap. Inspect
-`logs/study-controller-*.out`, `runs/submissions.json`, `squeue` and `sacct` before
+unexpected concurrent jobs, a failed analysis, or an exhausted cap. The standing
+GPU authorization permits an evidence-based cap amendment without asking the user.
+Inspect `logs/study-controller-*.out`, `runs/submissions.json`, `squeue` and `sacct` before
 any manual recovery. A successful submission alone is not evidence of completion.
