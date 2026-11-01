@@ -44,9 +44,10 @@ validation categories are separate taxonomies and should not be summed together.
 
 ## What remains unresolved
 
-The full frozen test extraction and judge records are not available locally.
-We have not measured their quotation counts, budget utilization, extraction
-positions, cross-step coverage, or conditional judgment performance. No reference
+The recovered frozen test records show a mean of 11.21 quotations and 1,068.8
+quoted tokens per trajectory across all 572 primary records, including empty
+and invalid results. These descriptive averages do not establish evidence relevance.
+Cross-step coverage and conditional judgment performance require model references. No reference
 retention percentage or verified extraction-versus-interpretation attribution is
 reported. Underutilization in historical repair data must not be projected onto
 the frozen test cohort without checking those artifacts.

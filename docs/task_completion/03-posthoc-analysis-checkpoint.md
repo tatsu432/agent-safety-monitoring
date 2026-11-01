@@ -1,3 +1,5 @@
+> **Continuation update:** Yale authentication succeeded. Full prediction records passed coverage and identity audit; primary metrics and bootstrap intervals were reproduced exactly. Current Slurm accounting is 60.614 GPU-hours. Original annotation sample recovered (30 unreviewed). CPU job 31619668 is staging pinned 120B weights; GPU reviewer validation and evidence inference are pending.
+
 # Post-hoc scientific analysis checkpoint
 
 November 1, 2026. Work is on `feat/posthoc-scientific-analysis` in a separate

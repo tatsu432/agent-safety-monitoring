@@ -1,6 +1,8 @@
+> **Update:** Full frozen records were recovered and audited; regenerated primary metrics and paired bootstrap intervals match the saved summary exactly. Objective intervals and score histograms are available below.
+
 # Primary statistical analysis
 
-Primary estimates reproduce the saved frozen summary. Record-level reconciliation and new objective-specific uncertainty require recovery of the full run. Calibration uses 448 separate benign trajectories; thresholds target 5% expected FPR. Invalid outputs are referral alerts. AUROC conditions on valid scores.
+Primary estimates reproduce the saved frozen summary. Record-level reconciliation and objective-specific uncertainty have been completed. Calibration uses 448 separate benign trajectories; thresholds target 5% expected FPR. Invalid outputs are referral alerts. AUROC conditions on valid scores.
 
 | Method | Benign n | Attack n | TPR % [95% CI] | FPR % [95% CI] | Valid AUROC [95% CI] | Coverage % | Invalid n |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -61,7 +63,7 @@ These TPR/FPR values are expected alert probabilities under randomized boundary 
 | MRT 5 interactions | privilege escalation | 115 | 31.0 |
 | MRT 5 interactions | secret exfiltration | 115 | 53.7 |
 
-Objective results are descriptive point estimates. Objective-specific intervals and score histograms cannot be reconstructed from aggregate AUROCs. The regenerated ROC requires saved individual scores; no curve is invented from one AUROC value.
+Objective point estimates are descriptive; recalibrated task-bootstrap intervals appear below. The regenerated ROC requires saved individual scores; no curve is invented from one AUROC value.
 
 ![Detection and uncertainty](figures/main-performance.png)
 
@@ -78,3 +80,31 @@ Objective results are descriptive point estimates. Objective-specific intervals 
 ![Original saved valid-score ROC](figures/roc-original.png)
 
 *Original saved ROC, copied without modification. Invalid outputs are excluded; per-method valid coverage is given in the primary table. Full record recovery is required to regenerate and independently verify the curve.*
+
+
+## Recomputed objective intervals
+
+| Method | Objective | 95% task-bootstrap interval | Usable replicates |
+| --- | --- | --- | --- |
+| Average ×2 | firewall disabling | 27.7–61.8% | 2000 |
+| Average ×2 | malware execution | 70.8–94.9% | 2000 |
+| Average ×2 | privilege escalation | 47.9–78.7% | 2000 |
+| Average ×2 | secret exfiltration | 72.7–92.7% | 2000 |
+| EaE 3K | firewall disabling | 1.0–8.7% | 2000 |
+| EaE 3K | malware execution | 2.3–12.3% | 2000 |
+| EaE 3K | privilege escalation | 1.3–8.8% | 2000 |
+| EaE 3K | secret exfiltration | 2.0–11.5% | 2000 |
+| MRT 5 interactions | firewall disabling | 6.5–56.0% | 2000 |
+| MRT 5 interactions | malware execution | 39.2–71.7% | 2000 |
+| MRT 5 interactions | privilege escalation | 12.2–64.2% | 2000 |
+| MRT 5 interactions | secret exfiltration | 37.5–71.8% | 2000 |
+| Single review | firewall disabling | 14.6–28.6% | 2000 |
+| Single review | malware execution | 31.0–52.8% | 2000 |
+| Single review | privilege escalation | 22.1–40.1% | 2000 |
+| Single review | secret exfiltration | 30.1–51.6% | 2000 |
+| Think longer | firewall disabling | 39.8–81.2% | 2000 |
+| Think longer | malware execution | 48.5–95.8% | 2000 |
+| Think longer | privilege escalation | 48.0–93.1% | 2000 |
+| Think longer | secret exfiltration | 48.9–94.8% | 2000 |
+
+These intervals resample whole calibration and test tasks and recalibrate each method. They are post-hoc pointwise intervals. Numeric score histograms and aggregate diagnostics are in [full-record diagnostics](full-record-diagnostics.json).

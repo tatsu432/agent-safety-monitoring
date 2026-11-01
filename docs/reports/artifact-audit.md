@@ -1,3 +1,5 @@
+> **November 1 reconciliation update:** Yale authentication succeeded. Full frozen records passed coverage, evaluation-metadata and identity checks for all five methods (448 calibration and 572 primary test records each). Recomputed metrics and bootstrap uncertainty match saved results exactly. Project Slurm accounting confirms 218,212 allocated GPU-seconds (60.614 GPU-hours). Original 30-record annotations are all unreviewed.
+
 # Artifact audit
 
 Verified locally on November 1, 2026. Cluster authentication is unavailable;
