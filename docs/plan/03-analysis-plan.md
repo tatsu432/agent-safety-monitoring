@@ -25,3 +25,12 @@ and source `a0fd3fd19e7b64cd4b6a99f9ed8e2cec14d1ddbd`. Work in the separate
 No broad new search, primary rerun, or optional average-injection extension is
 included. Missing Yale authentication or model validation blocks only dependent
 work. The user elected model-based annotation instead of human review.
+
+## Implementation checkpoint
+
+Local source/data/proof verification, aggregate primary/compute/structural/injection
+analysis, historical EaE inspection, reports/figures, model-review tooling and
+software tests are implemented. See the detailed
+[checkpoint](../task_completion/03-posthoc-analysis-checkpoint.md).
+Full record reconciliation and physical review/retention experiments remain
+blocked by interactive Yale authentication. No original study rerun occurred.

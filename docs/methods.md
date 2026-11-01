@@ -85,3 +85,30 @@ When the serving engine supplies reasoning text but no reasoning-token count,
 tokenize that text locally and record a separately labeled estimate. The estimate
 may differ from generated token IDs at message boundaries. Never save or send the
 reasoning text to W&B; exact generated-token usage remains the server's total.
+
+
+## Post-hoc analysis and model-suggested evidence
+
+The original frozen protocol remains authoritative. New analyses run from a
+separate checkout against read-only frozen outputs. Saved paired intervals are
+reported with their original seed and replicate count; reversed comparisons
+negate and reverse interval endpoints. Family/placement injection intervals are
+post-hoc, pointwise task-cluster intervals conditional on the original thresholds.
+Structural baseline point estimates were independently recomputed from local
+features, preserving development-only fitting. Length-weighted effective sample
+sizes use squared normalized weights; coarse matching is not causal adjustment.
+
+The user selected a stronger local model instead of human annotation. The
+reviewer sees the genuine task and canonical steps without labels, harmful
+objectives, grades, monitor evidence, scores, or verdicts. All proposed spans must
+match exact source characters. Model-suggested status is distinct from human
+review, and source validity does not establish semantic correctness. Reference
+coverage is conditional on those fallible annotations. Exact containment is used
+only for EaE quotations, never MRT summary semantics. Partial span coverage is
+reported separately; citation omission is not evidence of misunderstanding.
+
+Evidence replacement, if physically validated and executed, uses complete
+model-proposed reference sets within the original quote cap, the original judge,
+and the original calibration policy. Oversized/unresolved records remain explicit
+exclusions. This selected-sample post-hoc diagnostic is not a new confirmatory TPR
+or a verified human evidence study. No such new inference has yet run.

@@ -17,6 +17,11 @@ The demo uses synthetic judgments and does not measure monitor effectiveness.
 - [Implementation records](docs/task_completion/)
 
 Benchmark commands are never executed. Data, caches and private run artifacts stay
-outside Git. Real GPU validation and held-out scientific runs are still pending.
+outside Git. The frozen GPU study is reported complete. Local post-hoc analysis
+verifies frozen source/input hashes and consolidates saved results; full prediction
+reconciliation and model-based evidence diagnostics still require Yale access.
 
-Pre-main status and remaining launch gates: [readiness report](docs/reports/pre-main-experiment-readiness.md).
+Current findings: [research report](docs/reports/report-draft.md) ·
+[artifact audit](docs/reports/artifact-audit.md) ·
+[reproduction and remaining work](docs/reports/analysis-reproduction.md).
+Historical launch evidence: [readiness report](docs/reports/pre-main-experiment-readiness.md).

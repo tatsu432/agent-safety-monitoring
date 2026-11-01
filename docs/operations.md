@@ -1,3 +1,9 @@
+> **November 1 post-hoc analysis:** the frozen study is reported complete. Do not
+> use historical launch commands below to restart completed shards. Current
+> aggregate analyses and remaining reconciliation are documented in
+> [the analysis runbook](reports/analysis-reproduction.md). New analysis runs use a
+> separate checkout; the frozen runtime and proofs remain unchanged.
+
 # Operations
 
 ## Local setup and validation

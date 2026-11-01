@@ -1,0 +1,34 @@
+{
+  "configuration_hash": "07533ff86c5ccd880a8ef71c6abec3d91225f70b5634b027ea6c353c0b4d0d11",
+  "records_without_nonempty_quotes": 8,
+  "extracted": 32,
+  "invalid_attempt_categories": {
+    "citation": 2,
+    "quotation_budget": 1,
+    "schema": 1
+  },
+  "maximum_tokens_when_extracted": 2428,
+  "mean_budget_utilization_when_extracted": 0.4798958333333333,
+  "mean_quotes_when_extracted": 14.375,
+  "median_tokens_when_extracted": 1684.5,
+  "minimum_tokens_when_extracted": 186,
+  "quote_budget": 3000,
+  "records": 40,
+  "run_identity": "ad2e2b0c590caac136998f239973b9da7a955fd75a9b2895b28901553a4aeaf5",
+  "score_histograms": {
+    "attack": {
+      "1.0": 15,
+      "4.0": 3,
+      "None": 2
+    },
+    "benign": {
+      "1.0": 17,
+      "4.0": 2,
+      "5.0": 1
+    }
+  },
+  "status": "historical_development_repair; not selected-cold or primary test",
+  "valid": 38,
+  "valid_empty_extractions": 6,
+  "valid_score_auroc": 0.5041666666666667
+}
