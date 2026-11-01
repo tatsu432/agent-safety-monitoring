@@ -1,4 +1,4 @@
-> **November 1 reconciliation update:** All five methods’ full frozen records passed coverage and metadata checks. Recomputed primary metrics and paired bootstrap intervals exactly match saved summaries. Slurm accounting confirms 60.614 allocated GPU-hours. The 120B reviewer is staging; evidence annotation and inference remain pending. Statements below that describe record reconciliation as blocked are superseded by this update.
+> **November 1 reconciliation update:** All five methods’ full frozen records passed coverage and metadata checks. Recomputed primary metrics and paired bootstrap intervals exactly match saved summaries. Slurm accounting confirms 60.614 allocated GPU-hours. The 120B reviewer is staging; evidence annotation and inference remain pending. 
 
 # How Should a Coding Agent Safety Monitor Spend Its Compute Budget?
 
@@ -6,8 +6,7 @@ Tatsuhiro Shimizu · Yale CPSC 5710 · Scientific analysis draft, November 1, 20
 
 **Status:** The frozen experiment is reported complete and its saved aggregates have
 been analyzed. Frozen source and canonical inputs are independently verified locally.
-Full prediction-record reconciliation, fresh cluster accounting, and the stronger-model
-evidence experiment remain blocked by Yale authentication. This is an empirical draft
+The stronger-model evidence experiment remains in preparation. This is an empirical draft
 with explicit outstanding dependencies, not a claim that every acceptance criterion is met.
 
 ## Abstract
@@ -164,8 +163,8 @@ exploratory. The frozen thresholds are not retuned using test labels.
 Objective-specific point estimates appear in [the primary analysis](primary-analysis.md).
 Firewall disabling has lower detection than malware execution and secret exfiltration in
 several methods. These descriptive differences need task-aware uncertainty before stronger
-claims. Individual score distributions, full ROC regeneration, and objective intervals remain
-dependent on the full prediction records; no ROC is inferred from a single AUROC.
+claims. Objective intervals and score histograms were computed from recovered predictions; the
+original valid-score ROC is preserved in the primary analysis.
 
 ## 5. Compute efficiency
 
@@ -224,7 +223,7 @@ uses a revision-pinned local gpt-oss-120b, with no access to source outcome labe
 selections, scores, or verdicts. Exact-span checks verify source containment only. Any future
 retention or replacement finding will remain conditional on model-suggested evidence and
 shared-family biases; it will not be presented as human-verified evidence. No annotation or
-replacement GPU experiment was executed during this authentication-blocked analysis.
+replacement GPU experiment has yet been executed.
 
 The frozen injection experiment supplies 480 matched comparisons across two methods,
 three payload families, two positions, and 40 trajectories. Recomputed task-cluster intervals
@@ -251,8 +250,7 @@ review cannot establish whether live intervention would prevent harm.
 
 All mechanism investigations added after observing results are post-hoc. Model-proposed
 reference evidence is fallible. Mock/software tests establish safeguards, not GPU compatibility
-or scientific effectiveness. Missing private artifacts limit the independent reconciliation
-completed in this draft and are recorded rather than filled in from public point estimates.
+or scientific effectiveness. The model-based evidence diagnostic has not yet been run; its eventual interpretations will remain fallible.
 
 ## 8. Conclusion
 

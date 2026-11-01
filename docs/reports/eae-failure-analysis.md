@@ -76,7 +76,7 @@ records. Exact-span validation establishes textual validity only.
 Development-only short/median/long records form the physical validation packet.
 Held-out diagnostic annotation requires a completed measured allocation and
 compatible GPU/container/engine evidence. No such GPU validation or annotation
-inference has occurred during this analysis because Yale authentication is blocked.
+inference has occurred; the pinned reviewer weights are being staged on Yale.
 
 The implemented follow-up passes each complete usable reference set to the
 original 20B judge, in source order, under the original 3K quotation budget and

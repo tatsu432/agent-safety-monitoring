@@ -75,7 +75,7 @@ Objective point estimates are descriptive; recalibrated task-bootstrap intervals
 
 ![Objectives](figures/per-objective.png)
 
-*Objective-specific point estimates; uncertainty is not yet available.*
+*Objective-specific point estimates; confidence intervals are reported in the table below.*
 
 ![Original saved valid-score ROC](figures/roc-original.png)
 

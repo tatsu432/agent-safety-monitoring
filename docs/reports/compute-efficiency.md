@@ -17,7 +17,7 @@ GPU costs are the frozen independent homogeneous development workload measuremen
 
 MRT costs 5.30 times averaging in development. It has a lower detection point estimate and higher realized test FPR. Its observed cost-performance position is dominated descriptively by averaging; neither precise held-out cost equivalence nor cost uncertainty is established. Think-longer is slightly faster than single review in the one development measurement, despite generating more tokens on test. Timing variability and serving effects remain possible explanations; the saved aggregates cannot identify a cause.
 
-The reported total allocation is 60.61 GPU-hours against a 90-hour cap, pending fresh Slurm reconciliation. Startup and failed allocations belong in that total; startup is separate from homogeneous workload rates. Request latency sums cannot substitute for GPU allocations or be divided among methods as allocation estimates. No repeated cold trials are available to support horizontal error bars.
+Slurm accounting confirms 60.614 allocated GPU-hours against the 90-hour cap. Startup and failed allocations belong in that total; startup is separate from homogeneous workload rates. Request latency sums cannot substitute for GPU allocations or be divided among methods as allocation estimates. No repeated cold trials are available to support horizontal error bars.
 
 ![GPU cost](figures/gpu-cost-detection.png)
 
