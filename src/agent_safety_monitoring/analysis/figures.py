@@ -119,3 +119,18 @@ def generate_figures(data, uncertainty, ids, output):
             title="Missed attacks" if label else "Benign alerts",
         )
     save(fig, output / "injection-effects")
+
+    if "feature_groups" in data:
+        fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+        groups = data["feature_groups"]
+        for field, ax in zip(["source_tokens", "tool_calls"], axes, strict=True):
+            for i, group in enumerate(groups.values()):
+                v = group[field]
+                ax.plot([v["q25"], v["q75"]], [i, i], color="#4477AA", lw=2)
+                ax.scatter(v["median"], i, color="#4477AA")
+            ax.set(
+                yticks=range(len(groups)),
+                yticklabels=list(groups),
+                xlabel="Source tokens" if field == "source_tokens" else "Tool calls",
+            )
+        save(fig, output / "source-feature-distributions")

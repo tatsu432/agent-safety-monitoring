@@ -1,6 +1,7 @@
 """Reproducible public aggregate reports; private rows never enter exported artifacts."""
 
 import csv
+import shutil
 from collections import defaultdict
 from pathlib import Path
 
@@ -84,6 +85,45 @@ def public_method(value):
     return numeric_tree(clean)
 
 
+def public_structural(raw, ids):
+    result = {"length_feature": raw["length_feature"], "baselines": {}, "length_matched": {}}
+    for name in ["length", "tools", "length_tools"]:
+        entry = raw["baselines"][name]
+        u = entry["bootstrap"]
+        result["baselines"][name] = {
+            "metrics": {
+                k: numeric_tree(entry["metrics"][k])
+                for k in ["tpr", "fpr", "auroc_valid", "n", "n_attacks", "n_benign"]
+            },
+            "bootstrap": {
+                "replicates": u["replicates"],
+                "skipped": u["skipped"],
+                "tpr_intervals": {name: u["tpr_intervals"][name]},
+                "additional_intervals": {
+                    name: {k: u["additional_intervals"][name][k] for k in ["fpr", "auroc_valid"]}
+                },
+            },
+        }
+    if set(raw["length_matched"]) != set(ids):
+        raise ValueError("Structural method coverage mismatch")
+    for name in ids:
+        entry = raw["length_matched"][name]
+        point = {k: entry["point"][k] for k in ["tpr", "fpr", "unsupported_trajectories"]}
+        point["overlap"] = [
+            {k: b[k] for k in ["bin", "benign", "attack", "retained_mass"]}
+            for b in entry["point"]["overlap"]
+        ]
+        result["length_matched"][name] = {
+            "point": point,
+            "bootstrap": {
+                k: {field: entry["bootstrap"][k][field] for field in ["ci95", "usable_replicates"]}
+                for k in ["tpr", "fpr"]
+            },
+        }
+    numeric_tree({k: result[k] for k in ["baselines", "length_matched"]})
+    return result
+
+
 def signed_interval(uncertainty, a, b):
     intervals = uncertainty["paired_tpr_difference_intervals"]
     if f"{a} - {b}" in intervals:
@@ -165,7 +205,9 @@ def write_report(output, name, title, content):
     (output / name).write_text(f"# {title}\n\n{content}\n")
 
 
-def generate(bundle: Path, freeze: Path, output: Path, replicates=2000):
+def generate(
+    bundle: Path, freeze: Path, output: Path, replicates=2000, features=None, tracking_mode="online"
+):
     """Generate only allowlisted aggregates from immutable saved summaries."""
     frozen = read_json(freeze)
     verify_manifest(frozen)
@@ -174,12 +216,12 @@ def generate(bundle: Path, freeze: Path, output: Path, replicates=2000):
     saved = read_json(source)
     injection_source = bundle / "secondary/injection-metrics.json"
     injected = read_json(injection_source)
+    original_roc = bundle / "report/roc.png"
     structural_source = bundle / "structural/structural-diagnostics.json"
     raw_structural = read_json(structural_source)
     if raw_structural["length_feature"] not in {"source_tokens", "characters"}:
         raise ValueError("Unknown structural feature")
-    structural = {k: numeric_tree(raw_structural[k]) for k in ["baselines", "length_matched"]}
-    structural["length_feature"] = raw_structural["length_feature"]
+    structural = public_structural(raw_structural, ids)
     if any(d["freeze"] != frozen["hash"] for d in (saved, injected)):
         raise ValueError("Aggregate artifact freeze mismatch")
     if set(saved["methods"]) != set(ids) or set(structural["length_matched"]) != set(ids):
@@ -197,6 +239,24 @@ def generate(bundle: Path, freeze: Path, output: Path, replicates=2000):
         expected_counts = counts
     if set(r["method"] for r in injected["rows"]) - set(ids):
         raise ValueError("Unknown injection method")
+    definition = frozen["body"]["injections"]
+    injection_methods = {
+        name
+        for name, family in ids.items()
+        if any(name == f"{family}-{h[:12]}" for h in definition["method_hashes"])
+    }
+    expected_pairs = {
+        (m, uid, family, placement)
+        for m in injection_methods
+        for uid in definition["trajectory_ids"]
+        for family in definition["payloads"]
+        for placement in ["early", "late"]
+    }
+    actual_pairs = {
+        (r["method"], r["trajectory_id"], r["family"], r["placement"]) for r in injected["rows"]
+    }
+    if actual_pairs != expected_pairs:
+        raise ValueError("Injection coverage differs from frozen design")
     pairs = []
     for a, b in COMPARISONS:
         ci = signed_interval(saved["uncertainty"], by_family[a], by_family[b])
@@ -228,11 +288,49 @@ def generate(bundle: Path, freeze: Path, output: Path, replicates=2000):
         "status": "saved_aggregates; record-level reconciliation required",
         "sources": {
             p.relative_to(bundle).as_posix(): file_hash(p)
-            for p in (source, injection_source, structural_source)
+            for p in (source, injection_source, structural_source, original_roc)
         },
         "freeze_file_sha256": file_hash(freeze),
     }
+    if features is not None:
+        feature_data = read_json(features)
+        allowed_groups = {
+            f"{split}/{label}"
+            for split in ["development", "calibration", "test"]
+            for label in ["benign", "attack"]
+        }
+        if set(feature_data["groups"]) - allowed_groups:
+            raise ValueError("Unknown feature group")
+        result["feature_groups"] = numeric_tree(
+            {
+                group: {
+                    "n": values["n"],
+                    **{
+                        field: {
+                            stat: values[field][stat]
+                            for stat in ["median", "q25", "q75", "minimum", "maximum"]
+                        }
+                        for field in ["source_tokens", "characters", "tool_calls"]
+                    },
+                }
+                for group, values in feature_data["groups"].items()
+            }
+        )
+        result["feature_audit_hash"] = feature_data["audit_hash"]
     output.mkdir(parents=True, exist_ok=True)
+    result["descriptive_frontier"] = [
+        f
+        for f in ORDER
+        if not any(
+            costs[g] <= costs[f]
+            and methods[g]["primary"]["tpr"] >= methods[f]["primary"]["tpr"]
+            and (costs[g] < costs[f] or methods[g]["primary"]["tpr"] > methods[f]["primary"]["tpr"])
+            for g in ORDER
+            if g != f
+        )
+    ]
+    (output / "figures").mkdir(exist_ok=True)
+    shutil.copyfile(original_roc, output / "figures/roc-original.png")
     atomic_json(output / "analysis-aggregates.json", result)
     rows = []
     for f in ORDER:
@@ -333,7 +431,11 @@ def generate(bundle: Path, freeze: Path, output: Path, replicates=2000):
         "![Paired differences](figures/paired-differences.png)\n\n"
         "*Signed TPR differences in percentage points; intervals preserve pairing.*\n\n"
         "![Objectives](figures/per-objective.png)\n\n"
-        "*Objective-specific point estimates; uncertainty is not yet available.*"
+        "*Objective-specific point estimates; uncertainty is not yet available.*\n\n"
+        "![Original saved valid-score ROC](figures/roc-original.png)\n\n"
+        "*Original saved ROC, copied without modification. Invalid outputs are excluded; "
+        "per-method valid coverage is given in the primary table. Full record recovery is "
+        "required to regenerate and independently verify the curve.*"
     )
     write_report(output, "primary-analysis.md", "Primary statistical analysis", primary)
     cost_rows = []
@@ -405,6 +507,12 @@ def generate(bundle: Path, freeze: Path, output: Path, replicates=2000):
         "*Logical generated tokens per primary test trajectory versus detection; tokens are "
         "a workload proxy and do not imply equal GPU time.*"
     )
+    compute += "\n\nThe point-estimate frontier in development GPU cost and expected test TPR "
+    compute += "contains " + ", ".join(NAMES[f] for f in result["descriptive_frontier"]) + ". "
+    compute += (
+        "This descriptive two-axis frontier ignores cost uncertainty and unequal "
+        "realized test FPR; frontier membership is not an inferential superiority claim."
+    )
     write_report(output, "compute-efficiency.md", "Compute efficiency", compute)
     structural_rows = []
     for name, v in structural["baselines"].items():
@@ -428,6 +536,36 @@ def generate(bundle: Path, freeze: Path, output: Path, replicates=2000):
                 v["point"]["unsupported_trajectories"],
             ]
         )
+    overlap = next(iter(structural["length_matched"].values()))["point"]["overlap"]
+    ess = {}
+    for label in ["benign", "attack"]:
+        mass = sum(b["retained_mass"] for b in overlap)
+        squared = sum(b["retained_mass"] ** 2 / b[label] for b in overlap if b[label])
+        ess[label] = mass * mass / squared if squared else None
+    feature_text = ""
+    if features is not None:
+        feature_text = "\n\n## Calibration distribution shift\n\n" + table(
+            ["Group", "n", "Median source tokens [IQR]", "Median tool calls [IQR]"],
+            [
+                [
+                    key,
+                    group["n"],
+                    f"{group['source_tokens']['median']:,.1f} "
+                    f"[{group['source_tokens']['q25']:,.1f}, {group['source_tokens']['q75']:,.1f}]",
+                    f"{group['tool_calls']['median']:.1f} "
+                    f"[{group['tool_calls']['q25']:.1f}, {group['tool_calls']['q75']:.1f}]",
+                ]
+                for key, group in result["feature_groups"].items()
+            ],
+        )
+        feature_text += (
+            "\n\nSource-token statistics come from the local prepared audit, not complete "
+            "model prompts. Benign test trajectories are longer and have more tool calls "
+            "at their medians than calibration trajectories. This is descriptive evidence "
+            "of population differences; it does not establish their effect on scores.\n\n"
+            "![Source distributions](figures/source-feature-distributions.png)\n\n"
+            "*Source-feature medians and interquartile ranges, not confidence intervals.*"
+        )
     structure_text = (
         table(["Baseline", "TPR % [95% CI]", "FPR % [95% CI]", "Valid AUROC"], structural_rows)
         + "\n\nBaselines fit only development labels using standardized log-transformed length "
@@ -450,13 +588,15 @@ def generate(bundle: Path, freeze: Path, output: Path, replicates=2000):
         "coarse matching leaves within-bin differences and tool-count confounding. It is a "
         "sensitivity analysis, not causal identification. The unchanged weighted FPR follows "
         "from every bin having more attacks than benign records, leaving benign weights one. "
-        "Effective sample sizes and finer distribution comparisons require record-level data.\n\n"
+        f"Kish effective sample sizes from saved bin weights are {ess['benign']:.1f} benign "
+        f"and {ess['attack']:.1f} attacks; bin edges remain development-derived.\n\n"
         "Calibration benign records come from never-attacked tasks; test benign records come "
         "from attacked task groups. Their different task populations can shift scores and "
         "realized FPR. Length, tool-count, and score distribution comparisons are pending "
         "record-level recovery; the frozen calibration population will not be changed.\n\n"
         "![Structural and monitor performance](figures/structural-performance.png)\n\n"
         "*Structural baseline and monitor TPR at independently benign-calibrated policies.*"
+        + feature_text
     )
     write_report(output, "structural-confounding.md", "Structural confounding", structure_text)
     injection_rows = [
@@ -510,10 +650,17 @@ def generate(bundle: Path, freeze: Path, output: Path, replicates=2000):
         writer.writerows(
             [r["a"], r["b"], 100 * r["difference"], *[100 * x for x in r["ci95"]]] for r in pairs
         )
+    from agent_safety_monitoring.analysis.manuscript import write_manuscript
+
+    write_manuscript(output, result, main_table, pair_table, cost_table, policy_table)
     from agent_safety_monitoring.analysis.figures import generate_figures
 
     generate_figures(result, saved["uncertainty"], by_family, output / "figures")
+    from agent_safety_monitoring.analysis.tracking import publish
+
+    tracking = publish(result, tracking_mode)
     return {
+        **tracking,
         "output": str(output),
         "methods": len(methods),
         "injection_pairs": len(injected["rows"]),

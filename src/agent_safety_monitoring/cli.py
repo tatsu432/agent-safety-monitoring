@@ -330,11 +330,13 @@ def analysis_aggregate(
     freeze: Annotated[Path, typer.Option()],
     output: Annotated[Path, typer.Option()],
     replicates: int = 2000,
+    features: Path | None = None,
+    tracking_mode: str = "online",
 ):
     """Publish numerical aggregates only; never export private injection rows."""
     from agent_safety_monitoring.analysis.aggregate import generate
 
-    show(generate(bundle, freeze, output, replicates))
+    show(generate(bundle, freeze, output, replicates, features, tracking_mode))
 
 
 @analysis_app.command("features")
@@ -393,6 +395,73 @@ def analysis_review_run(
     from agent_safety_monitoring.analysis.model_review import run_review
 
     show(asyncio.run(run_review(packet, config, output, proof)))
+
+
+@analysis_app.command("review-accept")
+def analysis_review_accept(
+    summary: Annotated[Path, typer.Option()],
+    runtime: Annotated[Path, typer.Option()],
+    sacct: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Accept completed development validation using measured runtime and Slurm evidence."""
+    from agent_safety_monitoring.analysis.model_review import accept_development
+
+    show(accept_development(summary, runtime, sacct, output))
+
+
+@analysis_app.command("retention")
+def analysis_retention(
+    data: Annotated[Path, typer.Option()],
+    run_root: Annotated[Path, typer.Option()],
+    freeze: Annotated[Path, typer.Option()],
+    review_root: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Aggregate model-reference retention, without claiming human evidence verification."""
+    from agent_safety_monitoring.analysis.model_review import annotation_retention
+
+    show(annotation_retention(data, run_root, read_json(freeze), review_root, output))
+
+
+@analysis_app.command("replacement")
+def analysis_replacement(
+    data: Annotated[Path, typer.Option()],
+    run_root: Annotated[Path, typer.Option()],
+    freeze: Annotated[Path, typer.Option()],
+    review_root: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Exploratory replay of the frozen judge on complete model-suggested evidence."""
+    import asyncio
+
+    from agent_safety_monitoring.analysis.model_review import replacement_run
+
+    show(asyncio.run(replacement_run(data, run_root, read_json(freeze), review_root, output)))
+
+
+@analysis_app.command("structural-check")
+def analysis_structural_check(
+    data: Annotated[Path, typer.Option()],
+    expected: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Recompute structural baseline points using development-only fitting."""
+    from agent_safety_monitoring.analysis.records import verify_structural
+
+    show(verify_structural(data, expected, output))
+
+
+@analysis_app.command("historical-eae")
+def analysis_historical_eae(
+    data: Annotated[Path, typer.Option()],
+    run_root: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Inspect real saved development repair outputs without new inference."""
+    from agent_safety_monitoring.analysis.records import development_eae
+
+    show(development_eae(data, run_root, output))
 
 
 if __name__ == "__main__":

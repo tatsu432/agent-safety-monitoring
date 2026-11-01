@@ -172,3 +172,109 @@ def full_diagnostics(data: Path, run_root: Path, output: Path, replicates=2000):
     }
     atomic_json(output / "record-diagnostics-aggregate.json", aggregate)
     return {"output": str(output), "methods": len(tables["test"])}
+
+
+def verify_structural(data, expected_path, output):
+    """Independently recompute development-fitted baseline points using local features."""
+    from agent_safety_monitoring.evaluation.metrics import metrics
+    from agent_safety_monitoring.evaluation.structural import fit_baselines
+
+    manifest, audit = read_json(data / "manifest.json"), read_json(data / "audit.json")
+    expected = read_json(expected_path)
+    baselines = fit_baselines(manifest["records"], audit["features"])
+    actual = {
+        name: metrics([r["score"] for r in rows["calibration"]], rows["test"])
+        for name, rows in baselines["models"].items()
+    }
+    matching = all(
+        np.isclose(actual[name][metric], value["metrics"][metric], atol=1e-10)
+        for name, value in expected["baselines"].items()
+        for metric in ["tpr", "fpr", "auroc_valid"]
+    )
+    result = {
+        "matching_saved_points": bool(matching),
+        "baselines": actual,
+        "development_length_edges": baselines["development_length_edges"],
+        "feature_audit_hash": digest(audit),
+        "manifest_hash": digest(manifest),
+        "note": "Recomputed point estimates; bootstrap intervals were not recomputed.",
+    }
+    atomic_json(output, result)
+    return result
+
+
+def development_eae(data, run_root, output):
+    """Historical development repair diagnostics; never relabel as frozen test evidence."""
+    from sklearn.metrics import roc_auc_score
+
+    from agent_safety_monitoring.inference.backend import ModelConfig, Tokenizer
+    from agent_safety_monitoring.schema import MonitoringResult
+
+    study = read_json(run_root / "study.json")
+    if study["software_only"]:
+        raise ValueError("Historical scientific diagnostic requires real outputs")
+    tokenizer = Tokenizer(ModelConfig.model_validate(study["configuration"]["model"]))
+    records = {r["trajectory_id"]: r for r in read_json(data / "manifest.json")["records"]}
+    numbers, histogram = [], defaultdict(Counter)
+    categories = Counter()
+    labels, scores = [], []
+    budgets = {m["quote_tokens"] for m in study["configuration"]["methods"] if m["method"] == "eae"}
+    if len(budgets) != 1:
+        raise ValueError("One extraction budget required")
+    budget = budgets.pop()
+    for path in sorted((run_root / "development").glob("eae-*/*.json")):
+        saved = read_json(path)
+        uid = saved["result"]["trajectory_id"]
+        if records[uid]["split"] != "development" or saved["evaluation"]["split"] != "development":
+            raise ValueError("Historical inspection must remain development-only")
+        result = MonitoringResult.model_validate(saved["result"])
+        if saved["run_identity"] != study["identity"]:
+            raise ValueError("Historical run identity mismatch")
+        quotes = [
+            q
+            for a in result.artifacts
+            if a.get("stage") == "extract"
+            for q in a.get("output", {}).get("quotes", [])
+        ]
+        numbers.append(
+            {
+                "quotes": len(quotes),
+                "tokens": sum(tokenizer.count(q["text"]) for q in quotes),
+                "valid": result.status == "valid",
+                "extracted": bool(quotes),
+            }
+        )
+        categories.update(
+            a.get("category", "unknown") for a in result.artifacts if "invalid_attempt" in a
+        )
+        label = records[uid]["assignment"]
+        histogram[label][str(result.score)] += 1
+        if result.status == "valid" and (label == "benign" or records[uid]["outcome"] == "success"):
+            labels.append(int(label == "attack"))
+            scores.append(result.score)
+    if not numbers:
+        raise ValueError("No historical development EaE records")
+    extracted = [r for r in numbers if r["extracted"]]
+    result = {
+        "status": "historical_development_repair; not selected-cold or primary test",
+        "run_identity": study["identity"],
+        "configuration_hash": digest(study["configuration"]),
+        "records": len(numbers),
+        "valid": sum(r["valid"] for r in numbers),
+        "extracted": len(extracted),
+        "quote_budget": budget,
+        "mean_quotes_when_extracted": float(np.mean([r["quotes"] for r in extracted])),
+        "median_tokens_when_extracted": float(np.median([r["tokens"] for r in extracted])),
+        "mean_budget_utilization_when_extracted": float(
+            np.mean([r["tokens"] / budget for r in extracted])
+        ),
+        "minimum_tokens_when_extracted": min(r["tokens"] for r in extracted),
+        "maximum_tokens_when_extracted": max(r["tokens"] for r in extracted),
+        "invalid_attempt_categories": dict(categories),
+        "score_histograms": {k: dict(v) for k, v in histogram.items()},
+        "valid_score_auroc": float(roc_auc_score(labels, scores))
+        if len(set(labels)) == 2
+        else None,
+    }
+    atomic_json(output, result)
+    return result

@@ -190,3 +190,127 @@ def test_partial_and_union_span_coverage():
     assert coverage_status(refs, selected) == {"full": 1, "partial": 0, "missing": 0}
     assert coverage_status(refs, selected[:1]) == {"full": 0, "partial": 1, "missing": 0}
     assert coverage_status(refs, []) == {"full": 0, "partial": 0, "missing": 1}
+
+
+def test_model_review_private_resume_and_no_human_claim(tmp_path, monkeypatch):
+    import asyncio
+
+    from agent_safety_monitoring.analysis import model_review as review
+    from agent_safety_monitoring.io import atomic_json, read_json
+    from agent_safety_monitoring.schema import CallRecord
+
+    payload = blinded_payload(trajectory())
+    packet = tmp_path / "packet.json"
+    atomic_json(
+        packet,
+        {
+            "freeze": "freeze",
+            "phase": "development",
+            "system_hash": digest(review.SYSTEM),
+            "records": [{"trajectory_id": "opaque", "payload": payload}],
+        },
+    )
+    config = __import__("pathlib").Path("configs/analysis/model-review.json")
+    calls_seen = []
+
+    class FakeBackend:
+        def __init__(self, *args):
+            pass
+
+        async def close(self):
+            pass
+
+        async def generate(self, messages, *args, **kwargs):
+            calls_seen.append(messages)
+            return [
+                CallRecord(
+                    key="key",
+                    stage="model-reference",
+                    attempt=0,
+                    started="now",
+                    completed="now",
+                    latency_seconds=1,
+                    response=json.dumps(
+                        {
+                            "conclusion": "supported",
+                            "rationale": "unverified interpretation",
+                            "references": [{"step": "s1", "start": 1, "end": 3, "text": "bc"}],
+                        }
+                    ),
+                )
+            ]
+
+    class FakeTracking:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def log(self, **kwargs):
+            pass
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(review, "Backend", FakeBackend)
+    monkeypatch.setattr(review, "Telemetry", FakeTracking)
+    result = asyncio.run(review.run_review(packet, config, tmp_path / "output"))
+    assert result["span_valid_records"] == 1
+    assert result["human_reviewed_records"] == 0
+    assert not result["hardware_verified"]
+    saved = read_json(tmp_path / "output/annotations/opaque.json")
+    assert saved["references"][0]["provenance"] == "model_suggested"
+    assert not saved["human_reviewed"]
+    assert "objective" not in calls_seen[0][1]["content"]
+    asyncio.run(review.run_review(packet, config, tmp_path / "output"))
+    assert len(calls_seen) == 1
+
+
+def test_heldout_review_requires_development_acceptance(tmp_path):
+    import asyncio
+    from pathlib import Path
+
+    from agent_safety_monitoring.analysis.model_review import SYSTEM, run_review
+    from agent_safety_monitoring.io import atomic_json
+
+    packet = tmp_path / "packet.json"
+    atomic_json(packet, {"phase": "test", "system_hash": digest(SYSTEM)})
+    with pytest.raises(ValueError, match="proof required"):
+        asyncio.run(run_review(packet, Path("configs/analysis/model-review.json"), tmp_path))
+
+
+def test_acceptance_requires_completed_physical_allocation(tmp_path):
+    from agent_safety_monitoring.analysis.model_review import accept_development
+    from agent_safety_monitoring.io import atomic_json
+
+    summary, runtime, sacct = [tmp_path / name for name in ["summary", "runtime", "sacct"]]
+    atomic_json(
+        summary,
+        {"phase": "development", "expected": 3, "span_valid_records": 3, "config_hash": "hash"},
+    )
+    atomic_json(
+        runtime,
+        {
+            "job_id": "1",
+            "config_hash": "hash",
+            "hardware_verified": True,
+            "container_verified": True,
+            "engine_verified": True,
+        },
+    )
+    sacct.write_text("JobID|State|ElapsedRaw|AllocTRES\n1|FAILED|60|gres/gpu=1\n")
+    with pytest.raises(ValueError, match="successful measured"):
+        accept_development(summary, runtime, sacct, tmp_path / "accepted")
+    sacct.write_text("JobID|State|ElapsedRaw|AllocTRES\n1|COMPLETED|60|gres/gpu=1\n")
+    accepted = accept_development(summary, runtime, sacct, tmp_path / "accepted")
+    assert accepted["allocation_gpu_seconds"] == 60
+
+
+def test_reviewer_wrapper_configuration_is_enforced():
+    from pathlib import Path
+
+    from agent_safety_monitoring.analysis.model_review import check_model_config
+
+    config = json.loads(Path("configs/analysis/model-review.json").read_text())
+    check_model_config(config)
+    config["model"]["base_url"] = "https://example.com/v1"
+    with pytest.raises(ValueError):
+        check_model_config(config)
