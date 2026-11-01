@@ -133,3 +133,11 @@ git diff --check
 
 Software tests establish analysis safeguards only. They do not establish real GPU
 compatibility, reliable model annotations, or scientific effectiveness.
+
+After full-record diagnostics complete, regenerate the aggregate-only EaE table:
+
+```bash
+uv run --locked python scripts/analysis/summarize_eae.py \
+  --input runs/yale-recovered/full-analysis/record-diagnostics-private.json \
+  --output docs/reports/eae-test-extraction-aggregate.json
+```

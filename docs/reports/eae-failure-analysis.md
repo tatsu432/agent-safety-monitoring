@@ -85,3 +85,15 @@ truncated or selected based on favorable scores. Invalid judge outputs remain
 referrals. Paired task intervals condition on the selected sample and frozen
 threshold. This is an exploratory conditional diagnostic, not a replacement
 confirmatory score or a human-verified evidence study.
+
+## Frozen test extraction, recovered records
+
+Across all 572 primary test records, the extractor saved an average of 11.21
+quotations and 1,068.8 quoted tokens per trajectory. The two classes differ:
+benign records average 17.18 quotations and 1,617.8 tokens, while successful
+attack records average 9.66 quotations and 926.1 tokens. Among valid results,
+17 of 118 benign records and 36 of 454 attack records have no quotations.
+These are descriptive observations conditional on saved artifacts, not evidence
+that any particular omitted behavior is harmful or that the extractor caused a
+miss. [Aggregate counts](eae-test-extraction-aggregate.json) can be reproduced
+with `scripts/analysis/summarize_eae.py` from the private record diagnostics.

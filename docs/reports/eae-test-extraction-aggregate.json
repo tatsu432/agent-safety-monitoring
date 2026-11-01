@@ -1,0 +1,16 @@
+{
+  "0": {
+    "mean_quote_count": 17.177966101694917,
+    "mean_quoted_tokens": 1617.8050847457628,
+    "n": 118,
+    "valid_without_quotations": 17,
+    "without_quotations": 19
+  },
+  "1": {
+    "mean_quote_count": 9.658590308370044,
+    "mean_quoted_tokens": 926.0572687224669,
+    "n": 454,
+    "valid_without_quotations": 36,
+    "without_quotations": 37
+  }
+}
