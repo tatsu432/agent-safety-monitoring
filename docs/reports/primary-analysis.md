@@ -122,3 +122,28 @@ listed above; invalid outputs are referral alerts and are counted separately in 
 *Expected detection by objective with pointwise 95% whole-task bootstrap intervals;
 calibration is repeated for each bootstrap draw. Each objective includes 109 or 115
 successful attacks. These post-hoc comparisons are descriptive.*
+
+## Exploratory score-resolution sensitivity
+
+The first component of average ×2 exactly matches single review on all 572
+primary test records and shares its first request key in all 572 cases; the
+second component is a distinct seeded judgment. From the same saved judgments,
+we recalibrated an exploratory rounded average (nearest integer, half up) on the
+separate benign calibration set. No additional model calls were made.
+
+| Score policy | Expected TPR | Realized test FPR |
+| --- | ---: | ---: |
+| First component / single | 31.9% | 4.1% |
+| Second component | 28.3% | 5.5% |
+| Rounded average | 54.1% | 2.9% |
+| Original half-step average | 70.2% | 4.2% |
+
+The original average exceeds the rounded average by 16.1 percentage points
+(pointwise paired 95% task-bootstrap interval 0.8–24.7 points), while the rounded
+average exceeds the first component by 22.2 points (9.4–42.9 points). Both
+comparisons recalibrate within every bootstrap draw. This suggests that both
+combining judgments and retaining half-step score resolution affect this particular
+calibrated operating point. Realized test FPRs differ and this rounding analysis was
+chosen after observing the data, so it does not isolate a general causal effect or
+replace the frozen primary policy. [Numeric outputs](score-resolution.json) include
+all point estimates and paired intervals.

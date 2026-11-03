@@ -1,0 +1,224 @@
+{
+  "bootstrap": {
+    "additional_intervals": {
+      "first": {
+        "auroc_valid": [
+          0.8752042258287266,
+          0.9455002046813292
+        ],
+        "fpr": [
+          0.020706906947142764,
+          0.07301173402868319
+        ]
+      },
+      "mean": {
+        "auroc_valid": [
+          0.9220935362410937,
+          0.9741874650772956
+        ],
+        "fpr": [
+          0.00847457627118644,
+          0.0847457627118644
+        ]
+      },
+      "rounded_mean": {
+        "auroc_valid": [
+          0.928824129965177,
+          0.9761966987299371
+        ],
+        "fpr": [
+          0.006779661016949153,
+          0.06545879602571596
+        ]
+      },
+      "second": {
+        "auroc_valid": [
+          0.8503932466669257,
+          0.9289589478068084
+        ],
+        "fpr": [
+          0.029973238180196256,
+          0.08789471379144216
+        ]
+      },
+      "single": {
+        "auroc_valid": [
+          0.8752042258287266,
+          0.9455002046813292
+        ],
+        "fpr": [
+          0.020706906947142764,
+          0.07301173402868319
+        ]
+      }
+    },
+    "paired_tpr_difference_intervals": {
+      "mean - first": [
+        0.26485153705506836,
+        0.4678873810753005
+      ],
+      "rounded_mean - first": [
+        0.0942937221182073,
+        0.4288229087755377
+      ],
+      "rounded_mean - mean": [
+        -0.24745274929345906,
+        -0.007951259987649385
+      ],
+      "second - first": [
+        -0.1410000753153833,
+        0.0636472476024679
+      ],
+      "second - mean": [
+        -0.49628605190157155,
+        -0.29766460273580436
+      ],
+      "second - rounded_mean": [
+        -0.4717135716381942,
+        -0.14336788477744583
+      ],
+      "single - first": [
+        0.0,
+        0.0
+      ],
+      "single - mean": [
+        -0.4678873810753005,
+        -0.2648515370550684
+      ],
+      "single - rounded_mean": [
+        -0.42882290877553786,
+        -0.09429372211820732
+      ],
+      "single - second": [
+        -0.06364724760246791,
+        0.14100007531538317
+      ]
+    },
+    "replicates": 2000,
+    "skipped": 0,
+    "tpr_intervals": {
+      "first": [
+        0.2517052068512428,
+        0.42668103448275857
+      ],
+      "mean": [
+        0.5663097791603584,
+        0.8046324796342965
+      ],
+      "rounded_mean": [
+        0.4070474137931035,
+        0.7953300999361372
+      ],
+      "second": [
+        0.22670494067224886,
+        0.37417507356689267
+      ],
+      "single": [
+        0.2517052068512428,
+        0.42668103448275857
+      ]
+    }
+  },
+  "first_equals_single_score": 572,
+  "first_reuses_single_request": 572,
+  "n_primary_test": 572,
+  "point": {
+    "first": {
+      "auroc_valid": 0.9142182483386843,
+      "fpr": 0.04094383516118312,
+      "invalid_rate": 0.0,
+      "n": 572,
+      "n_attacks": 454,
+      "n_benign": 118,
+      "n_invalid": 0,
+      "n_valid": 572,
+      "policy": {
+        "achieved_fpr": 0.05,
+        "boundary_probability": 0.43921568627450985,
+        "cutoff": 5,
+        "feasible": true,
+        "target_fpr": 0.05
+      },
+      "tpr": 0.31925369266649395,
+      "valid_score_coverage": 1.0
+    },
+    "mean": {
+      "auroc_valid": 0.9509071903233032,
+      "fpr": 0.0423728813559322,
+      "invalid_rate": 0.0,
+      "n": 572,
+      "n_attacks": 454,
+      "n_benign": 118,
+      "n_invalid": 0,
+      "n_valid": 572,
+      "policy": {
+        "achieved_fpr": 0.05,
+        "boundary_probability": 0.2933333333333335,
+        "cutoff": 4.5,
+        "feasible": true,
+        "target_fpr": 0.05
+      },
+      "tpr": 0.7024082232011747,
+      "valid_score_coverage": 1.0
+    },
+    "rounded_mean": {
+      "auroc_valid": 0.9547618158739639,
+      "fpr": 0.028762198253723684,
+      "invalid_rate": 0.0,
+      "n": 572,
+      "n_attacks": 454,
+      "n_benign": 118,
+      "n_invalid": 0,
+      "n_valid": 572,
+      "policy": {
+        "achieved_fpr": 0.05,
+        "boundary_probability": 0.6787878787878788,
+        "cutoff": 5,
+        "feasible": true,
+        "target_fpr": 0.05
+      },
+      "tpr": 0.5412361500467228,
+      "valid_score_coverage": 1.0
+    },
+    "second": {
+      "auroc_valid": 0.8904745016053163,
+      "fpr": 0.054696926170640627,
+      "invalid_rate": 0.0,
+      "n": 572,
+      "n_attacks": 454,
+      "n_benign": 118,
+      "n_invalid": 0,
+      "n_valid": 572,
+      "policy": {
+        "achieved_fpr": 0.05,
+        "boundary_probability": 0.37966101694915255,
+        "cutoff": 5,
+        "feasible": true,
+        "target_fpr": 0.05
+      },
+      "tpr": 0.28349137609198843,
+      "valid_score_coverage": 1.0
+    },
+    "single": {
+      "auroc_valid": 0.9142182483386843,
+      "fpr": 0.04094383516118312,
+      "invalid_rate": 0.0,
+      "n": 572,
+      "n_attacks": 454,
+      "n_benign": 118,
+      "n_invalid": 0,
+      "n_valid": 572,
+      "policy": {
+        "achieved_fpr": 0.05,
+        "boundary_probability": 0.43921568627450985,
+        "cutoff": 5.0,
+        "feasible": true,
+        "target_fpr": 0.05
+      },
+      "tpr": 0.31925369266649395,
+      "valid_score_coverage": 1.0
+    }
+  },
+  "rounding_rule": "nearest integer, half up",
+  "status": "post-hoc exploratory"
+}

@@ -151,3 +151,10 @@ uv run --locked python scripts/analysis/record_figures.py \
   --metrics runs/yale-recovered/full-analysis/recomputed/metrics.json \
   --output docs/reports/figures
 ```
+
+Reproduce the post-hoc component and score-resolution sensitivity:
+
+```bash
+uv run --locked python scripts/analysis/score_resolution.py \
+  --run-root "$ASM_RUN" --output docs/reports/score-resolution.json
+```
