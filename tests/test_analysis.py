@@ -510,3 +510,51 @@ def test_repeat_component_rejects_multiple_accepted_outputs():
     result.artifacts.append({"stage": "review-0", "output": {"score": 4}})
     with pytest.raises(ValueError, match="Multiple"):
         module.component(result, 0)
+
+
+def test_cold_screen_requires_the_accepted_checksum(tmp_path):
+    import importlib.util
+    from pathlib import Path
+
+    from agent_safety_monitoring.io import atomic_json, file_hash
+
+    spec = importlib.util.spec_from_file_location(
+        "cold_screen", Path("scripts/analysis/cold_screen.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    measurement, acceptance = tmp_path / "measurements.json", tmp_path / "acceptance.json"
+    costs = {
+        k: 0
+        for k in [
+            "logical_calls",
+            "cache_hits",
+            "input_tokens",
+            "output_tokens",
+            "reasoning_tokens_estimated",
+        ]
+    }
+    trials = [
+        {
+            "method": {"method": name},
+            "state": "complete",
+            "independent_cold": True,
+            "timing_incomplete": False,
+            "gpus": 1,
+            "completed": 40,
+            "invalid": 0,
+            "gpu_seconds": 10,
+            "gpu_seconds_per_trajectory": 0.25,
+            "costs": costs,
+        }
+        for name in ["single", "think", "average", "eae", "mrt"]
+    ]
+    atomic_json(measurement, {"trial_id": "selected-cold-1", "trials": trials})
+    atomic_json(
+        acceptance,
+        {"backend_validated": True, "evidence": {"measurement_sha256": file_hash(measurement)}},
+    )
+    assert module.summarize(measurement, acceptance)["individual_trials"]["single"]["n"] == 40
+    measurement.write_text(measurement.read_text() + " ")
+    with pytest.raises(ValueError, match="accepted proof"):
+        module.summarize(measurement, acceptance)
