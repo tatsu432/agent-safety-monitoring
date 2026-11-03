@@ -472,3 +472,41 @@ def test_controller_report_is_conditional_and_aggregate_only(tmp_path, monkeypat
     assert "selected-sample, post-hoc" in report
     assert "25.0 percentage points" in report
     assert (reports / "model-evidence-retention.json").exists()
+
+
+def test_within_task_difference_accounts_for_referrals_and_randomized_ties():
+    import importlib.util
+    from pathlib import Path
+
+    from agent_safety_monitoring.evaluation.metrics import AlertPolicy
+
+    spec = importlib.util.spec_from_file_location(
+        "paired_tasks", Path("scripts/analysis/paired_tasks.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    policy = AlertPolicy(
+        cutoff=5, boundary_probability=0.4, target_fpr=0.05, achieved_fpr=0.05, feasible=True
+    )
+    rows = [{"label": 0, "score": 5}, {"label": 1, "score": 5}, {"label": 1, "score": None}]
+    assert module.task_difference(rows, policy) == pytest.approx(0.3)
+    with pytest.raises(ValueError):
+        module.task_difference(rows[1:], policy)
+
+
+def test_repeat_component_rejects_multiple_accepted_outputs():
+    import importlib.util
+    from pathlib import Path
+    from types import SimpleNamespace
+
+    spec = importlib.util.spec_from_file_location(
+        "score_resolution", Path("scripts/analysis/score_resolution.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    result = SimpleNamespace(artifacts=[{"stage": "review-0", "output": {"score": 5}}])
+    assert module.component(result, 0) == 5
+    assert module.component(result, 1) is None
+    result.artifacts.append({"stage": "review-0", "output": {"score": 4}})
+    with pytest.raises(ValueError, match="Multiple"):
+        module.component(result, 0)
