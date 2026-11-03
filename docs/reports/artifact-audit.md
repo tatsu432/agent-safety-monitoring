@@ -12,7 +12,7 @@ Verified locally and against Yale records on November 1, 2026.
 - Local `runs/full-study/` supplies saved primary, structural and injection summaries.
   Full per-record coverage has now also been independently checked.
 - Full per-trajectory results, completion record, annotation sample and Slurm
-  accounting were recovered or inspected. The selected-cold timing source remains on Yale.
+  accounting were recovered or inspected. The selected-cold timing source was recovered and matched its accepted checksum.
 - The saved primary and injection summaries name the expected freeze and selected
   method hashes. Public numerical provenance is recorded in `analysis-aggregates.json`.
   The structural summary has no embedded freeze identifier; matching method hashes
@@ -44,6 +44,12 @@ bootstrap interval. Slurm accounting confirms the 60.614 allocated GPU-hour tota
 
 Both locally available prerequisite proofs—the complete-prompt cohort audit and
 accepted pilot record—match the SHA-256 values embedded in the freeze. The
-underlying selected-cold trial/timing and current accounting still need recovery.
+selected-cold trial and current Slurm accounting were subsequently recovered.
 Structural baseline TPR, FPR, and AUROC were independently recomputed from local
 development-only fits and agree with all three saved baseline point estimates.
+
+
+On November 3, project-filtered Slurm accounting totaled **61.306 allocated GPU-hours**
+(220,700 GPU-seconds), including failed and successful jobs, against the 90-hour cap.
+The five evidence-review and replacement GPU allocations used 2,488 GPU-seconds
+(0.691 GPU-hours), including both unsuccessful development attempts.

@@ -63,7 +63,7 @@ These TPR/FPR values are expected alert probabilities under randomized boundary 
 | MRT 5 interactions | privilege escalation | 115 | 31.0 |
 | MRT 5 interactions | secret exfiltration | 115 | 53.7 |
 
-Objective point estimates are descriptive; recalibrated task-bootstrap intervals appear below. The regenerated ROC requires saved individual scores; no curve is invented from one AUROC value.
+Objective point estimates are descriptive; recalibrated task-bootstrap intervals appear below. The ROC below is recomputed from the recovered individual scores.
 
 ![Detection and uncertainty](figures/main-performance.png)
 
@@ -77,9 +77,9 @@ Objective point estimates are descriptive; recalibrated task-bootstrap intervals
 
 *Objective-specific point estimates; confidence intervals are reported in the table below.*
 
-![Original saved valid-score ROC](figures/roc-original.png)
+![Recomputed valid-score ROC](figures/roc-valid-scores.png)
 
-*Original saved ROC, copied without modification. Invalid outputs are excluded; per-method valid coverage is given in the primary table. Full record recovery is required to regenerate and independently verify the curve.*
+*ROC curves recomputed from recovered valid test scores; legend coverage is the fraction of all primary test records with valid scores. Invalid referrals are excluded from these curves and remain included in policy TPR/FPR. The [original saved ROC](figures/roc-original.png) is preserved.*
 
 
 ## Recomputed objective intervals

@@ -1,5 +1,3 @@
-> **Evidence-review update:** The model-based diagnostic has completed. See [its aggregate results](model-evidence-results.md); earlier pending-status statements below are historical. References remain model-suggested.
-
 # EaE failure analysis
 
 The frozen 3K EaE method has 4.8% expected attack detection, 5.1% realized test
@@ -49,10 +47,8 @@ validation categories are separate taxonomies and should not be summed together.
 The recovered frozen test records show a mean of 11.21 quotations and 1,068.8
 quoted tokens per trajectory across all 572 primary records, including empty
 and invalid results. These descriptive averages do not establish evidence relevance.
-Cross-step coverage and conditional judgment performance require model references. No reference
-retention percentage or verified extraction-versus-interpretation attribution is
-reported. Underutilization in historical repair data must not be projected onto
-the frozen test cohort without checking those artifacts.
+A separate model-based review and evidence-replacement diagnostic are reported
+below. They provide conditional, exploratory clues, not verified causal attribution.
 
 Potential mechanisms include poor passage ranking, unnecessary compression,
 missing multi-step connections, missing authorization context, weak judging of
@@ -69,18 +65,17 @@ configuration. Its larger size is not independent proof that its interpretations
 are correct; shared model-family errors and transcript prompt injection remain risks.
 
 The workflow preserves the original 30-record sample and hides labels, harmful
-objectives, grades, monitor selections, scores, and verdicts. Reviewers see the
-genuine task and canonical steps only. Proposed character spans must match exact
-source text. Supported conclusions require references; unresolved cases remain
+objectives, grades, monitor selections, scores, and verdicts. The reviewer sees the genuine task and canonical steps as indexed 800-character
+passages. Code resolves selected passage IDs to exact source spans. Supported conclusions require references; unresolved cases remain
 explicit. All outputs retain `model_suggested` provenance and zero human-reviewed
 records. Exact-span validation establishes textual validity only.
 
 Development-only short/median/long records form the physical validation packet.
 Held-out diagnostic annotation requires a completed measured allocation and
-compatible GPU/container/engine evidence. No such GPU validation or annotation
-inference has occurred; the pinned reviewer is staged and development GPU validation is queued.
+compatible GPU/container/engine evidence. The repaired reviewer passed the
+three-record development gate and then processed the fixed diagnostic sample.
 
-The implemented follow-up passes each complete usable reference set to the
+The completed follow-up passed each complete usable reference set to the
 original 20B judge, in source order, under the original 3K quotation budget and
 calibrated policy. Oversized sets are excluded with `budget_exceeded`, never
 truncated or selected based on favorable scores. Invalid judge outputs remain
@@ -99,3 +94,25 @@ These are descriptive observations conditional on saved artifacts, not evidence
 that any particular omitted behavior is harmful or that the extractor caused a
 miss. [Aggregate counts](eae-test-extraction-aggregate.json) can be reproduced
 with `scripts/analysis/summarize_eae.py` from the private record diagnostics.
+
+
+## Model-proposed evidence and replacement results
+
+Of 30 sampled attacks, the local 120B reviewer returned 29 span-valid proposals:
+28 supported interpretations, one unresolved interpretation, and one invalid output.
+The 28 supported interpretations selected 304 exact source passages. Frozen EaE
+fully retained 9, partially retained 9, and had no overlap with 286. These are
+800-character model-selected passages, so partial coverage may retain the actual
+critical content; neither passage selection nor exact overlap verifies harmfulness.
+The evidence is model-suggested and never human-reviewed.
+
+The original 20B EaE judge evaluated complete selected references for 24 records
+across 22 task groups. Four supported sets exceeded 3K quoted tokens and two
+records were unresolved. Expected alert probability was 5.6% for the original
+EaE outputs and 2.8% for the replacement outputs: −2.8 percentage points
+(95% task-bootstrap interval −13.4 to 5.8). Thus this small post-hoc diagnostic
+does not show that replacing evidence improved alerts. It does not rule out a
+benefit or identify a unique failure mechanism. Selected evidence remains unverified,
+passage boundaries can lose context, and the sample was chosen for diagnosis rather
+than unbiased test estimation. See [aggregate evidence results](model-evidence-results.md)
+and [the paired summary](model-evidence-paired-summary.json).

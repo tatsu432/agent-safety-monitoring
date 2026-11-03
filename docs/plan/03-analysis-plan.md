@@ -26,11 +26,10 @@ No broad new search, primary rerun, or optional average-injection extension is
 included. Missing Yale authentication or model validation blocks only dependent
 work. The user elected model-based annotation instead of human review.
 
-## Implementation checkpoint
+## Implementation status
 
-Local source/data/proof verification, aggregate primary/compute/structural/injection
-analysis, historical EaE inspection, reports/figures, model-review tooling and
-software tests are implemented. See the detailed
-[checkpoint](../task_completion/03-posthoc-analysis-checkpoint.md).
-Full record reconciliation and physical review/retention experiments remain
-blocked by interactive Yale authentication. No original study rerun occurred.
+The frozen study and original artifacts have been reconciled. Primary, compute,
+structural, injection, evidence-retention and replacement analyses are complete.
+The final [completion record](../task_completion/03-completed-scientific-analysis.md)
+records tests, physical runs, provenance and remaining scientific limitations.
+Evidence references are model-suggested; no human review is claimed.

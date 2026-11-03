@@ -1,15 +1,10 @@
-> **Evidence-review update:** The model-based diagnostic has completed. See [its aggregate results](model-evidence-results.md); earlier pending-status statements below are historical. References remain model-suggested.
-
-> **November 1 reconciliation update:** All five methods’ full frozen records passed coverage and metadata checks. Recomputed primary metrics and paired bootstrap intervals exactly match saved summaries. Slurm accounting confirms 60.614 allocated GPU-hours. The 120B reviewer is staging; evidence annotation and inference remain pending. 
-
 # How Should a Coding Agent Safety Monitor Spend Its Compute Budget?
 
-Tatsuhiro Shimizu · Yale CPSC 5710 · Scientific analysis draft, November 1, 2026
+Tatsuhiro Shimizu · Yale CPSC 5710 · Scientific report, November 3, 2026
 
-**Status:** The frozen experiment is reported complete and its saved aggregates have
-been analyzed. Frozen source and canonical inputs are independently verified locally.
-The stronger-model evidence experiment remains in preparation. This is an empirical draft
-with explicit outstanding dependencies, not a claim that every acceptance criterion is met.
+**Status:** The frozen study, independent artifact reconciliation, and exploratory
+model-based evidence diagnostic are complete. The evidence review was performed by
+a local model, not a human reviewer; its interpretations remain unverified.
 
 ## Abstract
 
@@ -23,7 +18,8 @@ test FPR; its paired task-bootstrap difference from single review is positive, w
 comparison with longer reasoning remains inconclusive. EaE attains 4.8% detection
 and 0.556 valid-score AUROC. MRT costs 5.30 times averaging in the
 independent development timing screen. A development-fitted length-and-tool-count baseline
-attains 0.901 AUROC, making structural confounding central to interpretation. Fixed,
+attains 0.901 AUROC, making structural confounding central to interpretation. In a
+selected 24-record evidence-replacement diagnostic, the expected alert-rate change was −2.8 percentage points (95% task-bootstrap interval −13.4 to 5.8). Fixed,
 matched-control injections do not produce a clear aggregate increase in missed attacks.
 These findings concern one offline setting; they do not establish live protection,
 universal method superiority, or a verified causal explanation of EaE failure.
@@ -157,10 +153,13 @@ This ranking does not imply equal compute, equal realized FPR, or a universal be
 
 Boundary randomization materially affects the practical endpoint. Conservative deterministic
 single and think-longer policies exclude their maximum-score boundary and therefore yield
-zero valid-score alerts. Averaging has finer half-integer resolution. The saved aggregate
-summaries cannot determine how much of its advantage is attributable to resolution versus
-independent judgment. That decomposition requires saved constituent predictions and is
-exploratory. The frozen thresholds are not retuned using test labels.
+zero valid-score alerts. In a post-hoc same-judgment analysis, rounding the two-review
+average to integer categories reduced expected detection from 70.2% to 54.1%, while
+realized FPR changed from 4.2% to 2.9%. The rounded average still exceeded its first
+component by 22.2 percentage points (paired 95% interval 9.4–42.9). This indicates
+that both aggregation and finer score levels affect this operating point, but unequal
+realized FPR and the post-hoc choice limit causal interpretation. The primary policy
+was not changed. See [the score-resolution analysis](primary-analysis.md#exploratory-score-resolution-sensitivity).
 
 Objective-specific point estimates appear in [the primary analysis](primary-analysis.md).
 Firewall disabling has lower detection than malware execution and secret exfiltration in
@@ -220,12 +219,23 @@ lost chronology, extractor ranking, missing context, and judge limitations remai
 hypotheses. The selected spans and judge inputs must be inspected before attributing failure.
 [The EaE analysis](eae-failure-analysis.md) separates observations from hypotheses.
 
-The user elected stronger-model review instead of human annotation. The prepared workflow
-uses a revision-pinned local gpt-oss-120b, with no access to source outcome labels, monitor
-selections, scores, or verdicts. Exact-span checks verify source containment only. Any future
-retention or replacement finding will remain conditional on model-suggested evidence and
-shared-family biases; it will not be presented as human-verified evidence. No annotation or
-replacement GPU experiment has yet been executed.
+A blinded local gpt-oss-120b reviewer, with no attack labels, grader outcomes, or
+monitor outputs, examined the pre-existing 30-record diagnostic sample. It returned
+29 span-valid proposals, including 28 supported interpretations, one unresolved
+interpretation, and one invalid output after retry. It selected 304 source passages
+(up to 800 characters each); the frozen EaE extractor fully retained 9 and partially
+retained 9. These are model-suggested references, not human-verified ground truth;
+partial passage coverage can still include decisive text.
+
+In an exploratory evidence-replacement diagnostic, 24 records fit the original
+3K quotation budget; four were over budget and two were unresolved. Under the
+frozen EaE policy, expected alert probability was 5.6% with the original extraction
+and 2.8% with model-selected evidence, a paired change of −2.8 percentage points
+(95% task-bootstrap interval −13.4 to 5.8; 22 task groups). This does not establish
+an improvement. The sample is selected and small; model references are fallible,
+coarse passages may omit or include context, and the interval includes meaningful
+changes in either direction. It does not identify a single causal failure mechanism.
+[Evidence diagnostics](model-evidence-results.md) report counts and provenance.
 
 The frozen injection experiment supplies 480 matched comparisons across two methods,
 three payload families, two positions, and 40 trajectories. Recomputed task-cluster intervals
@@ -252,15 +262,27 @@ review cannot establish whether live intervention would prevent harm.
 
 All mechanism investigations added after observing results are post-hoc. Model-proposed
 reference evidence is fallible. Mock/software tests establish safeguards, not GPU compatibility
-or scientific effectiveness. The model-based evidence diagnostic has not yet been run; its eventual interpretations will remain fallible.
+or scientific effectiveness. The model-based evidence diagnostic has no human
+reference review, and its interpretations and passage selections remain fallible.
 
 ## 8. Conclusion
 
-The frozen summaries support benefits from averaging and longer reasoning over a single
+The frozen results support benefits from averaging and longer reasoning over a single
 low-effort review under this calibration policy. Averaging compares favorably with MRT's
 measured development cost, while the difference from think-longer remains inconclusive.
 EaE performs poorly in this adaptation. Structural confounding and score-boundary sensitivity
 are substantial qualifications, and a verified causal account of extraction failure remains open.
+
+## References
+
+- Greenblatt, Shlegeris, Sachan and Roger. [AI Control: Improving Safety Despite Intentional Subversion](https://arxiv.org/abs/2312.06942), 2023, revised 2024.
+- Kaufman, Lucassen, Tracy, Rushing and Bhatt. [BashArena: A Control Setting for Highly Privileged AI Agents](https://arxiv.org/abs/2512.15688), 2025.
+- Arike, Mehta Moreno, Subramani, Biswas and Ward. [How Does Information Access Affect LLM Monitors’ Ability to Detect Sabotage?](https://arxiv.org/abs/2601.21112), 2026.
+- Kale et al. [Reliable Weak-to-Strong Monitoring of LLM Agents](https://arxiv.org/abs/2508.19461), 2025; ICLR 2026.
+- Guan et al. [Monitoring Monitorability](https://arxiv.org/abs/2512.18311), 2025.
+- Terekhov et al. [Adaptive Attacks on Trusted Monitors Subvert AI Control Protocols](https://arxiv.org/abs/2510.09462), 2025; ICLR 2026.
+- Remedios, Storf, Roger and Hughes. [Red-Teaming Auto Mode: Improving Blocking Classifiers Against Malign Coding Agents](https://arxiv.org/abs/2609.19587), 2026.
+- OpenAI. [gpt-oss-120b & gpt-oss-20b Model Card](https://arxiv.org/abs/2508.10925), 2025.
 
 ## Reproducibility appendix
 

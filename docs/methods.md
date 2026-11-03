@@ -111,4 +111,5 @@ Evidence replacement, if physically validated and executed, uses complete
 model-proposed reference sets within the original quote cap, the original judge,
 and the original calibration policy. Oversized/unresolved records remain explicit
 exclusions. This selected-sample post-hoc diagnostic is not a new confirmatory TPR
-or a verified human evidence study. No such new inference has yet run.
+or a verified human evidence study. The fixed 30-record review and selected evidence-replacement diagnostic were
+completed; their model-based results and limitations are reported separately.

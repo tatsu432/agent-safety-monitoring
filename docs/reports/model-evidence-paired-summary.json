@@ -1,0 +1,21 @@
+{
+  "bootstrap_replicates": 2000,
+  "ci95": [
+    -0.13391304347826088,
+    0.05828922495274067
+  ],
+  "counts": {
+    "budget_exceeded": 4,
+    "unresolved": 2,
+    "valid": 24
+  },
+  "eligible_records": 24,
+  "freeze": "b86533ed57f70956b55d8a5e26eac1f833dc622ef92b36060e1f71382c70ae5d",
+  "mean_expected_alert_change": -0.027898550724637688,
+  "original_expected_alert_rate": 0.055797101449275376,
+  "provenance": "model_suggested",
+  "replacement_expected_alert_rate": 0.027898550724637688,
+  "seed": 20261028,
+  "status": "post-hoc exploratory selected sample",
+  "task_groups": 22
+}

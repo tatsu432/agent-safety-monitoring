@@ -1,0 +1,32 @@
+{
+  "account": "cpsc4710",
+  "allocated_gpu_hours": 61.30555555555556,
+  "allocated_gpu_seconds": 220700,
+  "allocation_count": 34,
+  "documented_cap_hours": 90,
+  "follow_up_allocated_gpu_hours": 0.6911111111111111,
+  "follow_up_allocated_gpu_seconds": 2488,
+  "follow_up_allocations": {
+    "31619759": {
+      "gpu_seconds": 493,
+      "state": "COMPLETED"
+    },
+    "31802302": {
+      "gpu_seconds": 338,
+      "state": "COMPLETED"
+    },
+    "31802796": {
+      "gpu_seconds": 186,
+      "state": "COMPLETED"
+    },
+    "31802993": {
+      "gpu_seconds": 1231,
+      "state": "COMPLETED"
+    },
+    "31804042": {
+      "gpu_seconds": 240,
+      "state": "COMPLETED"
+    }
+  },
+  "source_sha256": "d6d7919078797c53cf1aece348f4c95ed76148d6ca5204e6eccdaaf947ef642d"
+}

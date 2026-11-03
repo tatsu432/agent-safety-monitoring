@@ -1,8 +1,7 @@
-> **Current status, November 1:** primary and injection runs are reported complete.
-> Historical readiness and launch entries below are retained as dated records.
-> Fresh Slurm reconciliation and stronger-model diagnostics are pending interactive
-> authentication; follow [the analysis runbook](reports/analysis-reproduction.md)
-> before any new submission. Existing standing GPU authorization remains in force.
+> **Current status, November 3:** primary and injection runs, the model-based
+> evidence review, and the exploratory evidence-replacement diagnostic are complete.
+> Current accounting and limitations are in the [final analysis record](task_completion/03-completed-scientific-analysis.md).
+> Historical entries below retain the status known at their original dates.
 
 # Yale execution runbook
 

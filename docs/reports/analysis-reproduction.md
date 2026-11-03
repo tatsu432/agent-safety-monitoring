@@ -17,7 +17,7 @@ uv run --locked asm analysis structural-check --data "$ASM_SOURCE/data/prepared"
   --output runs/analysis/structural-verification.json
 uv run --locked asm analysis aggregate --bundle "$ASM_SOURCE/runs/full-study" \
   --freeze "$ASM_SOURCE/runs/readiness/study-freeze.json" \
-  --features runs/analysis/feature-shift.json --output docs/reports
+  --features runs/analysis/feature-shift.json --output runs/analysis/regenerated-reports
 ```
 
 Aggregate generation defaults to online W&B and exports a fixed allowlist of
@@ -45,8 +45,7 @@ The original saved ROC is copied unchanged with its hash recorded.
 
 ## Full prediction reconciliation
 
-Yale noninteractive SSH currently fails with keyboard-interactive authentication.
-Complete Duo using `ssh yale-hpc-cpsc4710` and retain a ControlMaster connection.
+If the reusable Yale SSH connection has expired, complete Duo using `ssh yale-hpc-cpsc4710` and retain a ControlMaster connection.
 Before any GPU action, inspect current permissions, personal project/scratch
 storage, `squeue --me`, the completion/controller record, submission ledger, and
 project-filtered `sacct -X` entries including failed jobs. Do not submit duplicates.
@@ -73,7 +72,7 @@ with the original Python 3.12.15 environment; analysis code does not weaken that
 
 ## Local model evidence review
 
-The pinned configuration is `configs/analysis/model-review.json`. Download its
+The accepted indexed-passage configuration is `configs/analysis/model-review-repair-2.json`. Download its
 exact 120B revision into this project's model cache without exposing records to
 any service. Verify storage/quota and prepare the locked client before allocating
 GPUs. The launcher uses the original digest-verified vLLM image, but 120B memory
@@ -94,7 +93,7 @@ absolute cluster paths. Submit `scripts/analysis/model-review.sbatch` for one H2
 Start with a bounded development allocation; derive subsequent cost and cap
 amendments from the measured workload, not an assumed 120B throughput. The wrapper
 records runtime and utilization and verifies GPU, image checksum, and engine.
-It has been syntax-checked only; no successful physical execution is claimed.
+The repaired indexed-passage configuration was physically validated on an H200.
 
 After the development allocation completes, save project-filtered Slurm accounting
 with `JobID,State,ElapsedRaw,AllocTRES` and bind it to the measured runtime:
@@ -119,8 +118,7 @@ become human-reviewed. Do not edit proof flags to bypass physical acceptance.
 After annotation, run `asm analysis retention` with `--data`, `--run-root`,
 `--freeze`, `--review-root`, and private `--output`. A separately accounted local
 20B allocation can run `asm analysis replacement` with the same arguments, using
-an output directory. It replays the original frozen judge and has not yet been
-physically validated. Preserve failures and report all exclusion/status counts.
+an output directory. It replays the original frozen judge and was physically executed on the selected diagnostic sample. Preserve failures and report all exclusion/status counts.
 
 ## Checks
 
@@ -174,4 +172,40 @@ uv run --locked python scripts/analysis/cold_screen.py \
   --measurement runs/yale-recovered/selected-cold-measurements.json \
   --acceptance "$ASM_SOURCE/runs/readiness/accepted-readiness.json" \
   --output docs/reports/cold-screen-aggregate.json
+```
+
+
+Recompute paired evidence-replacement rates from the recovered private outputs:
+
+```bash
+uv run --locked python scripts/analysis/summarize_replacement.py \
+  --run-root "$ASM_RUN" --replacement-root runs/yale-recovered/model-replacement \
+  --output docs/reports/model-evidence-paired-summary.json
+```
+
+The repaired 800-character indexed-passage reviewer used the locked configuration
+`configs/analysis/model-review-repair-2.json`; development and held-out model-review
+identities, proofs and source records remain private. The diagnostic used the same
+fixed sample selected before annotation. Repeating it is not needed to reproduce
+aggregate analyses. The full allocation summary is generated from project-filtered
+Slurm data using `scripts/analysis/resource_summary.py`; individual logs remain
+private. The published [resource summary](resource-accounting.json) records the
+accounting-input hash and follow-up allocation totals.
+
+The aggregate generator writes baseline report templates to the requested output
+folder. The checked-in research report and specialized analyses incorporate the
+subsequent full-record and model-evidence findings; do not overwrite them with the
+older aggregate-only templates. The figure and table scripts above reproduce the
+relevant numeric artifacts independently.
+
+For the November 3 accounting snapshot, the underlying private `sacct -X` file
+was parsed with the existing `asm experiment resource-usage` command. Reproduce
+the public summary from that private file and parsed allocation artifact with:
+
+```bash
+uv run --locked python scripts/analysis/resource_summary.py \
+  --allocation runs/yale-recovered/allocation-final-nov3.json \
+  --accounting runs/yale-recovered/sacct-final-nov3.txt \
+  --follow-up 31619759 31802302 31802796 31802993 31804042 \
+  --output docs/reports/resource-accounting.json
 ```

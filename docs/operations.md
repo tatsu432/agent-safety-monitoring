@@ -1,6 +1,6 @@
 > **November 1 post-hoc analysis:** the frozen study is reported complete. Do not
 > use historical launch commands below to restart completed shards. Current
-> aggregate analyses and remaining reconciliation are documented in
+> aggregate analyses and reproducibility steps are documented in
 > [the analysis runbook](reports/analysis-reproduction.md). New analysis runs use a
 > separate checkout; the frozen runtime and proofs remain unchanged.
 
@@ -130,10 +130,11 @@ come from the same frozen study. The sample IDs, token-matched neutral controls,
 payloads and methods are frozen; authentic evidence remains unchanged. The runner
 saves paired outcomes and generates an injection figure.
 
-Independent reference annotations for missed-attack evidence remain a human or
-separately audited grader-evidence task. `evaluation.evidence.retention` validates
-exact annotated spans and checks retention/citations; it does not invent reference
-evidence or infer semantic understanding from a missing citation.
+Reference evidence may be human-reviewed, supplied by an independent grader, or
+model-suggested; these provenance categories are not interchangeable. The completed
+post-hoc study uses model-suggested evidence without human verification. Exact span
+checks validate source text, not semantic correctness, and a missing citation does
+not prove misunderstanding. See the [evidence analysis](reports/eae-failure-analysis.md).
 
 Prepare a stratified independent annotation file only after primary results exist:
 
