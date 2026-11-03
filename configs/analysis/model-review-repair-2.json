@@ -1,0 +1,32 @@
+{
+  "model": {
+    "backend": "vllm",
+    "model": "openai/gpt-oss-120b",
+    "revision": "b5c939de8f754692c1647ca79fbf85e8c1e70f8a",
+    "tokenizer_revision": "b5c939de8f754692c1647ca79fbf85e8c1e70f8a",
+    "engine_version": "0.11.0",
+    "base_url": "http://127.0.0.1:8000/v1",
+    "temperature": 0,
+    "max_tokens": 16384,
+    "context_limit": 131072,
+    "concurrency": 1,
+    "transport_retries": 2,
+    "timeout_seconds": 1800
+  },
+  "effort": "medium",
+  "seed": 20261101,
+  "output_retries": 1,
+  "environment": {
+    "container_digest": "sha256:014a95f21c9edf6abe0aea6b07353f96baa4ec291c427bb1176dc7c93a85845c",
+    "container_sha256": "056a8f8f182b1652c88ecf567d11dfa18a5b0a7ddd33d17b3fcc5d5869731c03"
+  },
+  "hardware": {
+    "gpu_name": "NVIDIA H200",
+    "gpu_count": 1,
+    "tensor_parallel_size": 1
+  },
+  "logging": {
+    "mode": "online"
+  },
+  "status": "development-only repair: 800-character indexed source passages; physical validation required"
+}

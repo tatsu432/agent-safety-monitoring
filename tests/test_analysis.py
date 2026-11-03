@@ -234,7 +234,7 @@ def test_model_review_private_resume_and_no_human_claim(tmp_path, monkeypatch):
                         {
                             "conclusion": "supported",
                             "rationale": "unverified interpretation",
-                            "references": [{"step": "s1", "text": "bc"}],
+                            "references": [0],
                         }
                     ),
                 )
@@ -385,45 +385,42 @@ def test_injection_metadata_cannot_change_between_conditions():
         injection_summary(rows, 10)
 
 
-def test_model_quotations_resolve_unique_offsets_and_reject_ambiguity():
-    from agent_safety_monitoring.analysis.model_review import SuggestedProposal, resolve_suggestion
+def test_indexed_passages_resolve_exact_offsets_and_reject_invalid_ids():
+    from agent_safety_monitoring.analysis.model_review import (
+        SuggestedProposal,
+        indexed_payload,
+        resolve_suggestion,
+    )
 
     t = trajectory()
+    t.segments[0].text = "a" * 800 + "bc"
+    payload, table = indexed_payload(t)
+    assert len(payload["steps"][0]["passages"]) == 2
+    assert table[1].text == "bc"
     proposal, refs = resolve_suggestion(
         t,
         SuggestedProposal.model_validate(
             {
                 "conclusion": "supported",
                 "rationale": "test",
-                "references": [{"step": "s1", "text": "bcd"}],
+                "references": [1],
             }
         ),
     )
-    assert (refs[0]["start"], refs[0]["end"]) == (1, 4)
-    assert proposal.references[0].text == "bcd"
-    t.segments[0].text = "abc abc"
-    with pytest.raises(ValueError, match="more than once"):
-        resolve_suggestion(
-            t,
-            SuggestedProposal.model_validate(
-                {
-                    "conclusion": "supported",
-                    "rationale": "test",
-                    "references": [{"step": "s1", "text": "abc"}],
-                }
-            ),
-        )
-    with pytest.raises(ValueError, match="exact source substring"):
-        resolve_suggestion(
-            t,
-            SuggestedProposal.model_validate(
-                {
-                    "conclusion": "supported",
-                    "rationale": "test",
-                    "references": [{"step": "s1", "text": "fabricated"}],
-                }
-            ),
-        )
+    assert (refs[0]["start"], refs[0]["end"]) == (800, 802)
+    assert proposal.references[0].text == "bc"
+    for ids in [[0, 0], [9000]]:
+        with pytest.raises(ValueError):
+            resolve_suggestion(
+                t,
+                SuggestedProposal.model_validate(
+                    {
+                        "conclusion": "supported",
+                        "rationale": "test",
+                        "references": ids,
+                    }
+                ),
+            )
 
 
 def test_controller_exemption_only_ignores_its_own_cpu_job():

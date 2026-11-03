@@ -46,7 +46,9 @@ def publish_result(root, retention, replacement):
     lines += [
         "",
         "Exact quotation containment applies only to EaE; citation omission does not "
-        "prove misunderstanding. Retention is conditional on the model's fallible references.",
+        "prove misunderstanding. The reviewer selects passages up to 800 characters, so "
+        "partial coverage may still include the decisive content. Retention is conditional "
+        "on the model's fallible references.",
     ]
     if replacement is not None:
         delta, ci = replacement["mean_alert_change"], replacement["ci95"]
@@ -146,19 +148,19 @@ def main():
     elapsed = int(rows[0][2])
     env = os.environ.copy()
     if args.phase == "development":
-        dev = base / "development-repair-1"
-        proof = base / "repair-development-accepted.json"
+        dev = base / "development-repair-2"
+        proof = base / "repair-2-development-accepted.json"
         accepted = accept_development(
             dev / "summary.json", dev / "jobs" / args.prior_job / "runtime.json", sacct_path, proof
         )
         minutes = max(30, min(240, math.ceil(elapsed * 10 * 1.35 / 60 + 5)))
         env.update(
-            ASM_REVIEW_PACKET=str(base / "diagnostic-review-repair.json"),
-            ASM_REVIEW_OUTPUT=str(base / "diagnostic-repair-1"),
+            ASM_REVIEW_PACKET=str(base / "diagnostic-review-repair-2.json"),
+            ASM_REVIEW_OUTPUT=str(base / "diagnostic-repair-2"),
             ASM_REVIEW_PROOF=str(proof),
         )
         identity, script = (
-            "model-review-diagnostic-repair-1",
+            "model-review-diagnostic-repair-2",
             "scripts/analysis/model-review.sbatch",
         )
         estimate = {
@@ -169,7 +171,7 @@ def main():
         atomic_json(base / "diagnostic-resource-plan.json", estimate)
         next_phase = "diagnostic"
     elif args.phase == "diagnostic":
-        diag = base / "diagnostic-repair-1"
+        diag = base / "diagnostic-repair-2"
         summary = read_json(diag / "summary.json")
         if summary["completed"] != summary["expected"] or summary["expected"] != 30:
             raise SystemExit("Diagnostic sample is incomplete")

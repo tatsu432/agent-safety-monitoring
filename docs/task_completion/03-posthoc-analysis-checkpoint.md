@@ -95,3 +95,12 @@ will verify the repaired development job and only then submit the fixed 30-recor
 sample; subsequent retention and evidence-replacement stages are also triggered by
 Slurm dependencies. The original project ledger and measured 90-hour cap remain in
 force. Controller failure or ambiguity stops the chain and preserves its status.
+
+The first repair job (31802302) completed with all six answers ending normally,
+but every proposal contained at least one paraphrased rather than exact quotation.
+The dependent controller stopped before test inference. The second development-only
+repair presents the complete transcript as deterministic 800-character indexed
+passages; the reviewer selects passage IDs, and code retrieves exact source spans.
+Passage boundaries are coarser than the frozen extractor's 400-character passages,
+so partial retention does not imply that the decisive text was lost. It retains the
+medium-effort, 16,384-token reviewer settings and the fixed blinded 30-record sample.
