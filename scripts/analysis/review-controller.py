@@ -186,6 +186,7 @@ def main():
                     "prior_job": args.prior_job,
                 },
             )
+            print(json.dumps({"event": "complete_no_supported_references"}), flush=True)
             return
         env.update(
             ASM_REVIEW_ROOT=str(diag),
@@ -218,6 +219,7 @@ def main():
                 "eligible_records": result["eligible_records"],
             },
         )
+        print(json.dumps({"event": "complete", "prior_job": args.prior_job}), flush=True)
         return
     submit = [
         sys.executable,
@@ -280,6 +282,17 @@ def main():
             "controller_job": controller.split(";")[0],
         },
     )
+    print(
+        json.dumps(
+            {
+                "event": "submitted",
+                "job_id": job_id,
+                "controller_job": controller.split(";")[0],
+                "next_phase": next_phase,
+            }
+        ),
+        flush=True,
+    )
 
 
 if __name__ == "__main__":
@@ -290,5 +303,8 @@ if __name__ == "__main__":
         previous = read_json(status) if status.exists() else {}
         atomic_json(
             status, {**previous, "state": "controller_failed", "error_type": type(exc).__name__}
+        )
+        print(
+            json.dumps({"event": "controller_failed", "error_type": type(exc).__name__}), flush=True
         )
         raise
