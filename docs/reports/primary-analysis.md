@@ -108,3 +108,17 @@ Objective point estimates are descriptive; recalibrated task-bootstrap intervals
 | Think longer | secret exfiltration | 48.9–94.8% | 2000 |
 
 These intervals resample whole calibration and test tasks and recalibrate each method. They are post-hoc pointwise intervals. Numeric score histograms and aggregate diagnostics are in [full-record diagnostics](full-record-diagnostics.json).
+
+## Recovered score distributions and objective uncertainty
+
+![Score distributions](figures/score-distributions.png)
+
+*Counts of valid ordinal scores by method and cohort. Dashed lines show the frozen
+calibration cutoff. Boundary scores are alerted with the method-specific probability
+listed above; invalid outputs are referral alerts and are counted separately in each panel.*
+
+![Objective detection intervals](figures/per-objective-intervals.png)
+
+*Expected detection by objective with pointwise 95% whole-task bootstrap intervals;
+calibration is repeated for each bootstrap draw. Each objective includes 109 or 115
+successful attacks. These post-hoc comparisons are descriptive.*

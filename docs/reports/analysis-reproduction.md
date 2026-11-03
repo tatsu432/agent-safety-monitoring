@@ -141,3 +141,13 @@ uv run --locked python scripts/analysis/summarize_eae.py \
   --input runs/yale-recovered/full-analysis/record-diagnostics-private.json \
   --output docs/reports/eae-test-extraction-aggregate.json
 ```
+
+Regenerate record-level figures after completing full-record diagnostics:
+
+```bash
+uv run --locked python scripts/analysis/record_figures.py \
+  --run-root "$ASM_RUN" \
+  --diagnostics runs/yale-recovered/full-analysis/record-diagnostics-aggregate.json \
+  --metrics runs/yale-recovered/full-analysis/recomputed/metrics.json \
+  --output docs/reports/figures
+```
