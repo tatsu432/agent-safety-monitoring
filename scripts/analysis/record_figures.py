@@ -8,6 +8,7 @@ import numpy as np
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve
 
 from agent_safety_monitoring.analysis.aggregate import NAMES, ORDER
 from agent_safety_monitoring.analysis.audit import validate_pairs
@@ -27,6 +28,28 @@ def generate(run_root, diagnostics, metrics_file, output):
     ):
         raise ValueError("Method identities do not match")
     output.mkdir(parents=True, exist_ok=True)
+    fig, ax = plt.subplots(figsize=(6.5, 5.5))
+    for family in ORDER:
+        rows = tables["test"][methods[family]]
+        valid = [r for r in rows if r["score"] is not None]
+        if len({r["label"] for r in valid}) != 2:
+            continue
+        fpr, tpr, _ = roc_curve([r["label"] for r in valid], [r["score"] for r in valid])
+        ax.plot(
+            fpr,
+            tpr,
+            color=COLORS[family],
+            label=f"{NAMES[family]} ({100 * len(valid) / len(rows):.1f}% valid)",
+        )
+    ax.plot([0, 1], [0, 1], color="black", linewidth=0.7, linestyle=":")
+    ax.set(
+        xlabel="False-positive rate among valid scores",
+        ylabel="True-positive rate among valid scores",
+        xlim=(0, 1),
+        ylim=(0, 1),
+    )
+    ax.legend(fontsize=8, loc="lower right")
+    save(fig, output / "roc-valid-scores")
     fig, axes = plt.subplots(5, 3, figsize=(12, 13), sharex=True)
     groups = [
         ("calibration", 0, "Calibration benign"),

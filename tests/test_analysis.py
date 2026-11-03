@@ -558,3 +558,53 @@ def test_cold_screen_requires_the_accepted_checksum(tmp_path):
     measurement.write_text(measurement.read_text() + " ")
     with pytest.raises(ValueError, match="accepted proof"):
         module.summarize(measurement, acceptance)
+
+
+def test_replacement_summary_pairs_original_policy_and_preserves_referrals(tmp_path, monkeypatch):
+    import importlib.util
+    from pathlib import Path
+
+    from agent_safety_monitoring.io import atomic_json
+
+    spec = importlib.util.spec_from_file_location(
+        "summarize_replacement", Path("scripts/analysis/summarize_replacement.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    name = "eae-abcd"
+    rows = {
+        "calibration": {name: [{"score": 5}]},
+        "test": {name: [{"trajectory_id": "a", "task_id": "task", "label": 1, "score": 1}]},
+    }
+    monkeypatch.setattr(module, "load_results", lambda _: rows)
+    run, replacement = tmp_path / "run", tmp_path / "replacement"
+    identity = {"freeze": "freeze"}
+    atomic_json(run / "study.json", {"freeze": "freeze"})
+    atomic_json(replacement / "identity.json", identity)
+    atomic_json(
+        replacement / "results/a.json",
+        {"trajectory_id": "a", "identity": identity, "status": "invalid", "score": None},
+    )
+    result = module.summarize(run, replacement, replicates=20)
+    assert result["original_expected_alert_rate"] == 0
+    assert result["replacement_expected_alert_rate"] == 1
+    assert result["mean_expected_alert_change"] == 1
+    assert result["counts"] == {"invalid": 1}
+
+
+def test_resource_summary_rejects_tampered_allocation(tmp_path):
+    import importlib.util
+    from pathlib import Path
+
+    from agent_safety_monitoring.io import atomic_json
+
+    spec = importlib.util.spec_from_file_location(
+        "resource_summary", Path("scripts/analysis/resource_summary.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    accounting, allocation = tmp_path / "sacct", tmp_path / "allocation.json"
+    accounting.write_text("JobID|State|ElapsedRaw|AllocTRES\n1|COMPLETED|60|gres/gpu=1\n")
+    atomic_json(allocation, {"jobs": [], "allocated_gpu_seconds": 0, "allocated_gpu_hours": 0})
+    with pytest.raises(ValueError, match="does not match"):
+        module.summarize(allocation, accounting, ["1"])
