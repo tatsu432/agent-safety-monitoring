@@ -4,11 +4,26 @@
 import argparse
 import getpass
 import json
+import os
 import subprocess
 from pathlib import Path
 
 from agent_safety_monitoring.experiments.resources import allocation_usage
 from agent_safety_monitoring.io import FileLock, atomic_json, digest, now, read_json
+
+
+def active_jobs(reserved, controller_self, environment):
+    active = reserved.splitlines()
+    if controller_self:
+        self_id = environment.get("SLURM_JOB_ID")
+        if (
+            not self_id
+            or environment.get("SLURM_JOB_NAME") != "asm-review-controller"
+            or environment.get("SLURM_JOB_GPUS") not in (None, "", "N/A")
+        ):
+            raise ValueError("Controller exemption requires the current CPU controller job")
+        active = [job for job in active if job != self_id]
+    return active
 
 
 def main():
@@ -21,6 +36,7 @@ def main():
     parser.add_argument("--minutes", type=int, required=True)
     parser.add_argument("--cap-hours", type=float, required=True)
     parser.add_argument("--since", default="2026-10-28")
+    parser.add_argument("--controller-self", action="store_true")
     parser.add_argument("sbatch_args", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     command = args.sbatch_args
@@ -67,7 +83,8 @@ def main():
         reserved = subprocess.check_output(
             ["squeue", "-u", user, "-h", "-o", "%i"], text=True
         ).strip()
-        if reserved:
+        active = active_jobs(reserved, args.controller_self, os.environ)
+        if active:
             raise SystemExit("Other jobs are active; reconcile reserved budget first")
         if usage["allocated_gpu_hours"] + args.gpus * args.minutes / 60 > args.cap_hours:
             raise SystemExit("Requested allocation exceeds remaining approved total cap")

@@ -78,3 +78,20 @@ calibration isolation, task resampling, interval reversal, randomized ties,
 injection pairing, exact/partial evidence spans, annotation provenance, protected
 held-out review gating, measured acceptance, resume, and aggregate export safety.
 Software tests do not establish GPU compatibility or annotation correctness.
+
+## November 3 reviewer repair
+
+Development job 31619759 completed in 8m13s but produced zero accepted proposals.
+Five of six calls spent all 8,192 output tokens on reasoning and returned no final
+content. The one completed response included an exact quotation repeated three
+times within its source step and supplied incorrect offsets. These are development
+observations; no held-out tuning occurred.
+
+The exploratory reviewer repair uses medium reasoning, a 16,384-token limit, and
+verbatim quotation text with sufficient context for uniqueness. Code resolves
+unique source offsets and rejects missing, fabricated, or ambiguous quotations.
+The original primary-study configuration is unchanged. A dependent CPU controller
+will verify the repaired development job and only then submit the fixed 30-record
+sample; subsequent retention and evidence-replacement stages are also triggered by
+Slurm dependencies. The original project ledger and measured 90-hour cap remain in
+force. Controller failure or ambiguity stops the chain and preserves its status.

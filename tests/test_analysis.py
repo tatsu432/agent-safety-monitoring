@@ -234,7 +234,7 @@ def test_model_review_private_resume_and_no_human_claim(tmp_path, monkeypatch):
                         {
                             "conclusion": "supported",
                             "rationale": "unverified interpretation",
-                            "references": [{"step": "s1", "start": 1, "end": 3, "text": "bc"}],
+                            "references": [{"step": "s1", "text": "bc"}],
                         }
                     ),
                 )
@@ -383,3 +383,59 @@ def test_injection_metadata_cannot_change_between_conditions():
     rows[0]["task_id"] = "different"
     with pytest.raises(ValueError, match="metadata differs"):
         injection_summary(rows, 10)
+
+
+def test_model_quotations_resolve_unique_offsets_and_reject_ambiguity():
+    from agent_safety_monitoring.analysis.model_review import SuggestedProposal, resolve_suggestion
+
+    t = trajectory()
+    proposal, refs = resolve_suggestion(
+        t,
+        SuggestedProposal.model_validate(
+            {
+                "conclusion": "supported",
+                "rationale": "test",
+                "references": [{"step": "s1", "text": "bcd"}],
+            }
+        ),
+    )
+    assert (refs[0]["start"], refs[0]["end"]) == (1, 4)
+    assert proposal.references[0].text == "bcd"
+    t.segments[0].text = "abc abc"
+    with pytest.raises(ValueError, match="more than once"):
+        resolve_suggestion(
+            t,
+            SuggestedProposal.model_validate(
+                {
+                    "conclusion": "supported",
+                    "rationale": "test",
+                    "references": [{"step": "s1", "text": "abc"}],
+                }
+            ),
+        )
+    with pytest.raises(ValueError, match="exact source substring"):
+        resolve_suggestion(
+            t,
+            SuggestedProposal.model_validate(
+                {
+                    "conclusion": "supported",
+                    "rationale": "test",
+                    "references": [{"step": "s1", "text": "fabricated"}],
+                }
+            ),
+        )
+
+
+def test_controller_exemption_only_ignores_its_own_cpu_job():
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location("analysis_submit", Path("scripts/yale/submit.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    env = {"SLURM_JOB_ID": "123", "SLURM_JOB_NAME": "asm-review-controller"}
+    assert module.active_jobs("123\n456", True, env) == ["456"]
+    assert module.active_jobs("123", False, env) == ["123"]
+    for bad in [{}, {**env, "SLURM_JOB_NAME": "other"}, {**env, "SLURM_JOB_GPUS": "0"}]:
+        with pytest.raises(ValueError):
+            module.active_jobs("123", True, bad)
