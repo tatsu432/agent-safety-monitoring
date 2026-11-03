@@ -16,6 +16,93 @@ def command(*args, env=None):
     return subprocess.check_output(args, text=True, env=env).strip()
 
 
+def publish_result(root, retention, replacement):
+    """Commit only aggregate diagnostics; reference text and record IDs stay private."""
+    if command("git", "status", "--porcelain"):
+        raise ValueError(
+            "Analysis checkout has uncommitted changes; refusing automatic report commit"
+        )
+    output = root / "docs/reports"
+    atomic_json(output / "model-evidence-retention.json", retention)
+    if replacement is not None:
+        atomic_json(output / "model-evidence-replacement.json", replacement)
+    lines = [
+        "# Exploratory model-based evidence review",
+        "",
+        f"The local 120B reviewer produced {retention['model_proposals']} validated proposals "
+        f"and {retention['model_supported_records']} supported interpretations.",
+        "All references are model-suggested, not human-verified. Exact source-span validation "
+        "does not establish semantic correctness. The sample contains 30 selected attacks.",
+        "",
+        "| Method | References | Fully retained | Partly retained | Missing | Cited |",
+        "| --- | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for method, values in sorted(retention["methods"].items()):
+        fields = [values.get(key, "not applicable") for key in ["full", "partial", "missing"]]
+        lines.append(
+            f"| {method.split('-')[0]} | {values['references']} | {fields[0]} | {fields[1]} "
+            f"| {fields[2]} | {values['cited']} |"
+        )
+    lines += [
+        "",
+        "Exact quotation containment applies only to EaE; citation omission does not "
+        "prove misunderstanding. Retention is conditional on the model's fallible references.",
+    ]
+    if replacement is not None:
+        delta, ci = replacement["mean_alert_change"], replacement["ci95"]
+        lines += [
+            "",
+            "## Evidence replacement",
+            "",
+            f"Eligible selected records: {replacement['eligible_records']}; "
+            f"task groups: {replacement['tasks']}. Status counts: "
+            f"{json.dumps(replacement['status_counts'], sort_keys=True)}.",
+        ]
+        if delta is not None and ci is not None:
+            lines.append(
+                f"Mean expected-alert change: {100 * delta:.1f} percentage points "
+                f"(pointwise 95% task-bootstrap interval {100 * ci[0]:.1f} to "
+                f"{100 * ci[1]:.1f})."
+            )
+        lines.append(
+            "This is a selected-sample, post-hoc diagnostic using the original policy, "
+            "not a full-system TPR or a human-verified evidence study."
+        )
+    else:
+        lines += [
+            "",
+            "No supported reference sets were available; evidence replacement was not run.",
+        ]
+    (output / "model-evidence-results.md").write_text("\n".join(lines) + "\n")
+    for name in ["eae-failure-analysis.md", "report-draft.md"]:
+        path = output / name
+        previous = path.read_text()
+        path.write_text(
+            "> **Evidence-review update:** The model-based diagnostic has completed. "
+            "See [its aggregate results](model-evidence-results.md); earlier pending-status "
+            "statements below are historical. References remain model-suggested.\n\n" + previous
+        )
+    files = [
+        "docs/reports/model-evidence-results.md",
+        "docs/reports/model-evidence-retention.json",
+        "docs/reports/eae-failure-analysis.md",
+        "docs/reports/report-draft.md",
+    ]
+    if replacement is not None:
+        files.append("docs/reports/model-evidence-replacement.json")
+    command("git", "add", *files)
+    command(
+        "git",
+        "-c",
+        "user.name=Codex",
+        "-c",
+        "user.email=codex@localhost",
+        "commit",
+        "-m",
+        "Report exploratory model evidence diagnostics",
+    )
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -90,6 +177,7 @@ def main():
             data, run_root, freeze, diag, base / "retention-aggregate.json"
         )
         if retention["model_supported_records"] == 0:
+            publish_result(root, retention, None)
             atomic_json(
                 status_path,
                 {
@@ -119,6 +207,8 @@ def main():
         next_phase = "replacement"
     else:
         result = read_json(base / "replacement-1/summary.json")
+        retention = read_json(base / "retention-aggregate.json")
+        publish_result(root, retention, result)
         atomic_json(
             status_path,
             {
@@ -193,4 +283,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except BaseException as exc:
+        status = Path("runs/model-review/continuation-status.json")
+        previous = read_json(status) if status.exists() else {}
+        atomic_json(
+            status, {**previous, "state": "controller_failed", "error_type": type(exc).__name__}
+        )
+        raise

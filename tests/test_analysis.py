@@ -439,3 +439,39 @@ def test_controller_exemption_only_ignores_its_own_cpu_job():
     for bad in [{}, {**env, "SLURM_JOB_NAME": "other"}, {**env, "SLURM_JOB_GPUS": "0"}]:
         with pytest.raises(ValueError):
             module.active_jobs("123", True, bad)
+
+
+def test_controller_report_is_conditional_and_aggregate_only(tmp_path, monkeypatch):
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location(
+        "review_controller", Path("scripts/analysis/review-controller.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(module, "command", lambda *args, **kwargs: "")
+    reports = tmp_path / "docs/reports"
+    reports.mkdir(parents=True)
+    for name in ["eae-failure-analysis.md", "report-draft.md"]:
+        (reports / name).write_text("Earlier draft")
+    retention = {
+        "model_proposals": 30,
+        "model_supported_records": 2,
+        "methods": {
+            "eae-0123456789ab": {"references": 3, "full": 1, "partial": 1, "missing": 1, "cited": 2}
+        },
+    }
+    replacement = {
+        "mean_alert_change": 0.25,
+        "ci95": [-0.1, 0.5],
+        "eligible_records": 2,
+        "tasks": 2,
+        "status_counts": {"valid": 2},
+    }
+    module.publish_result(tmp_path, retention, replacement)
+    report = (reports / "model-evidence-results.md").read_text()
+    assert "model-suggested, not human-verified" in report
+    assert "selected-sample, post-hoc" in report
+    assert "25.0 percentage points" in report
+    assert (reports / "model-evidence-retention.json").exists()
