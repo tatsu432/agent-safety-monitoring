@@ -48,7 +48,8 @@ def publish_result(root, retention, replacement):
         "Exact quotation containment applies only to EaE; citation omission does not "
         "prove misunderstanding. The reviewer selects passages up to 800 characters, so "
         "partial coverage may still include the decisive content. Retention is conditional "
-        "on the model's fallible references.",
+        "on the model's fallible references. Cited counts match source steps, not necessarily "
+        "the specific span within each cited step.",
     ]
     if replacement is not None:
         delta, ci = replacement["mean_alert_change"], replacement["ci95"]
