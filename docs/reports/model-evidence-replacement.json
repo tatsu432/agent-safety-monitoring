@@ -1,0 +1,17 @@
+{
+  "ci95": [
+    -0.13391304347826088,
+    0.05828922495274067
+  ],
+  "eligible_records": 24,
+  "freeze": "b86533ed57f70956b55d8a5e26eac1f833dc622ef92b36060e1f71382c70ae5d",
+  "mean_alert_change": -0.027898550724637688,
+  "note": "Selected-sample exploratory diagnostic, not a new system TPR or independently verified evidence study.",
+  "provenance": "model_suggested",
+  "status_counts": {
+    "budget_exceeded": 4,
+    "unresolved": 2,
+    "valid": 24
+  },
+  "tasks": 22
+}

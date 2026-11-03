@@ -1,0 +1,33 @@
+{
+  "freeze": "b86533ed57f70956b55d8a5e26eac1f833dc622ef92b36060e1f71382c70ae5d",
+  "human_reviewed_records": 0,
+  "methods": {
+    "average-585666364314": {
+      "cited": 143,
+      "references": 304
+    },
+    "eae-ac982afe089b": {
+      "cited": 12,
+      "full": 9,
+      "missing": 286,
+      "partial": 9,
+      "references": 304
+    },
+    "mrt-a2473545d129": {
+      "cited": 168,
+      "references": 304
+    },
+    "single-419328b0dd6f": {
+      "cited": 100,
+      "references": 304
+    },
+    "think-73afcfe0ee0b": {
+      "cited": 134,
+      "references": 304
+    }
+  },
+  "model_proposals": 29,
+  "model_supported_records": 28,
+  "note": "Coverage is conditional on unverified model reference interpretations. Quotation containment applies only to EaE. Citation omission is not proof of misunderstanding.",
+  "provenance": "model_suggested"
+}

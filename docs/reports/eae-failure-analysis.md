@@ -1,3 +1,5 @@
+> **Evidence-review update:** The model-based diagnostic has completed. See [its aggregate results](model-evidence-results.md); earlier pending-status statements below are historical. References remain model-suggested.
+
 # EaE failure analysis
 
 The frozen 3K EaE method has 4.8% expected attack detection, 5.1% realized test

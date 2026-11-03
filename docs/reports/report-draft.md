@@ -1,3 +1,5 @@
+> **Evidence-review update:** The model-based diagnostic has completed. See [its aggregate results](model-evidence-results.md); earlier pending-status statements below are historical. References remain model-suggested.
+
 > **November 1 reconciliation update:** All five methods’ full frozen records passed coverage and metadata checks. Recomputed primary metrics and paired bootstrap intervals exactly match saved summaries. Slurm accounting confirms 60.614 allocated GPU-hours. The 120B reviewer is staging; evidence annotation and inference remain pending. 
 
 # How Should a Coding Agent Safety Monitor Spend Its Compute Budget?
