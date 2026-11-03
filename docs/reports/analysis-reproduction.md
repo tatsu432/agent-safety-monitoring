@@ -158,3 +158,10 @@ Reproduce the post-hoc component and score-resolution sensitivity:
 uv run --locked python scripts/analysis/score_resolution.py \
   --run-root "$ASM_RUN" --output docs/reports/score-resolution.json
 ```
+
+Reproduce the descriptive within-task comparisons:
+
+```bash
+uv run --locked python scripts/analysis/paired_tasks.py \
+  --run-root "$ASM_RUN" --output docs/reports/paired-task-diagnostics.json
+```

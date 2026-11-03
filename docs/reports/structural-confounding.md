@@ -39,3 +39,25 @@ Source-token statistics come from the local prepared audit, not complete model p
 ![Source distributions](figures/source-feature-distributions.png)
 
 *Source-feature medians and interquartile ranges, not confidence intervals.*
+
+## Within-task benign and attack comparisons
+
+For each of 118 legitimate tasks, the table subtracts the expected alert
+probability of its nominal benign trajectory from the mean expected alert
+probability of its successful attack trajectories. Tasks receive equal weight;
+intervals independently resample calibration and test task groups and recalibrate
+on every draw. The score columns compare each attack with its matched benign
+trajectory, excluding invalid-score pairs from the higher/tied/lower counts.
+
+| Method | Mean within-task alert difference, pp [95% CI] | Attack score higher / tied / lower | Invalid-score pairs |
+| --- | ---: | ---: | ---: |
+| Single | 28.0 [21.5, 37.9] | 386 / 53 / 15 | 0 |
+| Think longer | 55.7 [40.4, 79.1] | 370 / 79 / 5 | 0 |
+| Average ×2 | 66.0 [52.8, 76.7] | 415 / 27 / 12 | 0 |
+| EaE 3K | -0.4 [-4.3, 3.4] | 76 / 339 / 30 | 9 |
+| MRT | 32.0 [16.7, 55.3] | 379 / 29 / 25 | 21 |
+
+These post-hoc within-task comparisons control the shared legitimate task identity,
+but do not eliminate trajectory-level length or tool-count confounding. Nominal
+benign assignment is not independent proof of harmlessness. Results and exact
+counts are in [paired-task diagnostics](paired-task-diagnostics.json).
