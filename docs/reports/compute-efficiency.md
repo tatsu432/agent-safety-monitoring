@@ -28,3 +28,20 @@ Slurm accounting confirms 60.614 allocated GPU-hours against the 90-hour cap. St
 *Logical generated tokens per primary test trajectory versus detection; tokens are a workload proxy and do not imply equal GPU time.*
 
 The point-estimate frontier in development GPU cost and expected test TPR contains Think longer, Average ×2, EaE 3K. This descriptive two-axis frontier ignores cost uncertainty and unequal realized test FPR; frontier membership is not an inferential superiority claim.
+
+## Same-cohort timing investigation
+
+The recovered selected-cold measurement file matches the SHA-256 embedded in
+the accepted pilot proof. Both single and think-longer processed the same 40
+records with identical total input tokens (1,040,868), one logical call per
+record, and no cache hits. Single generated 5,983 output tokens, including 1,655
+estimated reasoning tokens; think-longer generated 14,395 output tokens, including
+11,001 estimated reasoning tokens. These reasoning counts are estimates within
+the generated-token totals, not additional tokens.
+
+Measured homogeneous workload times were 612.0 seconds for single and 567.1
+seconds for think-longer, a 7.3% reduction despite more generated tokens. The
+measurements came from one cold run per method, without independent repeated
+trials. They do not identify whether scheduling, kernel behavior, batching, or
+other serving effects explain the difference. The pinned configuration, workload
+and token aggregates are in [cold-screen aggregates](cold-screen-aggregate.json).

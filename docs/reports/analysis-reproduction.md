@@ -165,3 +165,13 @@ Reproduce the descriptive within-task comparisons:
 uv run --locked python scripts/analysis/paired_tasks.py \
   --run-root "$ASM_RUN" --output docs/reports/paired-task-diagnostics.json
 ```
+
+After recovering the original cold screen, verify its accepted proof and export
+numeric-only measurements:
+
+```bash
+uv run --locked python scripts/analysis/cold_screen.py \
+  --measurement runs/yale-recovered/selected-cold-measurements.json \
+  --acceptance "$ASM_SOURCE/runs/readiness/accepted-readiness.json" \
+  --output docs/reports/cold-screen-aggregate.json
+```

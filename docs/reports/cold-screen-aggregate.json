@@ -1,0 +1,62 @@
+{
+  "acceptance_sha256": "bf152987293898c65a38763fac3fd25192266d99a17f110694014ebbe3fe37c6",
+  "accepted_backend_validated": true,
+  "individual_trials": {
+    "average": {
+      "cache_hits": 0,
+      "gpu_seconds_per_trajectory": 26.76904842769727,
+      "input_tokens": 2081736,
+      "invalid": 0,
+      "logical_calls": 80,
+      "n": 40,
+      "output_tokens": 11261,
+      "reasoning_tokens_estimated": 3091,
+      "workload_gpu_seconds": 1070.7619371078908
+    },
+    "eae": {
+      "cache_hits": 0,
+      "gpu_seconds_per_trajectory": 13.674292984325438,
+      "input_tokens": 1285505,
+      "invalid": 0,
+      "logical_calls": 83,
+      "n": 40,
+      "output_tokens": 37562,
+      "reasoning_tokens_estimated": 33342,
+      "workload_gpu_seconds": 546.9717193730175
+    },
+    "mrt": {
+      "cache_hits": 0,
+      "gpu_seconds_per_trajectory": 141.80697872837771,
+      "input_tokens": 2972477,
+      "invalid": 2,
+      "logical_calls": 588,
+      "n": 40,
+      "output_tokens": 89255,
+      "reasoning_tokens_estimated": 24107,
+      "workload_gpu_seconds": 5672.279149135109
+    },
+    "single": {
+      "cache_hits": 0,
+      "gpu_seconds_per_trajectory": 15.300959979044274,
+      "input_tokens": 1040868,
+      "invalid": 0,
+      "logical_calls": 40,
+      "n": 40,
+      "output_tokens": 5983,
+      "reasoning_tokens_estimated": 1655,
+      "workload_gpu_seconds": 612.0383991617709
+    },
+    "think": {
+      "cache_hits": 0,
+      "gpu_seconds_per_trajectory": 14.177460592600983,
+      "input_tokens": 1040868,
+      "invalid": 0,
+      "logical_calls": 40,
+      "n": 40,
+      "output_tokens": 14395,
+      "reasoning_tokens_estimated": 11001,
+      "workload_gpu_seconds": 567.0984237040393
+    }
+  },
+  "source_sha256": "f394531fbb7b9e30d8627d51059f511dec2e8bb4d7330386119178aa8ccf94ca"
+}
