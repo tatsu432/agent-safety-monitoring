@@ -25,7 +25,9 @@ Read `docs/task/01-experiment-implementation-spec.md`, `docs/methods.md`, and
 
 ## Yale
 
-Read `docs/yale-hpc.md` before cluster actions. The user authorizes existing alias
+Initiate Yale HPC login automatically whenever needed; do not ask the user to start it.
+The user will complete MFA promptly when prompted. Keep the authenticated connection
+available for reuse. Read `docs/yale-hpc.md` before cluster actions. The user authorizes existing alias
 `yale-hpc-cpsc4710` for this CPSC 5710 project. Inspect current Slurm permissions
 and storage; never borrow another project's directories or resource allowance.
 The user grants standing authorization for GPU submissions needed to complete this
