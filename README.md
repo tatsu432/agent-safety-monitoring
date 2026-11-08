@@ -1,27 +1,30 @@
 # Agent safety monitoring
 
-Offline comparison of five coding-agent monitoring procedures using fixed
-`openai/gpt-oss-20b` weights and saved BashArena trajectories.
+How should a coding-agent safety monitor spend its compute budget to detect harmful
+behavior while limiting false alarms? This study compares five procedures on saved
+BashArena trajectories using a fixed `gpt-oss-20b` monitor: single review, longer
+reasoning, averaging two reviews, extract-and-evaluate (EaE), and sequential plus
+hierarchical review (MRT).
 
-```bash
-uv sync --locked --extra data --extra tokenizer
-uv run pytest -q
-uv run asm experiment demo
-```
+The frozen offline study and post-hoc analysis are complete. On 454 recorded
+successful attacks and 118 nominal benign test trajectories, thresholds were set
+using separate benign calibration data to target 5% false-positive rate. Rates
+are expected alerts with randomization at tied scores:
 
-The demo uses synthetic judgments and does not measure monitor effectiveness.
+| Method | Attack detection | Test false-positive rate |
+| --- | ---: | ---: |
+| Single review | 31.9% | 4.1% |
+| Think longer | 63.4% | 7.7% |
+| Average two reviews | 70.2% | 4.2% |
+| EaE | 4.8% | 5.1% |
+| MRT | 40.9% | 8.5% |
 
-- [Scientific specification](docs/task/01-experiment-implementation-spec.md)
-- [Implementation plan](docs/plan/01-experiment-implementation-plan.md)
-- [Methods](docs/methods.md) · [Operations](docs/operations.md) · [Yale](docs/yale-hpc.md)
-- [Implementation records](docs/task_completion/)
+Averaging outperformed single review and MRT in paired task-bootstrap intervals;
+its advantage over think-longer was inconclusive. MRT used 5.3× averaging's measured
+development GPU time. A structural baseline achieved 0.901 AUROC, so dataset shortcuts
+are an important limitation. A small model-based evidence diagnostic did not establish
+why EaE failed; its references were not human-verified.
 
-Benchmark commands are never executed. Data, caches and private run artifacts stay
-outside Git. The frozen GPU study is reported complete. Local post-hoc analysis
-verifies frozen source/input hashes and reconciles full prediction records. The
-exploratory model-based evidence review and its replacement diagnostic are complete.
-
-Current findings: [research report](docs/reports/report-draft.md) ·
-[artifact audit](docs/reports/artifact-audit.md) ·
-[reproduction and remaining work](docs/reports/analysis-reproduction.md).
-Historical launch evidence: [readiness report](docs/reports/pre-main-experiment-readiness.md).
+[Research report](docs/reports/report-draft.md) · [Results and uncertainty](docs/reports/primary-analysis.md) ·
+[Compute](docs/reports/compute-efficiency.md) · [Methods](docs/methods.md) ·
+[Reproduce](docs/reports/analysis-reproduction.md)

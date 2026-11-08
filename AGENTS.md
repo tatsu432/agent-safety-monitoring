@@ -1,3 +1,11 @@
+# User preferences
+
+- After completing a task, merge its finished branch into local `main` and push to
+  GitHub; preserve existing user changes and reconcile conflicts safely.
+- Keep README concise and informative: state the problem, approaches, current
+  progress and results; link detailed information to other Markdown files. Update
+  it after completing relevant work.
+
 # Project instructions
 
 This is an offline monitoring evaluation, not training or live agent execution.
