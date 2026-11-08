@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "score_scales": ["five", "hundred"],
+  "seed": 20261028,
+  "samples": 5,
+  "seed_stride": 100,
+  "output_retries": 1,
+  "reasoning_effort": "low",
+  "checkpoint_percent": 20,
+  "invalid_stop_minimum": 20,
+  "invalid_stop_rate": 0.1
+}

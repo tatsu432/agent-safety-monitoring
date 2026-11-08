@@ -375,11 +375,12 @@ def analysis_review_prepare(
     output: Annotated[Path, typer.Option()],
     sample: Path | None = None,
     development: bool = False,
+    objective_aware: bool = False,
 ):
     """Prepare a private blinded packet from development or the existing diagnostic sample."""
     from agent_safety_monitoring.analysis.model_review import prepare_packet
 
-    show(prepare_packet(data, read_json(freeze), output, sample, development))
+    show(prepare_packet(data, read_json(freeze), output, sample, development, objective_aware))
 
 
 @analysis_app.command("review-run")
@@ -462,6 +463,135 @@ def analysis_historical_eae(
     from agent_safety_monitoring.analysis.records import development_eae
 
     show(development_eae(data, run_root, output))
+
+
+@analysis_app.command("diagnosis")
+def analysis_diagnosis(
+    freeze: Annotated[Path, typer.Option()],
+    repository: Annotated[Path, typer.Option()],
+    data: Annotated[Path, typer.Option()],
+    run_root: Annotated[Path, typer.Option()],
+    sacct: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    replicates: int = 2000,
+):
+    """Audit saved frozen results and reconstruct ROC/branch metrics without inference."""
+    from agent_safety_monitoring.analysis.diagnosis import run_diagnosis
+
+    result = run_diagnosis(freeze, repository, data, run_root, sacct, output, replicates)
+    show({"output": str(output), "freeze": result["freeze"], "replicates": replicates})
+
+
+@experiment_app.command("followup")
+def experiment_followup(
+    original_freeze: Annotated[Path, typer.Option()],
+    config: Annotated[Path, typer.Option()],
+    data: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    split: str = "development",
+    limit: int | None = None,
+    shard: int = 0,
+    shards: int = 1,
+    frozen: Path | None = None,
+):
+    """Run the versioned exploratory score-scale/N study; original artifacts stay read-only."""
+    import asyncio
+
+    from agent_safety_monitoring.experiments.followup import run_followup
+
+    show(
+        asyncio.run(
+            run_followup(data, original_freeze, config, output, split, limit, shard, shards, frozen)
+        )
+    )
+
+
+@experiment_app.command("followup-context")
+def followup_context(
+    original_freeze: Annotated[Path, typer.Option()],
+    config: Annotated[Path, typer.Option()],
+    data: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Check both scoring prompts with the pinned tokenizer, including retry reserve."""
+    from agent_safety_monitoring.experiments.followup import context_preflight
+
+    show(context_preflight(data, original_freeze, config, output))
+
+
+@experiment_app.command("followup-freeze")
+def followup_freeze(
+    development_root: Annotated[Path, typer.Option()],
+    context: Annotated[Path, typer.Option()],
+    runtime: Annotated[Path, typer.Option()],
+    sacct: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Freeze the follow-up using completed real development and allocation evidence."""
+    from agent_safety_monitoring.experiments.followup import freeze_followup
+
+    show(freeze_followup(development_root, context, runtime, sacct, output))
+
+
+@experiment_app.command("followup-cache")
+def followup_cache(
+    run_root: Annotated[Path, typer.Option()],
+    original_freeze: Annotated[Path, typer.Option()],
+    data: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Copy compatible saved original calls into a separate follow-up request cache."""
+    from agent_safety_monitoring.experiments.followup import seed_cache
+
+    show(seed_cache(run_root, original_freeze, data, output))
+
+
+@analysis_app.command("followup-report")
+def analysis_followup_report(
+    run_root: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    replicates: int = 2000,
+):
+    """Require complete follow-up coverage before evaluating nested sample counts."""
+    from agent_safety_monitoring.experiments.followup import followup_report
+
+    show(followup_report(run_root, output, replicates))
+
+
+@analysis_app.command("diagnosis-render")
+def analysis_diagnosis_render(
+    source: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    replay: Path | None = None,
+):
+    """Render aggregate-only diagnosis reports and figures."""
+    from agent_safety_monitoring.analysis.diagnosis_report import render
+
+    show(render(source, output, replay))
+
+
+@analysis_app.command("source-replay")
+def analysis_source_replay(
+    repository: Annotated[Path, typer.Option()],
+    data: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Compare all canonical records and labels against the raw Inspect logs."""
+    from agent_safety_monitoring.analysis.source_replay import replay
+
+    show(replay(repository, data, output))
+
+
+@analysis_app.command("calibration-shift")
+def analysis_calibration_shift(
+    data: Annotated[Path, typer.Option()],
+    run_root: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Describe benign population differences with whole-task uncertainty."""
+    from agent_safety_monitoring.analysis.calibration_shift import analyze
+
+    show(analyze(data, run_root, output))
 
 
 if __name__ == "__main__":

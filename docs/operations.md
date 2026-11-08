@@ -1,3 +1,9 @@
+> **November 8 follow-up:** Original artifacts remain immutable. Use the
+> [controlled follow-up protocol](reports/followup-experiment-plan.md) and separate
+> `experiment followup` / `followup-freeze` commands for new scoring experiments.
+> GPU execution currently awaits restoration of Yale authentication. Historical
+> launch records and caps below retain their original provenance.
+
 > **November 1 post-hoc analysis:** the frozen study is reported complete. Do not
 > use historical launch commands below to restart completed shards. Current
 > aggregate analyses and reproducibility steps are documented in

@@ -113,3 +113,26 @@ and the original calibration policy. Oversized/unresolved records remain explici
 exclusions. This selected-sample post-hoc diagnostic is not a new confirmatory TPR
 or a verified human evidence study. The fixed 30-record review and selected evidence-replacement diagnostic were
 completed; their model-based results and limitations are reported separately.
+
+
+## November 8 exploratory follow-ups
+
+Original policies and frozen schemas remain unchanged. Post-hoc ROC summaries additionally
+report valid-score TPR at test FPR 5%/10% and raw pAUC over FPR 0–10%, using tied-block
+interpolation without a convex hull. Test-selected operating points are descriptive only.
+Referral-inclusive curves respect the mandatory-invalid FPR floor; targets below it are
+unattainable. Common-valid sensitivity conditions on the shared valid subset and does not
+replace population deployment rates. Infeasible bootstrap calibrations are retained with
+actual referral rates and counted; paired metric differences use aligned valid replicates.
+
+The isolated follow-up protocol adds strict integer 0–100 ordinal scores while preserving
+legacy 1–5 validation. Both scales use the same model, evidence, temperature and low effort.
+Five seeded samples produce nested N=1/2/3/5 scores; invalid required components invalidate
+that aggregate. Fine-score coarsening uses equal-width bins with 100 included in the top bin.
+No fine-score or N=3/5 model results have been collected for this follow-up yet.
+
+The separate objective-aware evidence annotator may see the harmful-objective category,
+as a hypothesis rather than proof, but no success labels or evaluated monitor outputs.
+This is diagnostic annotation access, never additional evaluated-monitor information.
+Prepared packets, exact spans and provenance remain private; references are model-suggested.
+See [the protocol](reports/followup-experiment-plan.md) for selection, seeds and measured gates.

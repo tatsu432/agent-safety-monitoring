@@ -1,0 +1,162 @@
+{
+  "feature_audit_hash": "5d15b44bfd11904b0d8d832a906e748833b1a695bf4a76e21a0c7c41fe677cbb",
+  "features": {
+    "characters": {
+      "calibration_mean": 69123.72991071429,
+      "calibration_n": 448,
+      "ci95": [
+        -3494.4121812575713,
+        12084.60200041616
+      ],
+      "test_mean": 73177.29661016949,
+      "test_minus_calibration": 4053.566699455201,
+      "test_n": 118
+    },
+    "source_tokens": {
+      "calibration_mean": 20687.43973214286,
+      "calibration_n": 448,
+      "ci95": [
+        -1138.7020779736665,
+        3468.258253253627
+      ],
+      "test_mean": 21774.525423728814,
+      "test_minus_calibration": 1087.085691585955,
+      "test_n": 118
+    },
+    "tool_calls": {
+      "calibration_mean": 28.03125,
+      "calibration_n": 448,
+      "ci95": [
+        0.5125558035714286,
+        7.270681371065374
+      ],
+      "test_mean": 31.864406779661017,
+      "test_minus_calibration": 3.8331567796610173,
+      "test_n": 118
+    }
+  },
+  "interpretation": "Descriptive population contrasts; neither FPR differences nor these observational contrasts establish a cause of monitor errors.",
+  "replicates": 2000,
+  "scores": {
+    "average-585666364314": {
+      "invalid": {
+        "calibration_mean": 0.0,
+        "calibration_n": 448,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "test_mean": 0.0,
+        "test_minus_calibration": 0.0,
+        "test_n": 118
+      },
+      "top_score": {
+        "calibration_mean": 0.04017857142857143,
+        "calibration_n": 448,
+        "ci95": [
+          -0.03484412832929782,
+          0.048577481840193705
+        ],
+        "test_mean": 0.0423728813559322,
+        "test_minus_calibration": 0.00219430992736077,
+        "test_n": 118
+      }
+    },
+    "eae-ac982afe089b": {
+      "invalid": {
+        "calibration_mean": 0.015625,
+        "calibration_n": 448,
+        "ci95": [
+          -0.022321428571428572,
+          0.02943401937046005
+        ],
+        "test_mean": 0.01694915254237288,
+        "test_minus_calibration": 0.0013241525423728813,
+        "test_n": 118
+      },
+      "top_score": {
+        "calibration_mean": 0.05133928571428571,
+        "calibration_n": 448,
+        "ci95": [
+          -0.04509685230024213,
+          0.04858883171912827
+        ],
+        "test_mean": 0.05084745762711865,
+        "test_minus_calibration": -0.0004918280871670649,
+        "test_n": 118
+      }
+    },
+    "mrt-a2473545d129": {
+      "invalid": {
+        "calibration_mean": 0.006696428571428571,
+        "calibration_n": 448,
+        "ci95": [
+          0.0017781476997578696,
+          0.07359639830508467
+        ],
+        "test_mean": 0.0423728813559322,
+        "test_minus_calibration": 0.03567645278450363,
+        "test_n": 118
+      },
+      "top_score": {
+        "calibration_mean": 0.029017857142857144,
+        "calibration_n": 448,
+        "ci95": [
+          -0.027239709443099273,
+          0.04502118644067797
+        ],
+        "test_mean": 0.03389830508474576,
+        "test_minus_calibration": 0.004880447941888619,
+        "test_n": 118
+      }
+    },
+    "single-419328b0dd6f": {
+      "invalid": {
+        "calibration_mean": 0.0,
+        "calibration_n": 448,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "test_mean": 0.0,
+        "test_minus_calibration": 0.0,
+        "test_n": 118
+      },
+      "top_score": {
+        "calibration_mean": 0.11383928571428571,
+        "calibration_n": 448,
+        "ci95": [
+          -0.07506053268765132,
+          0.04717766343825665
+        ],
+        "test_mean": 0.09322033898305085,
+        "test_minus_calibration": -0.020618946731234863,
+        "test_n": 118
+      }
+    },
+    "think-73afcfe0ee0b": {
+      "invalid": {
+        "calibration_mean": 0.0,
+        "calibration_n": 448,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "test_mean": 0.0,
+        "test_minus_calibration": 0.0,
+        "test_n": 118
+      },
+      "top_score": {
+        "calibration_mean": 0.07142857142857142,
+        "calibration_n": 448,
+        "ci95": [
+          -0.015662832929782086,
+          0.10475938256658594
+        ],
+        "test_mean": 0.11016949152542373,
+        "test_minus_calibration": 0.0387409200968523,
+        "test_n": 118
+      }
+    }
+  }
+}

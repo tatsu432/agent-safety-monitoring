@@ -1,0 +1,8 @@
+{
+  "complete": true,
+  "interpretation": "Exact replay of audited normalization plus direct raw-label checks; not a semantic guarantee of harmlessness or absence of visible prompt injection.",
+  "mismatch_count": 0,
+  "mismatch_fields": [],
+  "samples_replayed": 1200,
+  "tasks_with_inconsistent_genuine_description": 0
+}

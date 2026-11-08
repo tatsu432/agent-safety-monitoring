@@ -16,11 +16,12 @@ def write_manuscript(output, data, main_table, pair_table, cost_table, policy_ta
 
 Tatsuhiro Shimizu · Yale CPSC 5710 · Scientific analysis draft, November 1, 2026
 
-**Status:** The frozen experiment is reported complete and its saved aggregates have
-been analyzed. Frozen source and canonical inputs are independently verified locally.
-Full prediction-record reconciliation, fresh cluster accounting, and the stronger-model
-evidence experiment remain blocked by Yale authentication. This is an empirical draft
-with explicit outstanding dependencies, not a claim that every acceptance criterion is met.
+**Status:** This report is generated from validated aggregate tables. Record-level audit,
+completed evidence diagnostics, new post-hoc analyses, and outstanding follow-up work are
+tracked in [the original-study audit](original-study-audit.md),
+[model-evidence results](model-evidence-results.md), and
+[the follow-up protocol](followup-experiment-plan.md). This generator does not infer that
+all research tasks are complete from the availability of aggregate tables.
 
 ## Abstract
 
@@ -207,10 +208,12 @@ hypotheses. The selected spans and judge inputs must be inspected before attribu
 
 The user elected stronger-model review instead of human annotation. The prepared workflow
 uses a revision-pinned local gpt-oss-120b, with no access to source outcome labels, monitor
-selections, scores, or verdicts. Exact-span checks verify source containment only. Any future
-retention or replacement finding will remain conditional on model-suggested evidence and
-shared-family biases; it will not be presented as human-verified evidence. No annotation or
-replacement GPU experiment was executed during this authentication-blocked analysis.
+selections, scores, or verdicts. Exact-span checks verify source containment only.
+Retention and replacement findings remain
+conditional on model-suggested evidence and
+shared-family biases; they are not human-verified evidence. The completed blinded review and
+replacement diagnostic are documented in [model-evidence results](model-evidence-results.md).
+A separately versioned objective-aware review is part of the current follow-up protocol.
 
 The frozen injection experiment supplies 480 matched comparisons across two methods,
 three payload families, two positions, and 40 trajectories. Recomputed task-cluster intervals
@@ -237,8 +240,9 @@ review cannot establish whether live intervention would prevent harm.
 
 All mechanism investigations added after observing results are post-hoc. Model-proposed
 reference evidence is fallible. Mock/software tests establish safeguards, not GPU compatibility
-or scientific effectiveness. Missing private artifacts limit the independent reconciliation
-completed in this draft and are recorded rather than filled in from public point estimates.
+or scientific effectiveness. Artifact availability and completed independent reconciliation
+are recorded explicitly in
+the original-study audit. Missing follow-up results must not be inferred from original points.
 
 ## 8. Conclusion
 

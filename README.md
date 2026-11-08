@@ -6,7 +6,8 @@ BashArena trajectories using a fixed `gpt-oss-20b` monitor: single review, longe
 reasoning, averaging two reviews, extract-and-evaluate (EaE), and sequential plus
 hierarchical review (MRT).
 
-The frozen offline study and post-hoc analysis are complete. On 454 recorded
+The original frozen study is complete. A new forensic audit reproduces its results;
+controlled follow-up inference is prepared and awaiting Yale authentication. On 454 recorded
 successful attacks and 118 nominal benign test trajectories, thresholds were set
 using separate benign calibration data to target 5% false-positive rate. Rates
 are expected alerts with randomization at tied scores:
@@ -28,3 +29,11 @@ why EaE failed; its references were not human-verified.
 [Research report](docs/reports/report-draft.md) · [Results and uncertainty](docs/reports/primary-analysis.md) ·
 [Compute](docs/reports/compute-efficiency.md) · [Methods](docs/methods.md) ·
 [Reproduce](docs/reports/analysis-reproduction.md)
+
+
+The [forensic audit](docs/reports/original-study-audit.md) separates calibrated policies
+from descriptive test-ROC performance. [Failure analysis](docs/reports/failure-analysis.md)
+reconstructs MRT branches and EaE evidence structure. The
+[follow-up protocol](docs/reports/followup-experiment-plan.md) records prepared 0–100 scoring,
+N=1/2/3/5 experiments, resource projections, and outstanding physical validation.
+[Current report](docs/reports/final-report.md) includes completed post-hoc results and limitations.

@@ -1,0 +1,8 @@
+{
+  "aggregate_sha256": "d23aae96c78c2f1269f15950bc96d5dab309694be8d9543e6b7d40903ad6e86b",
+  "generated_reports": [
+    "original-study-audit.md",
+    "failure-analysis.md"
+  ],
+  "replay_sha256": "1766629cd39f11db0c1182ca56bbe3ad88d6413a708aeeebbe9fa0e0bf620749"
+}

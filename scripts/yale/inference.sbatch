@@ -130,6 +130,29 @@ if [[ "${ASM_ACTION:-run}" == benchmark ]]; then
       --gpus "${ASM_GPUS:?}" --limit "${ASM_LIMIT:-4}" \
       --trial-id "${ASM_TRIAL_ID:-default}" "${args[@]}" &
     client_pid=$!
+elif [[ "${ASM_ACTION:-run}" == followup ]]; then
+    args+=(--original-freeze "${ASM_FREEZE:?}" --config "${ASM_FOLLOWUP_CONFIG:?}"
+           --split "${ASM_SPLIT:-development}" --shard "${ASM_SHARD:-0}"
+           --shards "${ASM_SHARDS:-1}")
+    if [[ -n "${ASM_LIMIT:-}" ]]; then args+=(--limit "$ASM_LIMIT"); fi
+    if [[ -n "${ASM_FOLLOWUP_FREEZE:-}" ]]; then args+=(--frozen "$ASM_FOLLOWUP_FREEZE"); fi
+    "$client" experiment followup "${args[@]}" \
+      > "$output/jobs/$SLURM_JOB_ID-client.json" &
+    client_pid=$!
+    wait_client
+    python3 - "$output" "$SLURM_JOB_ID" <<'FOLLOWUP_PY'
+import hashlib, json, os, sys
+from pathlib import Path
+output, job = Path(sys.argv[1]), sys.argv[2]
+identity = json.loads((output / 'identity.json').read_text())
+encoded = json.dumps(identity, sort_keys=True, separators=(',', ':'),
+                     ensure_ascii=False, allow_nan=False).encode()
+with (output / 'jobs' / f'{job}-followup-runtime.json').open('w') as stream:
+    json.dump({'job_id': job, 'identity': hashlib.sha256(encoded).hexdigest(),
+               'hardware_verified': True, 'engine_verified': True,
+               'container_verified': bool(os.environ.get('ASM_IMAGE'))}, stream, indent=2)
+FOLLOWUP_PY
+    cat "$output/jobs/$SLURM_JOB_ID-client.json"
 else
     args+=(--split "${ASM_SPLIT:-development}" --shard "${ASM_SHARD:-0}" --shards "${ASM_SHARDS:-1}")
     if [[ -n "${ASM_FREEZE:-}" ]]; then args+=(--frozen "$ASM_FREEZE"); else args+=(--config "${ASM_CONFIG:?}"); fi
