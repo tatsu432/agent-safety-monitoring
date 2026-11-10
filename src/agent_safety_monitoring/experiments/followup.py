@@ -155,6 +155,7 @@ async def run_followup(
     shard=0,
     shards=1,
     frozen=None,
+    ids=None,
 ):
     """Real held-out work requires an explicit compatible follow-up freeze."""
     if split not in {"development", "calibration", "test"} or not 0 <= shard < shards:
@@ -192,6 +193,20 @@ async def run_followup(
         if not accepted["body"].get("development_accepted"):
             raise ValueError("Real development acceptance required")
     rows = [r for r in manifest["records"] if r["split"] == split and not r["exclusion"]]
+    if ids is not None:
+        selected_ids = read_json(ids)
+        if (
+            split != "development"
+            or limit is not None
+            or len(set(selected_ids)) != len(selected_ids)
+        ):
+            raise ValueError(
+                "Explicit unique IDs are development-only and cannot combine with limit"
+            )
+        available = {r["trajectory_id"] for r in rows}
+        if not selected_ids or not set(selected_ids) <= available:
+            raise ValueError("Explicit development IDs are ineligible")
+        rows = [r for r in rows if r["trajectory_id"] in selected_ids]
     rows.sort(key=lambda r: r["trajectory_id"])
     if limit is not None:
         if limit < 1:

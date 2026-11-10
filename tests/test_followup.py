@@ -142,6 +142,22 @@ def test_followup_report_requires_full_coverage_and_valid_scores(tmp_path):
                         },
                     )
     assert followup_report(tmp_path, tmp_path / "report.json", 5)["methods"] == 16
+    from agent_safety_monitoring.analysis.followup import load_split
+
+    for i, score in enumerate([19, 21, 50, 75, 100]):
+        path = tmp_path / f"test/a-hundred-{i}.json"
+        sample = read_json(path)
+        sample["review"]["score"] = score
+        atomic_json(path, sample)
+    tables, _, _, _, _ = load_split(tmp_path, "test")
+    assert next(r["score"] for r in tables["hundred-binned-n2"] if r["label"]) == 2
+    assert next(r["score"] for r in tables["hundred-bin-first-n2"] if r["label"]) == 1.5
+    invalid = tmp_path / "test/a-hundred-1.json"
+    sample = read_json(invalid)
+    sample["review"] = {"status": "invalid", "score": None}
+    atomic_json(invalid, sample)
+    tables, _, _, _, _ = load_split(tmp_path, "test")
+    assert next(r["score"] for r in tables["hundred-bin-first-n2"] if r["label"]) is None
     target = tmp_path / "test/a-hundred-4.json"
     saved = read_json(target)
     saved["review"]["score"] = 101

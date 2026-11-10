@@ -140,6 +140,7 @@ elif [[ "${ASM_ACTION:-run}" == followup ]]; then
            --split "${ASM_SPLIT:-development}" --shard "${ASM_SHARD:-0}"
            --shards "${ASM_SHARDS:-1}")
     if [[ -n "${ASM_LIMIT:-}" ]]; then args+=(--limit "$ASM_LIMIT"); fi
+    if [[ -n "${ASM_FOLLOWUP_IDS:-}" ]]; then args+=(--ids "$ASM_FOLLOWUP_IDS"); fi
     if [[ -n "${ASM_FOLLOWUP_FREEZE:-}" ]]; then args+=(--frozen "$ASM_FOLLOWUP_FREEZE"); fi
     "$client" experiment followup "${args[@]}" \
       > "$output/jobs/$SLURM_JOB_ID-client.json" &

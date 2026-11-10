@@ -493,6 +493,7 @@ def experiment_followup(
     shard: int = 0,
     shards: int = 1,
     frozen: Path | None = None,
+    ids: Path | None = None,
 ):
     """Run the versioned exploratory score-scale/N study; original artifacts stay read-only."""
     import asyncio
@@ -501,7 +502,9 @@ def experiment_followup(
 
     show(
         asyncio.run(
-            run_followup(data, original_freeze, config, output, split, limit, shard, shards, frozen)
+            run_followup(
+                data, original_freeze, config, output, split, limit, shard, shards, frozen, ids
+            )
         )
     )
 
