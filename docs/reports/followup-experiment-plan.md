@@ -1,3 +1,7 @@
+> **November 10 execution update:** Yale access is restored. The new physical pilot
+> is running, with ledger-backed continuation scheduled. The scoring and objective-aware
+> follow-ups remain unfinished. See the [current checkpoint](../task_completion/05-extra-check-checkpoint.md).
+
 # Controlled follow-up protocol and execution status
 
 November 8, 2026. These experiments are exploratory: the original test has already

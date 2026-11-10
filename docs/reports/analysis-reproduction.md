@@ -209,3 +209,46 @@ uv run --locked python scripts/analysis/resource_summary.py \
   --follow-up 31619759 31802302 31802796 31802993 31804042 \
   --output docs/reports/resource-accounting.json
 ```
+
+## November 10 joint sensitivity and controlled follow-ups
+
+Run the joint analysis from an isolated checkout against the recovered original run:
+
+```bash
+uv run --locked asm analysis joint-structural --data "$ASM_SOURCE/data/prepared" \
+  --run-root "$ASM_RUN" --output runs/extra-check/joint-structural.json
+uv run --locked python scripts/analysis/joint_structural_report.py \
+  --source runs/extra-check/joint-structural.json --output runs/extra-check/report
+```
+
+The checked-in `joint-structural-aggregate.json` contains aggregate cells, intervals,
+feature means and hashes, with no record identifiers or source text. Bootstrap
+conditions on the development-fitted baselines and boundaries; matching is not
+causal identification. Rendering that artifact requires no benchmark records.
+
+Follow-up CLI additions are `experiment followup-timing`, `analysis followup-select`,
+`analysis followup-report` and `analysis followup-figures`. Timing takes a private JSON
+list of exactly 40 development IDs with `--ids`. Selection takes the complete
+150-record development output via `--run-root` and physical timing artifact via
+`--measurements`. A held-out `experiment followup-freeze` now also requires
+`--selection`, binding development selection and full coverage before inference.
+The physical three-record pilot alone does not authorize a held-out freeze.
+
+After all eight held-out shards per split are complete:
+
+```bash
+uv run --locked asm analysis followup-report --run-root runs/extra-check/scoring \
+  --output runs/extra-check/scoring-report.json
+uv run --locked asm analysis followup-figures --source runs/extra-check/scoring-report.json \
+  --measurements runs/extra-check/timing/measurements.json --output runs/extra-check/figures
+uv run --locked python scripts/analysis/seed_variability.py --base runs/extra-check
+```
+
+Follow-up report and selection artifacts contain private provenance paths/IDs;
+keep them under `runs/`. Only vetted aggregate fields and figures may be published.
+The dependency continuation uses existing `submit.py`, explicit attempt identities,
+project accounting, full-coverage checks and separate physical acceptance. Inspect
+`runs/extra-check/continuation.json` and the ledger before any manual recovery.
+Cold timing trials intentionally regenerate requests for measurement; primary
+follow-up inference imports exact compatible original calls and never restarts a
+completed cold trial as if it were independent.

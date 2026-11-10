@@ -1,3 +1,7 @@
+> **November 10 execution update:** Yale access is restored. The new physical pilot
+> is running, with ledger-backed continuation scheduled. The scoring and objective-aware
+> follow-ups remain unfinished. See the [current checkpoint](../task_completion/05-extra-check-checkpoint.md).
+
 > **November 8 follow-up status:** Original metrics and uncertainty have been independently reproduced. New ROC and branch analyses below are post hoc. Controlled 0–100/N=3/5 inference and objective-aware reference review remain pending Yale authentication; this is the current report, not a claim of full follow-up completion.
 
 # How Should a Coding Agent Safety Monitor Spend Its Compute Budget?

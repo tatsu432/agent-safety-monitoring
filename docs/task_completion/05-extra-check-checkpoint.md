@@ -22,6 +22,9 @@ The full task is **in progress**, not complete.
   48.2% [31.9,69.4] MRT, and 65.8% [48.5,95.1] think-longer. The structural
   length/tool baseline has weighted AUROC 0.676. These are exploratory estimates
   for a changed overlap population, with residual within-cell confounding.
+- Re-ran the frozen source/data audit: all 1,200 canonical files and 47 frozen source
+  objects match; no task leakage. Regenerated original five-method and 480 injection
+  aggregates match the published numeric artifacts exactly.
 - Published allowlisted aggregate scalars to
   [W&B](https://forge.coreweave.com/wandb/tatsu432s/agent-safety-monitoring/runs/nov10-joint).
 - **105 tests pass; Ruff passes.** Software tests do not establish new GPU compatibility.
@@ -49,7 +52,7 @@ accounting cap is not a scheduler resource grant.
 
 Remote checkout:
 `/nfs/roberts/project/cpsc4710/cpsc4710_ts2236/agent-safety-monitoring-extra-check`.
-Private outputs: `runs/extra-check/`; shared submission ledger: `runs/submissions.json`.
+Private outputs: `runs/extra-check/`; continuation submission ledger: `runs/submissions.json`.
 Inspect `squeue --me`, project-filtered `sacct`, `continuation.json`, any
 `controller-failure.json`, summaries, and logs before recovery. Never resubmit an
 ambiguous identity. Complete-result resume preserves geometry, protocol, source,

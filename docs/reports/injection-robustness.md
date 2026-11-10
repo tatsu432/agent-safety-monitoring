@@ -38,3 +38,11 @@ The 480 comparisons are repeated conditions on 40 trajectories, not 480 independ
 ![Injection effects](figures/injection-effects.png)
 
 *Matched changes in expected miss/alert probability, with task-cluster intervals.*
+
+## November 10 reconciliation
+
+Re-running aggregate generation from the original frozen bundle reproduces all
+480 paired comparison aggregates exactly, including source-task clustered intervals,
+attack-miss/benign-alert separation, payload families, placements and invalid counts.
+No new injection inference was run. The effective independent cohort remains 40
+trajectories; repeated intervention conditions do not increase that denominator.
