@@ -141,7 +141,7 @@ def test_followup_report_requires_full_coverage_and_valid_scores(tmp_path):
                             "review": {"status": "valid", "score": score},
                         },
                     )
-    assert followup_report(tmp_path, tmp_path / "report.json", 5)["methods"] == 12
+    assert followup_report(tmp_path, tmp_path / "report.json", 5)["methods"] == 16
     target = tmp_path / "test/a-hundred-4.json"
     saved = read_json(target)
     saved["review"]["score"] = 101

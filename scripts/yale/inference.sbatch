@@ -130,6 +130,11 @@ if [[ "${ASM_ACTION:-run}" == benchmark ]]; then
       --gpus "${ASM_GPUS:?}" --limit "${ASM_LIMIT:-4}" \
       --trial-id "${ASM_TRIAL_ID:-default}" "${args[@]}" &
     client_pid=$!
+elif [[ "${ASM_ACTION:-run}" == followup-timing ]]; then
+    "$client" experiment followup-timing "${args[@]}" \
+      --original-freeze "${ASM_FREEZE:?}" --config "${ASM_FOLLOWUP_CONFIG:?}" \
+      --ids "${ASM_TIMING_IDS:?}" --gpus "${ASM_GPUS:?}" &
+    client_pid=$!
 elif [[ "${ASM_ACTION:-run}" == followup ]]; then
     args+=(--original-freeze "${ASM_FREEZE:?}" --config "${ASM_FOLLOWUP_CONFIG:?}"
            --split "${ASM_SPLIT:-development}" --shard "${ASM_SHARD:-0}"

@@ -521,6 +521,7 @@ def followup_context(
 
 @experiment_app.command("followup-freeze")
 def followup_freeze(
+    selection: Annotated[Path, typer.Option()],
     development_root: Annotated[Path, typer.Option()],
     context: Annotated[Path, typer.Option()],
     runtime: Annotated[Path, typer.Option()],
@@ -530,7 +531,7 @@ def followup_freeze(
     """Freeze the follow-up using completed real development and allocation evidence."""
     from agent_safety_monitoring.experiments.followup import freeze_followup
 
-    show(freeze_followup(development_root, context, runtime, sacct, output))
+    show(freeze_followup(development_root, context, runtime, sacct, output, selection))
 
 
 @experiment_app.command("followup-cache")
@@ -592,6 +593,60 @@ def analysis_calibration_shift(
     from agent_safety_monitoring.analysis.calibration_shift import analyze
 
     show(analyze(data, run_root, output))
+
+
+@analysis_app.command("followup-select")
+def analysis_followup_select(
+    run_root: Annotated[Path, typer.Option()],
+    measurements: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Select fixed scale/N policies using development tasks and physical cost."""
+    from agent_safety_monitoring.analysis.followup import select_development
+
+    show(select_development(run_root, measurements, output))
+
+
+@analysis_app.command("joint-structural")
+def analysis_joint_structural(
+    data: Annotated[Path, typer.Option()],
+    run_root: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    replicates: int = 2000,
+):
+    """Evaluate joint length/tool overlap using a fixed development grid."""
+    from agent_safety_monitoring.analysis.joint_structural import analyze
+
+    show(analyze(data, run_root, output, replicates))
+
+
+@experiment_app.command("followup-timing")
+def experiment_followup_timing(
+    data: Annotated[Path, typer.Option()],
+    original_freeze: Annotated[Path, typer.Option()],
+    config: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    ids: Annotated[Path, typer.Option()],
+    gpus: int = 1,
+):
+    """Measure eight cold development workloads in a real GPU allocation."""
+    import asyncio
+
+    from agent_safety_monitoring.experiments.followup_timing import benchmark
+
+    show(asyncio.run(benchmark(data, original_freeze, config, output, ids, gpus)))
+
+
+@analysis_app.command("followup-figures")
+def analysis_followup_figures(
+    source: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    measurements: Path | None = None,
+):
+    """Render aggregate follow-up figures; measured cost is optional and explicit."""
+    from agent_safety_monitoring.analysis.followup_figures import render
+
+    show(render(source, output, measurements))
 
 
 if __name__ == "__main__":

@@ -412,7 +412,7 @@ def context_preflight(data, original_freeze, config_path, output):
     return {k: v for k, v in result.items() if k != "records"}
 
 
-def freeze_followup(development_root, context, runtime, sacct, output):
+def freeze_followup(development_root, context, runtime, sacct, output, selection=None):
     """Bind actual development and preflight evidence; never amend the original freeze."""
     from agent_safety_monitoring.experiments.resources import allocation_usage
     from agent_safety_monitoring.io import file_hash
@@ -458,7 +458,18 @@ def freeze_followup(development_root, context, runtime, sacct, output):
         or not all(r["fits"] for r in proof["records"])
     ):
         raise ValueError("Incompatible context preflight")
+    if selection is None:
+        raise ValueError("Full development selection required before held-out freeze")
+    selected = read_json(selection)
+    if (
+        selected["identity"] != digest(identity)
+        or selected.get("selected") is None
+        or set(geometry["expected_ids"]) != set(identity["expected"]["development"])
+    ):
+        raise ValueError("Selection and full development coverage must match accepted identity")
     body = {
+        "selection_sha256": file_hash(selection),
+        "selected_policy": selected["selected"],
         "identity": identity,
         "development_accepted": True,
         "context_sha256": file_hash(context),
@@ -514,96 +525,6 @@ def seed_cache(run_root, original_freeze, data, output):
 
 
 def followup_report(root, output, replicates=2000):
-    from agent_safety_monitoring.analysis.operating_points import comparison
-    from agent_safety_monitoring.io import file_hash
+    from agent_safety_monitoring.analysis.followup import report
 
-    identity = read_json(root / "identity.json")
-    tables = {}
-    logical_costs = {}
-    sources = {}
-    for split in ["calibration", "test"]:
-        groups = {}
-        geometries = list(root.glob(f"{split}-*-geometry.json"))
-        if not geometries:
-            raise ValueError("Missing split geometry")
-        shards = [read_json(p) for p in geometries]
-        if len({g["shards"] for g in shards}) != 1 or {g["shard"] for g in shards} != set(
-            range(shards[0]["shards"])
-        ):
-            raise ValueError("Incomplete shard geometry")
-        expected = [uid for g in shards for uid in g["expected_ids"]]
-        if len(set(expected)) != len(expected) or set(expected) != set(identity["expected"][split]):
-            raise ValueError("Incomplete or duplicate expected trajectory coverage")
-        for p in sorted((root / split).glob("*.json")):
-            saved = read_json(p)
-            k = saved["key"]
-            if k["identity"] != digest(identity) or k["evaluation"]["split"] != split:
-                raise ValueError("Result identity mismatch")
-            key = k["trajectory_id"], k["scale"], k["sample"]
-            if key in groups:
-                raise ValueError("Duplicate sample")
-            if k["seed"] != identity["config"]["seed"] + k["sample"] * 100:
-                raise ValueError("Seed mismatch")
-            validate_review(saved["review"], k["scale"])
-            groups[key] = saved
-            sources[str(p.relative_to(root))] = file_hash(p)
-        wanted = {
-            (uid, scale, i)
-            for uid in expected
-            for scale in identity["config"]["score_scales"]
-            for i in range(5)
-        }
-        if set(groups) != wanted:
-            raise ValueError("Incomplete or unexpected sample coverage")
-        tables[split] = {}
-        for uid in expected:
-            for scale in identity["config"]["score_scales"]:
-                saved = [groups[uid, scale, i] for i in range(5)]
-                row = saved[0]["key"]["evaluation"]
-                if any(s["key"]["evaluation"] != row for s in saved):
-                    raise ValueError("Sample metadata mismatch")
-                if row["assignment"] == "attack" and row["outcome"] != "success":
-                    continue
-                for n, score in nested_scores([s["review"] for s in saved]).items():
-                    item = {
-                        "trajectory_id": uid,
-                        "task_id": row["task_id"],
-                        "label": int(row["assignment"] == "attack"),
-                        "score": score,
-                    }
-                    name = f"{scale}-n{n}"
-                    tables[split].setdefault(name, []).append(item)
-                    cost = logical_costs.setdefault(split, {}).setdefault(
-                        name,
-                        {
-                            "logical_calls": 0,
-                            "cache_hits": 0,
-                            "input_tokens": 0,
-                            "output_tokens": 0,
-                            "request_latency_seconds": 0.0,
-                            "allocated_gpu_seconds": None,
-                        },
-                    )
-                    for review in saved[: int(n)]:
-                        for call in review["review"].get("calls", []):
-                            cost["logical_calls"] += 1
-                            cost["cache_hits"] += call["cached"]
-                            cost["input_tokens"] += call["usage"]["input_tokens"]
-                            cost["output_tokens"] += call["usage"]["output_tokens"]
-                            cost["request_latency_seconds"] += call["latency_seconds"]
-                    if scale == "hundred":
-                        tables[split].setdefault(f"hundred-binned-n{n}", []).append(
-                            {**item, "score": coarsen_hundred(score)}
-                        )
-    result = {
-        "status": "exploratory; original test previously examined",
-        "identity": digest(identity),
-        "sources": sources,
-        "scoring": comparison(tables["calibration"], tables["test"], replicates),
-        "logical_costs": logical_costs,
-        "cost_definition": "Nested Ns share calls. Logical costs include required samples/retries; "
-        "latencies are not GPU allocation. Bind measured Slurm allocation separately.",
-        "coarsening": "equal-width bins [0,20),[20,40),[40,60),[60,80),[80,100]",
-    }
-    atomic_json(output, result)
-    return {"output": str(output), "methods": len(tables["test"])}
+    return report(root, output, replicates)
