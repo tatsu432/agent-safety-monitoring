@@ -1,5 +1,5 @@
-> **November 10 execution update:** Yale access is restored. The new physical pilot
-> is running, with ledger-backed continuation scheduled. The scoring and objective-aware
+> **November 10 execution update:** Yale access is restored. The physical pilot
+> passed with 30/30 valid reviews; homogeneous timing and ledger-backed continuation are queued. The scoring and objective-aware
 > follow-ups remain unfinished. See the [current checkpoint](../task_completion/05-extra-check-checkpoint.md).
 
 # Controlled follow-up protocol and execution status

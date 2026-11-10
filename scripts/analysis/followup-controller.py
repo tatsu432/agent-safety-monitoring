@@ -113,25 +113,29 @@ def main(phase, prior):
             workload = 1038 * (0.6 * five + hundred) + 190 * (five + hundred)
             remaining = workload / 3600 + 2.5  # reviewer, startup and reporting allowance
             cap = 5 * math.ceil((usage["allocated_gpu_hours"] + 1.25 * remaining) / 5)
-            # Reuse the predeclared N=5 timing samples for scientific development.
+            # Reuse pilot calls first, then predeclared N=5 timing samples.
             # Different cold N trials are measurements, not alternate samples to select from.
             import shutil
 
             cache = base / "development/cache"
             cache.mkdir(parents=True, exist_ok=True)
             imported = 0
-            for scale in ("five", "hundred"):
-                for source in sorted((base / f"timing/{scale}-n5/cache").glob("*.json")):
+            for directory in (
+                base / "pilot/cache",
+                base / "timing/five-n5/cache",
+                base / "timing/hundred-n5/cache",
+            ):
+                for source in sorted(directory.glob("*.json")):
                     target = cache / source.name
-                    if target.exists() and target.read_bytes() != source.read_bytes():
-                        raise ValueError("Conflicting development cache import")
+                    # First completed request wins; never choose by the returned score.
+                    # Backend validates exact request hashes before any cache reuse.
                     if not target.exists():
                         shutil.copy2(source, target)
                         imported += 1
             atomic_json(
                 base / "development/cache-provenance.json",
                 {
-                    "source": "Completed homogeneous N=5 timing trials, chosen in advance",
+                    "source": "Pilot first, then completed N=5 timing trials; chosen in advance",
                     "imported_entries": imported,
                     "timing_identity": measured["identity"],
                 },

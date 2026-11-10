@@ -27,21 +27,34 @@ The full task is **in progress**, not complete.
   aggregates match the published numeric artifacts exactly.
 - Published allowlisted aggregate scalars to
   [W&B](https://forge.coreweave.com/wandb/tatsu432s/agent-safety-monitoring/runs/nov10-joint).
-- **105 tests pass; Ruff passes.** Software tests do not establish new GPU compatibility.
+- **108 tests pass; Ruff passes.** Software tests do not establish new GPU compatibility.
 
 ## Active execution
 
-Pilot **32795420** requests one H200 for at most 30 minutes. Its partition eligibility
-was expanded in place to `gpu_h200,gpu_devel` with the verified `gpu:h200` feature;
-GPU count, account, time cap and submission identity were preserved. It started on
-`a1124u11n01` in `gpu_h200`. No duplicate was submitted.
+Pilot **32795420** completed successfully on one H200: all **30/30** reviews
+were valid (15 per scale), with no retries or cache hits. Startup took 106 seconds,
+workload 471 seconds, and Slurm allocated **577 GPU-seconds**. Actual maximum inputs
+were 64,351 tokens (five categories) and 64,373 (0–100). The all-record context
+preflight remains separate. [Aggregate physical measurements](../reports/followup-pilot-aggregate.json)
+record model, Python, source identity and token counts. This pilot does not estimate
+held-out effectiveness or prove all possible restart modes.
 
-CPU continuation **32796191** depends on the pilot. It verifies allocation and exact
-coverage, checks completed-result replay with generation forbidden, imports compatible
-original requests, then continues timing, development, seed repeats, calibration/test,
-objective-aware review and fixed-judge substitution through the existing ledger.
-It stops on failures, missing coverage, or incompatible identities; it never tunes
-from held-out effectiveness. Final aggregate generation still requires report synthesis.
+Completed-result replay passed with model generation explicitly forbidden. No
+in-flight GPU interruption was tested. Accounting after the pilot is **61.4658 GPU-hours**.
+
+The first CPU continuation **32796191** completed, imported 2,081 compatible original
+requests, and submitted homogeneous timing **32797535** (one H200, at most six hours),
+with dependent continuation **32797536**. Timing was pending scheduler resources at
+this checkpoint; it has no measured results yet. A model-default representation
+mismatch in timing identities was corrected and regression-tested before that job
+started. Full development will reaccept the final source identity before held-out work.
+
+Continuation verifies allocation and exact coverage, then proceeds through timing,
+development, fixed-screen seed repeats, calibration/test, objective-aware review and
+fixed-judge substitution using the existing ledger. Pilot and predeclared N=5 timing
+calls are reused for scientific development. It stops on failures, missing coverage,
+or incompatible identities; it never tunes from held-out effectiveness. Final report
+synthesis and PDF packaging remain outstanding after aggregate generation.
 
 The cap remains **90 GPU-hours** pending physical timing. The continuation records a
 separate evidence-based amendment after the eight timing workloads, using consumed
