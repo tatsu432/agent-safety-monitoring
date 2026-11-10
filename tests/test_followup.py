@@ -189,3 +189,66 @@ def test_followup_report_requires_full_coverage_and_valid_scores(tmp_path, monke
     target.unlink()
     with pytest.raises(ValueError, match="coverage"):
         followup_report(tmp_path, tmp_path / "report.json", 5)
+
+
+def test_context_accepts_omitted_defaults_but_rejects_actual_model_changes(tmp_path):
+    """Synthetic gate fixture; not evidence of GPU validation."""
+    from agent_safety_monitoring.experiments.runner import source_identity
+
+    model = ModelConfig(backend="vllm").model_dump()
+    legacy_model = {k: v for k, v in model.items() if k != "timeout_seconds"}
+    expected = {"development": ["d1", "d2", "d3"], "calibration": ["c"], "test": ["a", "b"]}
+    identity = {
+        "sources": source_identity(),
+        "expected": expected,
+        "model": legacy_model,
+        "protocol": "protocol",
+        "manifest": "manifest",
+        "config": FollowupConfig().model_dump(),
+    }
+    dev = tmp_path / "development"
+    atomic_json(dev / "identity.json", identity)
+    atomic_json(
+        dev / "development-0-geometry.json", {"expected_ids": expected["development"], "shards": 1}
+    )
+    atomic_json(
+        dev / "development-0-summary.json",
+        {
+            "identity": digest(identity),
+            "state": "complete",
+            "software_only": False,
+            "completed": 30,
+            "expected": 30,
+            "invalid": 0,
+        },
+    )
+    context = {
+        "model": model,
+        "protocol": "protocol",
+        "manifest": "manifest",
+        "overflow": 0,
+        "records": [
+            {"trajectory_id": uid, "fits": True} for ids in expected.values() for uid in ids
+        ],
+    }
+    atomic_json(tmp_path / "context.json", context)
+    atomic_json(
+        tmp_path / "runtime.json",
+        {
+            "identity": digest(identity),
+            "job_id": "123",
+            "hardware_verified": True,
+            "container_verified": True,
+            "engine_verified": True,
+        },
+    )
+    (tmp_path / "sacct.txt").write_text(
+        "JobID|State|ElapsedRaw|AllocTRES\n123|COMPLETED|10|gres/gpu=1\n"
+    )
+    atomic_json(tmp_path / "selection.json", {"identity": digest(identity), "selected": "five-n1"})
+    args = [dev, tmp_path / "context.json", tmp_path / "runtime.json", tmp_path / "sacct.txt"]
+    freeze_followup(*args, tmp_path / "accepted.json", tmp_path / "selection.json")
+    context["model"]["temperature"] = 0.99
+    atomic_json(tmp_path / "context.json", context)
+    with pytest.raises(ValueError, match="context preflight"):
+        freeze_followup(*args, tmp_path / "rejected.json", tmp_path / "selection.json")

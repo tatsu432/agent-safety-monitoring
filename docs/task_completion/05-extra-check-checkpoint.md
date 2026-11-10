@@ -27,7 +27,7 @@ The full task is **in progress**, not complete.
   aggregates match the published numeric artifacts exactly.
 - Published allowlisted aggregate scalars to
   [W&B](https://forge.coreweave.com/wandb/tatsu432s/agent-safety-monitoring/runs/nov10-joint).
-- **108 tests pass; Ruff passes.** Software tests do not establish new GPU compatibility.
+- **109 tests pass; Ruff passes.** Software tests do not establish new GPU compatibility.
 
 ## Active execution
 
@@ -44,8 +44,9 @@ in-flight GPU interruption was tested. Accounting after the pilot is **61.4658 G
 
 The first CPU continuation **32796191** completed, imported 2,081 compatible original
 requests, and submitted homogeneous timing **32797535** (one H200, at most six hours),
-with dependent continuation **32797536**. Timing is running on `a1126u19n01`; complete homogeneous measurements
-are not yet available. A model-default representation
+with dependent continuation **32797536**. Timing is running on `a1126u19n01`. The first 40-record condition
+(five-category N=1) measured 15.08 GPU-seconds/trajectory; the full eight-condition
+measurement remains incomplete. A model-default representation
 mismatch in timing identities was corrected and regression-tested before that job
 started. Full development will reaccept the final source identity before held-out work.
 
@@ -80,3 +81,10 @@ The active inference checkout stays at `5806d2a`. Subsequent analysis-only chang
 are developed separately and must not be pulled into active/frozen inference.
 The newer report interface supports original-method paired comparisons through
 `--original-run`, without changing original results.
+
+An analysis-controller update reconciles declared model defaults before context
+acceptance, preserving the original context audit and binding its hash into a
+separate canonical-serialization artifact. Normalized ModelConfig values must match;
+actual temperature/revision/model changes still fail. This corrects an inherited
+raw-dictionary mismatch without changing monitor prompts, thresholds, evidence,
+or the active inference source identity.

@@ -275,10 +275,18 @@ remain in ignored `output/` and `tmp/` directories.
 
 ### Active inference snapshot
 
-The running Yale checkout remains at **`5806d2a`**. Do not pull later analysis changes
+The running Yale inference sources remain at **`5806d2a`**, with the versioned
+analysis-controller update for canonical context serialization. Do not pull later analysis changes
 into it while timing, development, or held-out jobs are active: source identities
 are checked across the workflow. Later analysis can run in a separate checkout.
 For paired comparisons with original think-longer, EaE and MRT, the newer
 `analysis followup-report` also accepts `--original-run "$ASM_RUN"`; it verifies the
 original freeze and common cohort before sharing task-bootstrap draws. This
 postprocessing does not change the frozen monitoring procedures or calibrations.
+
+Context acceptance compares normalized ModelConfig values, including declared
+defaults. For the fixed inference snapshot's older raw-dictionary check, the
+controller writes `context-canonical.json` only after confirming this equivalence.
+It retains the original context audit, records its SHA-256, and preserves all prompt
+counts, coverage and overflow checks. This is serialization reconciliation, not
+permission to change model settings or mark an unvalidated runtime as accepted.

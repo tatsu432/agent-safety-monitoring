@@ -159,9 +159,29 @@ def main(phase, prior):
 
             selection = base / "selection.json"
             select_development(base / "development", base / "timing/measurements.json", selection)
+            # Preserve the original audit, and explicitly reconcile omitted defaults.
+            # This also supports the fixed inference snapshot's raw-dictionary gate.
+            from agent_safety_monitoring.inference.backend import ModelConfig
+            from agent_safety_monitoring.io import file_hash, immutable_json
+
+            context = read_json(base / "context.json")
+            identity = read_json(base / "development/identity.json")
+            if ModelConfig.model_validate(context["model"]) != ModelConfig.model_validate(
+                identity["model"]
+            ):
+                raise ValueError("Context model differs beyond serialization defaults")
+            canonical_context = {
+                **context,
+                "model": identity["model"],
+                "serialization_provenance": {
+                    "original_context_sha256": file_hash(base / "context.json"),
+                    "rule": "Equivalent ModelConfig values after filling declared defaults",
+                },
+            }
+            immutable_json(base / "context-canonical.json", canonical_context)
             freeze_followup(
                 base / "development",
-                base / "context.json",
+                base / "context-canonical.json",
                 base / f"development/jobs/{prior}-followup-runtime.json",
                 sacct,
                 base / "followup-freeze.json",
@@ -195,10 +215,18 @@ def main(phase, prior):
         state["next_phase"] = following
         atomic_json(state_path, state)
         if following == "analysis":
+            import inspect
+
             from agent_safety_monitoring.analysis.followup import report
             from agent_safety_monitoring.analysis.followup_figures import render
 
-            report(base / "scoring", base / "scoring-report.json", original_run=run_root)
+            # The fixed runtime predates the optional original-method analysis interface.
+            paired = (
+                {"original_run": run_root}
+                if "original_run" in inspect.signature(report).parameters
+                else {}
+            )
+            report(base / "scoring", base / "scoring-report.json", **paired)
             render(
                 base / "scoring-report.json", base / "figures", base / "timing/measurements.json"
             )

@@ -464,7 +464,8 @@ def freeze_followup(development_root, context, runtime, sacct, output, selection
         raise ValueError("Incomplete or incompatible measured development acceptance")
     if (
         proof["protocol"] != identity["protocol"]
-        or proof["model"] != identity["model"]
+        or ModelConfig.model_validate(proof["model"])
+        != ModelConfig.model_validate(identity["model"])
         or proof["manifest"] != identity["manifest"]
         or proof["overflow"]
         or {r["trajectory_id"] for r in proof["records"]}
