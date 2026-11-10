@@ -1,0 +1,11 @@
+{
+  "append_sha256": "e312dd7ce94d404fee58629f9814436bebfea50605d1acb373be111aabde62cf",
+  "environment": "configs/environment/report-renderer.json",
+  "outside_safe_page_bounds": 0,
+  "pages": 11,
+  "pdf_sha256": "ae776a83d24e900a46b9dc667f7f7b2908c910ec13f85d822d414f83341ffada",
+  "renderer": "scripts/analysis/render_report.py",
+  "source_sha256": "19ccf63ef0e548d6fae7c8d4c8233b83822cd74230560f64cb5b62846b1c25b3",
+  "status": "draft; required model experiments and synthesis pending",
+  "visual_review": "All pages reviewed via contact sheet; detailed joint table reviewed at full size"
+}

@@ -235,3 +235,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Rendered deliverables and visual QA intermediates
+/output/
+/tmp/

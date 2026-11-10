@@ -44,8 +44,8 @@ in-flight GPU interruption was tested. Accounting after the pilot is **61.4658 G
 
 The first CPU continuation **32796191** completed, imported 2,081 compatible original
 requests, and submitted homogeneous timing **32797535** (one H200, at most six hours),
-with dependent continuation **32797536**. Timing was pending scheduler resources at
-this checkpoint; it has no measured results yet. A model-default representation
+with dependent continuation **32797536**. Timing is running on `a1126u19n01`; complete homogeneous measurements
+are not yet available. A model-default representation
 mismatch in timing identities was corrected and regression-tested before that job
 started. Full development will reaccept the final source identity before held-out work.
 
@@ -73,4 +73,10 @@ Python and model identities; interrupted cold timing is not a valid cold measure
 
 [Joint sensitivity](../reports/joint-structural-sensitivity.md) contains the completed
 CPU result. Scoring inference, objective-aware references/substitution, final synthesis,
-and the rendered submission PDF are not yet complete.
+and the final submission PDF are not yet complete. An 11-page draft PDF has been
+rendered and visually checked, including the completed joint sensitivity.
+
+The active inference checkout stays at `5806d2a`. Subsequent analysis-only changes
+are developed separately and must not be pulled into active/frozen inference.
+The newer report interface supports original-method paired comparisons through
+`--original-run`, without changing original results.

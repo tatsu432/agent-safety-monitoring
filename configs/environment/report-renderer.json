@@ -1,0 +1,10 @@
+{
+  "base_environment": "uv.lock via uv run --locked",
+  "dependency_overlay": {
+    "reportlab": "5.1.0",
+    "pypdfium2": "5.15.2"
+  },
+  "purpose": "Report-only PDF authoring and visual verification; not inference",
+  "font_source": "DejaVu font files from locked matplotlib",
+  "default_status": "Draft - follow-up synthesis pending"
+}

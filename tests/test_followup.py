@@ -100,10 +100,11 @@ def test_resume_identity_and_heldout_gate(tmp_path, monkeypatch):
     assert read_json(output / "development-0-summary.json")["software_only"]
 
 
-def test_followup_report_requires_full_coverage_and_valid_scores(tmp_path):
+def test_followup_report_requires_full_coverage_and_valid_scores(tmp_path, monkeypatch):
     from agent_safety_monitoring.experiments.followup import followup_report
 
     identity = {
+        "original_freeze": "frozen",
         "config": FollowupConfig().model_dump(),
         "expected": {"calibration": ["c1", "c2"], "test": ["b", "a"]},
     }
@@ -142,7 +143,28 @@ def test_followup_report_requires_full_coverage_and_valid_scores(tmp_path):
                         },
                     )
     assert followup_report(tmp_path, tmp_path / "report.json", 5)["methods"] == 16
+    import agent_safety_monitoring.reporting.report as original_report
     from agent_safety_monitoring.analysis.followup import load_split
+
+    original = tmp_path / "original"
+    atomic_json(original / "study.json", {"freeze": "frozen", "software_only": False})
+    monkeypatch.setattr(
+        original_report,
+        "load_results",
+        lambda _: {
+            split: {"think": load_split(tmp_path, split)[0]["five-n1"]}
+            for split in ("calibration", "test")
+        },
+    )
+    assert followup_report(tmp_path, tmp_path / "paired.json", 5, original)["methods"] == 17
+    paired = read_json(tmp_path / "paired.json")
+    assert paired["scoring"]["paired_differences"]["five-n1 - original-think"]["tpr"]["ci95"] == [
+        0,
+        0,
+    ]
+    atomic_json(original / "study.json", {"freeze": "different", "software_only": False})
+    with pytest.raises(ValueError, match="same real frozen"):
+        followup_report(tmp_path, tmp_path / "paired.json", 5, original)
 
     for i, score in enumerate([19, 21, 50, 75, 100]):
         path = tmp_path / f"test/a-hundred-{i}.json"

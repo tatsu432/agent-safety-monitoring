@@ -124,11 +124,34 @@ def load_split(root, split):
     return tables, costs, disagreement, dict(supplementary), sources
 
 
-def report(root, output, replicates=2000):
+def report(root, output, replicates=2000, original_run=None):
     from agent_safety_monitoring.analysis.operating_points import comparison
 
     loaded = {split: load_split(root, split) for split in ("calibration", "test")}
     tables = {s: v[0] for s, v in loaded.items()}
+    original_provenance = None
+    if original_run is not None:
+        from agent_safety_monitoring.reporting.report import load_results
+
+        study = read_json(original_run / "study.json")
+        followup_identity = read_json(root / "identity.json")
+        if study["software_only"] or study["freeze"] != followup_identity["original_freeze"]:
+            raise ValueError("Original comparison must use the same real frozen study")
+        original = load_results(original_run)
+        for split, methods in original.items():
+            for name, rows in methods.items():
+                tables[split][f"original-{name}"] = rows
+        original_provenance = {
+            "study_sha256": file_hash(original_run / "study.json"),
+            "freeze": study["freeze"],
+            "result_hashes_sha256": digest(
+                {
+                    str(p.relative_to(original_run)): file_hash(p)
+                    for split in ("calibration", "test")
+                    for p in sorted((original_run / split).glob("*/*.json"))
+                }
+            ),
+        }
     scoring = comparison(tables["calibration"], tables["test"], replicates)
     distributions, curves = {}, {}
     for split, methods in tables.items():
@@ -185,6 +208,7 @@ def report(root, output, replicates=2000):
     result = {
         "status": "exploratory; original test previously examined",
         "identity": digest(read_json(root / "identity.json")),
+        "original_comparison_provenance": original_provenance,
         "sources": {k: v for loaded_split in loaded.values() for k, v in loaded_split[4].items()},
         "scoring": scoring,
         "logical_costs": {s: v[1] for s, v in loaded.items()},

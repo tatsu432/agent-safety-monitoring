@@ -252,3 +252,33 @@ project accounting, full-coverage checks and separate physical acceptance. Inspe
 Cold timing trials intentionally regenerate requests for measurement; primary
 follow-up inference imports exact compatible original calls and never restarts a
 completed cold trial as if it were independent.
+
+## Report PDF packaging
+
+The report renderer reads public Markdown and figure files only. Its optional
+report-only dependencies are pinned separately in
+`configs/environment/report-renderer.json`; `uv run --locked` preserves the core
+experiment lock. They are not installed into the active Yale inference checkout.
+
+```bash
+uv run --locked --with reportlab==5.1.0 python scripts/analysis/render_report.py \
+  --source docs/reports/final-report.md \
+  --append docs/reports/joint-structural-sensitivity.md \
+  --output output/pdf/monitoring-study-draft.pdf
+```
+
+The current 11-page PDF is a visually inspected **draft**, with follow-up synthesis
+pending in its footer. Final submission packaging requires the outstanding model
+results and scientific review. Render each page with pinned `pypdfium2==5.15.2` or
+Poppler and visually inspect before delivering a revision. Outputs and QA images
+remain in ignored `output/` and `tmp/` directories.
+
+### Active inference snapshot
+
+The running Yale checkout remains at **`5806d2a`**. Do not pull later analysis changes
+into it while timing, development, or held-out jobs are active: source identities
+are checked across the workflow. Later analysis can run in a separate checkout.
+For paired comparisons with original think-longer, EaE and MRT, the newer
+`analysis followup-report` also accepts `--original-run "$ASM_RUN"`; it verifies the
+original freeze and common cohort before sharing task-bootstrap draws. This
+postprocessing does not change the frozen monitoring procedures or calibrations.

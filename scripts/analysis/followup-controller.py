@@ -198,7 +198,7 @@ def main(phase, prior):
             from agent_safety_monitoring.analysis.followup import report
             from agent_safety_monitoring.analysis.followup_figures import render
 
-            report(base / "scoring", base / "scoring-report.json")
+            report(base / "scoring", base / "scoring-report.json", original_run=run_root)
             render(
                 base / "scoring-report.json", base / "figures", base / "timing/measurements.json"
             )

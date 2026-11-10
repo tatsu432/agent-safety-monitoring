@@ -539,7 +539,7 @@ def seed_cache(run_root, original_freeze, data, output):
     return {"new_cache_entries": count}
 
 
-def followup_report(root, output, replicates=2000):
+def followup_report(root, output, replicates=2000, original_run=None):
     from agent_safety_monitoring.analysis.followup import report
 
-    return report(root, output, replicates)
+    return report(root, output, replicates, original_run)

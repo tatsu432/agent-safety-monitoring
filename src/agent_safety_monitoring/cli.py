@@ -555,11 +555,12 @@ def analysis_followup_report(
     run_root: Annotated[Path, typer.Option()],
     output: Annotated[Path, typer.Option()],
     replicates: int = 2000,
+    original_run: Path | None = None,
 ):
     """Require complete follow-up coverage before evaluating nested sample counts."""
     from agent_safety_monitoring.experiments.followup import followup_report
 
-    show(followup_report(run_root, output, replicates))
+    show(followup_report(run_root, output, replicates, original_run))
 
 
 @analysis_app.command("diagnosis-render")
