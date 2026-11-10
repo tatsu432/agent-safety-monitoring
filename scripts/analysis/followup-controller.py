@@ -175,6 +175,7 @@ def main(phase, prior):
             render(
                 base / "scoring-report.json", base / "figures", base / "timing/measurements.json"
             )
+            command(client, "scripts/analysis/seed_variability.py", "--base", base)
             state["state"] = "inference_and_aggregate_analysis_complete; synthesis_pending"
             atomic_json(state_path, state)
             return

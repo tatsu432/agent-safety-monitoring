@@ -7,7 +7,7 @@ reasoning, averaging two reviews, extract-and-evaluate (EaE), and sequential plu
 hierarchical review (MRT).
 
 The original frozen study is complete. A new forensic audit reproduces its results;
-controlled follow-up inference is prepared and awaiting Yale authentication. On 454 recorded
+controlled follow-up inference is now underway on Yale. On 454 recorded
 successful attacks and 118 nominal benign test trajectories, thresholds were set
 using separate benign calibration data to target 5% false-positive rate. Rates
 are expected alerts with randomization at tied scores:
@@ -37,3 +37,8 @@ reconstructs MRT branches and EaE evidence structure. The
 [follow-up protocol](docs/reports/followup-experiment-plan.md) records prepared 0–100 scoring,
 N=1/2/3/5 experiments, resource projections, and outstanding physical validation.
 [Current report](docs/reports/final-report.md) includes completed post-hoc results and limitations.
+
+The [November 10 checkpoint](docs/task_completion/05-extra-check-checkpoint.md) records
+the active pilot and automatic continuation. New [joint length/tool sensitivity](docs/reports/joint-structural-sensitivity.md)
+preserves averaging's favorable comparisons within overlap, while excluding 143 test
+records; this exploratory result does not remove the benchmark's confounding limitations.
