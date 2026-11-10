@@ -44,7 +44,7 @@ async def benchmark(data, original_freeze, config_path, output, ids_path, gpus):
         "original_freeze": original["hash"],
         "protocol": protocol_identity(config),
         "sources": source_identity(),
-        "model": model.model_dump(),
+        "model": original["body"]["config"]["model"],
         "config": config.model_dump(),
         "manifest": digest(manifest),
         "expected": {
