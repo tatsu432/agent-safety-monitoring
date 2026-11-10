@@ -61,3 +61,10 @@ These post-hoc within-task comparisons control the shared legitimate task identi
 but do not eliminate trajectory-level length or tool-count confounding. Nominal
 benign assignment is not independent proof of harmlessness. Results and exact
 counts are in [paired-task diagnostics](paired-task-diagnostics.json).
+
+## November 10: joint structural sensitivity
+
+The [joint length/tool-count sensitivity](joint-structural-sensitivity.md) adds a
+fixed development-derived grid, overlap exclusions, effective sample sizes, paired
+whole-task intervals, and objective-specific estimates. This exploratory sensitivity
+changes the evaluated population; it does not replace the frozen primary results.

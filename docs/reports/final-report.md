@@ -320,3 +320,10 @@ These ROC figures condition on valid scores and use the test set to select opera
 | MRT hybrid | 40.9 / 8.5 | 0.903 | 47.8 | 0.0439 |
 
 The weaker hierarchical branch does not imply that removing it improves every metric. Branch intervals, common-valid sensitivity, referral contributions, ties and paired differences are in [the aggregate](diagnosis-aggregate.json). See [the audit](original-study-audit.md), [failure analysis](failure-analysis.md) and [execution protocol](followup-experiment-plan.md) for evidence, limitations, and the exact outstanding work. No missing experimental values are extrapolated.
+
+## November 10: joint structural sensitivity
+
+The [joint length/tool-count sensitivity](joint-structural-sensitivity.md) adds a
+fixed development-derived grid, overlap exclusions, effective sample sizes, paired
+whole-task intervals, and objective-specific estimates. This exploratory sensitivity
+changes the evaluated population; it does not replace the frozen primary results.
