@@ -147,6 +147,9 @@ elif [[ "${ASM_ACTION:-run}" == development-diagnostic ]]; then
     if [[ -n "${ASM_EVIDENCE_PACKET:-}" ]]; then
         args+=(--evidence-packet "$ASM_EVIDENCE_PACKET")
     fi
+    if [[ -n "${ASM_DIAGNOSTIC_FREEZE:-}" ]]; then
+        args+=(--frozen-heldout "$ASM_DIAGNOSTIC_FREEZE")
+    fi
     "$diagnostic_python" scripts/analysis/development_diagnostics.py "${args[@]}" \
       --freeze "${ASM_FREEZE:?}" --config "${ASM_DIAGNOSTIC_CONFIG:?}" \
       --ids "${ASM_DIAGNOSTIC_IDS:?}" --condition "${ASM_DIAGNOSTIC_CONDITION:?}" &

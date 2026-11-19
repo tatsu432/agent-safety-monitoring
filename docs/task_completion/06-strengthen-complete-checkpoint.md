@@ -50,3 +50,18 @@ causal attribution of EaE errors remain open.
 [Scoring aggregates](../reports/strengthened-scoring.json) ·
 [Stage diagnostics](../reports/strengthened-evidence.json) ·
 [Reproduction](../reports/analysis-reproduction.md)
+
+## November 19 continuation
+
+Job 33871161 completed the evidence and MRT development suite in 14,897 allocated
+GPU-seconds. All five conditions completed 40 records. The fine-scale EaE and MRT
+AUROCs were .515 and .916. Coarse MRT AUROC was .928 for 5 interactions and 512
+tokens, .890 for 5 and 1,024, and .884 for 10 and 512. This small screen does not
+establish a benefit from the larger state. Eleven highlighted full transcripts
+were valid, including eight cases with all four intervention conditions. Source
+spans were checked, while semantic sufficiency has not been human-verified.
+
+The fine medium-effort pilot produced 40 valid reviews and development AUROC .939.
+Its physical proof and a complete medium-effort tokenizer audit support a separate
+exploratory held-out freeze. The measured projection including contingency is 5.82
+GPU-hours. Submission is guarded by fresh accounting and the 125-hour cap.

@@ -1,0 +1,265 @@
+{
+  "evidence_intervention": {
+    "highlighted_attempted": 11,
+    "highlighted_valid": 11,
+    "human_reviewed": 0,
+    "matched_cases": 8,
+    "measures": {
+      "full_saved_single": {
+        "expected_alert_under_original_eae_policy": 0.6695652173913045,
+        "mean_ordinal_score": 5.0
+      },
+      "highlighted_full": {
+        "expected_alert_under_original_eae_policy": 0.5021739130434784,
+        "mean_ordinal_score": 4.75
+      },
+      "model_replacement": {
+        "expected_alert_under_original_eae_policy": 0.0,
+        "mean_ordinal_score": 1.0
+      },
+      "original_eae": {
+        "expected_alert_under_original_eae_policy": 0.16739130434782612,
+        "mean_ordinal_score": 2.0
+      }
+    },
+    "packet_sha256": "5a7adb383c5e212bbed5b27582ee2e448dda7c787b0e32eddd02b95864af923d",
+    "provenance": "source_checked_model_suggested"
+  },
+  "methods": {
+    "eae-hundred": {
+      "auroc": 0.515,
+      "branches": {},
+      "costs": {
+        "cache_hits": 43,
+        "input_tokens": 1286385,
+        "logical_calls": 83,
+        "output_tokens": 37671,
+        "reasoning_estimates_exposed": 83,
+        "reasoning_tokens": 0,
+        "reasoning_tokens_estimated": 33258,
+        "reasoning_tokens_exposed": 0,
+        "request_latency_sum_seconds": 550.6159944944084,
+        "warning": "Request latency sum is NOT allocated GPU time."
+      },
+      "decision_latency_median": 5.92489397386089,
+      "decision_latency_p95": 16.381294070044532,
+      "eligible_records": 40,
+      "screen_invalid": 0,
+      "screen_records": 40,
+      "summary_sha256": "f6a0121f22f4b31ab1285892f27ef6bc43c6af5331d57edbf2904cee04f57f57",
+      "valid_attack": 20,
+      "valid_benign": 20,
+      "workload_seconds": 286.88139103678986
+    },
+    "five-n1": {
+      "auroc": 0.9049999999999999,
+      "eligible_records": 40,
+      "valid_attack": 20,
+      "valid_benign": 20
+    },
+    "five-n2": {
+      "auroc": 0.9325000000000001,
+      "eligible_records": 40,
+      "valid_attack": 20,
+      "valid_benign": 20
+    },
+    "hundred-n1": {
+      "auroc": 0.89875,
+      "eligible_records": 40,
+      "valid_attack": 20,
+      "valid_benign": 20
+    },
+    "hundred-n2": {
+      "auroc": 0.93625,
+      "eligible_records": 40,
+      "valid_attack": 20,
+      "valid_benign": 20
+    },
+    "hundred-n5": {
+      "auroc": 0.9524999999999999,
+      "eligible_records": 40,
+      "valid_attack": 20,
+      "valid_benign": 20
+    },
+    "mrt-five-10-512": {
+      "auroc": 0.8842105263157894,
+      "branches": {
+        "hierarchical": {
+          "auroc": 0.818421052631579,
+          "eligible_records": 40,
+          "valid_attack": 20,
+          "valid_benign": 19
+        },
+        "sequential": {
+          "auroc": 0.8486842105263157,
+          "eligible_records": 40,
+          "valid_attack": 20,
+          "valid_benign": 19
+        }
+      },
+      "costs": {
+        "cache_hits": 14,
+        "input_tokens": 2460607,
+        "logical_calls": 312,
+        "output_tokens": 48273,
+        "reasoning_estimates_exposed": 312,
+        "reasoning_tokens": 0,
+        "reasoning_tokens_estimated": 12736,
+        "reasoning_tokens_exposed": 0,
+        "request_latency_sum_seconds": 4525.520314727444,
+        "warning": "Request latency sum is NOT allocated GPU time."
+      },
+      "decision_latency_median": 72.91167683759704,
+      "decision_latency_p95": 142.4164026298326,
+      "eligible_records": 40,
+      "screen_invalid": 1,
+      "screen_records": 40,
+      "summary_sha256": "7bede6648f682263804a91b1fc15e0c3afe90232b80f943e70d847920ff9907a",
+      "valid_attack": 20,
+      "valid_benign": 19,
+      "workload_seconds": 2961.6673459238373
+    },
+    "mrt-five-5-1024": {
+      "auroc": 0.89,
+      "branches": {
+        "hierarchical": {
+          "auroc": 0.7462500000000001,
+          "eligible_records": 40,
+          "valid_attack": 20,
+          "valid_benign": 20
+        },
+        "sequential": {
+          "auroc": 0.8775,
+          "eligible_records": 40,
+          "valid_attack": 20,
+          "valid_benign": 20
+        }
+      },
+      "costs": {
+        "cache_hits": 0,
+        "input_tokens": 2976306,
+        "logical_calls": 590,
+        "output_tokens": 88235,
+        "reasoning_estimates_exposed": 590,
+        "reasoning_tokens": 0,
+        "reasoning_tokens_estimated": 23828,
+        "reasoning_tokens_exposed": 0,
+        "request_latency_sum_seconds": 10121.896695837844,
+        "warning": "Request latency sum is NOT allocated GPU time."
+      },
+      "decision_latency_median": 122.30202061496675,
+      "decision_latency_p95": 264.1975680672096,
+      "eligible_records": 40,
+      "screen_invalid": 0,
+      "screen_records": 40,
+      "summary_sha256": "3b0f00f9fe385cc9d4d1025f95598a7af548a26d2ccd387cf8bf69f94132b18d",
+      "valid_attack": 20,
+      "valid_benign": 20,
+      "workload_seconds": 5254.164625246078
+    },
+    "mrt-five-5-512": {
+      "auroc": 0.9277777777777778,
+      "branches": {
+        "hierarchical": {
+          "auroc": 0.8125,
+          "eligible_records": 40,
+          "valid_attack": 20,
+          "valid_benign": 18
+        },
+        "sequential": {
+          "auroc": 0.8937499999999999,
+          "eligible_records": 40,
+          "valid_attack": 20,
+          "valid_benign": 20
+        }
+      },
+      "costs": {
+        "cache_hits": 588,
+        "input_tokens": 2972477,
+        "logical_calls": 588,
+        "output_tokens": 89255,
+        "reasoning_estimates_exposed": 588,
+        "reasoning_tokens": 0,
+        "reasoning_tokens_estimated": 24107,
+        "reasoning_tokens_exposed": 0,
+        "request_latency_sum_seconds": 10885.80038451869,
+        "warning": "Request latency sum is NOT allocated GPU time."
+      },
+      "decision_latency_median": 0.34952326654456556,
+      "decision_latency_p95": 0.9709381291875614,
+      "eligible_records": 40,
+      "screen_invalid": 2,
+      "screen_records": 40,
+      "summary_sha256": "5c13dc9038c2555fb1283a695ca455c3ec7e9242686b7402987f64b794333870",
+      "valid_attack": 20,
+      "valid_benign": 18,
+      "workload_seconds": 19.55735102808103
+    },
+    "mrt-hundred": {
+      "auroc": 0.9157894736842106,
+      "branches": {
+        "hierarchical": {
+          "auroc": 0.9,
+          "eligible_records": 40,
+          "valid_attack": 20,
+          "valid_benign": 19
+        },
+        "sequential": {
+          "auroc": 0.83875,
+          "eligible_records": 40,
+          "valid_attack": 20,
+          "valid_benign": 20
+        }
+      },
+      "costs": {
+        "cache_hits": 0,
+        "input_tokens": 2981222,
+        "logical_calls": 585,
+        "output_tokens": 88958,
+        "reasoning_estimates_exposed": 585,
+        "reasoning_tokens": 0,
+        "reasoning_tokens_estimated": 20113,
+        "reasoning_tokens_exposed": 0,
+        "request_latency_sum_seconds": 11082.742542461492,
+        "warning": "Request latency sum is NOT allocated GPU time."
+      },
+      "decision_latency_median": 139.65727764554322,
+      "decision_latency_p95": 344.35707001015544,
+      "eligible_records": 40,
+      "screen_invalid": 1,
+      "screen_records": 40,
+      "summary_sha256": "6e4fade4083776cd6332f1e597ef6c3ba5d8e45d3555480a1ae82161f93911b0",
+      "valid_attack": 20,
+      "valid_benign": 19,
+      "workload_seconds": 6063.2707001706585
+    },
+    "think-hundred": {
+      "auroc": 0.93875,
+      "branches": {},
+      "costs": {
+        "cache_hits": 1,
+        "input_tokens": 1041748,
+        "logical_calls": 40,
+        "output_tokens": 20109,
+        "reasoning_estimates_exposed": 40,
+        "reasoning_tokens": 0,
+        "reasoning_tokens_estimated": 16130,
+        "reasoning_tokens_exposed": 0,
+        "request_latency_sum_seconds": 635.3265282711945,
+        "warning": "Request latency sum is NOT allocated GPU time."
+      },
+      "decision_latency_median": 15.838009125785902,
+      "decision_latency_p95": 27.099212763807728,
+      "eligible_records": 40,
+      "screen_invalid": 0,
+      "screen_records": 40,
+      "summary_sha256": "e6230404799379d0ef554af4e0f5f0d47953a8cd160494bc6cda4bd12a9b1bff",
+      "valid_attack": 20,
+      "valid_benign": 20,
+      "workload_seconds": 623.8109620083123
+    }
+  },
+  "missing_conditions": [],
+  "screen_records": 40,
+  "status": "development discrimination and selected-case evidence interventions"
+}

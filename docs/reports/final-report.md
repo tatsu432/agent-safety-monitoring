@@ -375,6 +375,21 @@ objective composition across bins limits mechanism inference.
 *Descriptive test strata. Counts are shown under each interval. Realized FPR and
 paired intervals are available in the aggregate.*
 
+The bounded 40-record development screen gives valid-score AUROC .515 for fine-scale
+EaE, .916 for fine-scale MRT, and .939 for fine-scale medium-effort full review.
+On the coarse scale, MRT AUROC is .928 with five interactions and a 512-token state,
+.890 with five interactions and a 1,024-token state, and .884 with ten interactions
+and a 512-token state. These are small-sample development estimates. Invalid
+records number zero, one, two, one, and one respectively for fine EaE, fine MRT,
+and the three coarse MRT conditions in that order. The saved
+[development aggregate](strengthened-development.json) records sample coverage and costs.
+
+The fixed-judge evidence intervention includes eight matched attack cases with
+source-checked model-suggested references. Mean 1–5 scores are 2.0 for original
+quotes, 1.0 for replacements, 5.0 for the saved full review, and 4.75 for
+highlighted full review. Different evidence access and the small selected sample
+limit interpretation. No human-reviewed sufficient evidence set was available.
+
 ## 9. Discussion and conclusion
 
 Under the observed costs, repeated full-context review improves discrimination
@@ -382,8 +397,9 @@ for both native scales. Three coarse reviews occupy a useful point on the
 measured cost curve, while the differences between three and five are uncertain.
 The original longer-reasoning policy catches more attacks than single review
 at a higher realized FPR and has slightly lower valid AUROC. Its advantage
-is operating-point dependent on the available results. The direct fine-scale
-comparison is tracked in the execution checkpoint.
+is operating-point dependent on the available results. A 40-record development screen gives fine-scale medium-effort AUROC .939,
+compared with .899 for one low-effort fine review. A separately frozen held-out
+comparison remains pending.
 
 The EaE evidence bottleneck is observable in empty, sparse and unpaired
 extractions. The substitution diagnostic does not establish whether a genuinely

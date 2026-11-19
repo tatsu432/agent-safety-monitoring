@@ -43,18 +43,40 @@ async def run(args):
     if digest(manifest) != freeze["body"]["dataset_manifest"]:
         raise ValueError("Dataset differs from the original freeze")
     settings = read_json(args.config)
-    ids = read_json(args.ids)
     rows = {r["trajectory_id"]: r for r in manifest["records"]}
-    if len(set(ids)) != len(ids) or len(ids) != settings["screen_size"]:
-        raise ValueError("Unexpected diagnostic screen geometry")
-    if any(rows[uid]["split"] != "development" or rows[uid]["exclusion"] for uid in ids):
-        raise ValueError("Only eligible development records are accepted")
     cfg = settings["conditions"][args.condition]
     method = MethodConfig.model_validate({k: v for k, v in cfg.items() if k != "scale"})
     model = ModelConfig.model_validate(freeze["body"]["config"]["model"])
     if model.backend != "vllm":
         raise ValueError("Development measurement requires the pinned real model")
     output = args.output / args.condition
+    if args.frozen_heldout is None:
+        ids = read_json(args.ids)
+        if len(set(ids)) != len(ids) or len(ids) != settings["screen_size"]:
+            raise ValueError("Unexpected diagnostic screen geometry")
+        if any(rows[uid]["split"] != "development" or rows[uid]["exclusion"] for uid in ids):
+            raise ValueError("Only eligible development records are accepted")
+    else:
+        plan = read_json(args.frozen_heldout)
+        expected = {
+            split: sorted(
+                uid for uid, row in rows.items() if (row["split"] == split and not row["exclusion"])
+            )
+            for split in ("calibration", "test")
+        }
+        if (
+            digest(plan["body"]) != plan["hash"]
+            or plan["body"]["original_freeze"] != freeze["hash"]
+            or plan["body"]["condition"] != args.condition
+            or plan["body"]["config"] != cfg
+            or plan["body"]["model"] != model.model_dump()
+            or plan["body"]["sources"] != source_identity()
+            or plan["body"]["runner_sha256"] != file_hash(Path(__file__))
+            or plan["body"]["expected"] != expected
+        ):
+            raise ValueError("Held-out run differs from the accepted medium-effort freeze")
+        ids = expected[args.split]
+        output /= args.split
     output.mkdir(parents=True, exist_ok=True)
     identity = {
         "original_freeze": freeze["hash"],
@@ -63,11 +85,13 @@ async def run(args):
         "model": model.model_dump(),
         "screen_sha256": digest(ids),
         "script_sha256": file_hash(Path(__file__)),
+        "heldout_freeze": plan["hash"] if args.frozen_heldout is not None else None,
         "sources": source_identity(),
     }
     tracker = Telemetry(
         {"mode": args.tracking_mode},
         identity=digest(identity),
+        split=args.split,
         directory=output,
         attempt=uuid.uuid4().hex,
         metadata={"method_settings": [method.model_dump()]},
@@ -150,6 +174,12 @@ async def run(args):
 
 
 async def suite(args):
+    if args.frozen_heldout is not None:
+        if args.evidence_packet is not None or args.condition != "think-hundred":
+            raise ValueError("The held-out freeze only admits the medium-effort fine judgment")
+        for split in ("calibration", "test"):
+            await run(argparse.Namespace(**{**vars(args), "split": split}))
+        return
     if args.evidence_packet is not None:
         from evidence_intervention import evaluate as evaluate_evidence
 
@@ -165,7 +195,7 @@ async def suite(args):
     if len(set(conditions)) != len(conditions):
         raise ValueError("Diagnostic condition names must be unique")
     for name in conditions:
-        await run(argparse.Namespace(**{**vars(args), "condition": name}))
+        await run(argparse.Namespace(**{**vars(args), "condition": name, "split": "development"}))
 
 
 if __name__ == "__main__":
@@ -174,5 +204,6 @@ if __name__ == "__main__":
         parser.add_argument(f"--{name}", type=Path, required=True)
     parser.add_argument("--condition", required=True)
     parser.add_argument("--evidence-packet", type=Path)
+    parser.add_argument("--frozen-heldout", type=Path)
     parser.add_argument("--tracking-mode", default="online")
     asyncio.run(suite(parser.parse_args()))
