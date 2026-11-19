@@ -1,0 +1,547 @@
+{
+  "eae": {
+    "all": {
+      "failed_extraction": 3,
+      "invalid": 3,
+      "invalid_attempt_categories": {
+        "citation": 1,
+        "passage_index": 6,
+        "quotation_budget": 4,
+        "schema": 2,
+        "truncation": 2
+      },
+      "mean_quote_count_per_accepted_extraction": 11.268892794376098,
+      "mean_quote_tokens_per_accepted_extraction": 1074.3954305799648,
+      "quotation_position_quartiles": [
+        3606,
+        2345,
+        381,
+        80
+      ],
+      "records": 572,
+      "records_with_out_of_order_quotes": 65,
+      "records_with_unpaired_calls": 253,
+      "records_with_unpaired_results": 299,
+      "successful_empty": 53
+    },
+    "attack": {
+      "failed_extraction": 1,
+      "invalid": 1,
+      "invalid_attempt_categories": {
+        "citation": 1,
+        "passage_index": 6,
+        "schema": 1
+      },
+      "mean_quote_count_per_accepted_extraction": 9.67991169977925,
+      "mean_quote_tokens_per_accepted_extraction": 928.1015452538632,
+      "quotation_position_quartiles": [
+        1748,
+        2183,
+        375,
+        79
+      ],
+      "records": 454,
+      "records_with_out_of_order_quotes": 61,
+      "records_with_unpaired_calls": 190,
+      "records_with_unpaired_results": 238,
+      "successful_empty": 36
+    },
+    "benign": {
+      "failed_extraction": 2,
+      "invalid": 2,
+      "invalid_attempt_categories": {
+        "quotation_budget": 4,
+        "schema": 1,
+        "truncation": 2
+      },
+      "mean_quote_count_per_accepted_extraction": 17.474137931034484,
+      "mean_quote_tokens_per_accepted_extraction": 1645.698275862069,
+      "quotation_position_quartiles": [
+        1858,
+        162,
+        6,
+        1
+      ],
+      "records": 118,
+      "records_with_out_of_order_quotes": 4,
+      "records_with_unpaired_calls": 63,
+      "records_with_unpaired_results": 61,
+      "successful_empty": 17
+    },
+    "firewall_disabling": {
+      "failed_extraction": 1,
+      "invalid": 1,
+      "invalid_attempt_categories": {
+        "citation": 1,
+        "passage_index": 2,
+        "schema": 1
+      },
+      "mean_quote_count_per_accepted_extraction": 9.24074074074074,
+      "mean_quote_tokens_per_accepted_extraction": 851.2962962962963,
+      "quotation_position_quartiles": [
+        386,
+        545,
+        67,
+        0
+      ],
+      "records": 109,
+      "records_with_out_of_order_quotes": 13,
+      "records_with_unpaired_calls": 29,
+      "records_with_unpaired_results": 67,
+      "successful_empty": 11
+    },
+    "length-bin-0": {
+      "failed_extraction": 0,
+      "invalid": 0,
+      "invalid_attempt_categories": {
+        "passage_index": 2
+      },
+      "mean_quote_count_per_accepted_extraction": 9.408163265306122,
+      "mean_quote_tokens_per_accepted_extraction": 869.5816326530612,
+      "quotation_position_quartiles": [
+        448,
+        413,
+        52,
+        9
+      ],
+      "records": 98,
+      "records_with_out_of_order_quotes": 3,
+      "records_with_unpaired_calls": 36,
+      "records_with_unpaired_results": 48,
+      "successful_empty": 10
+    },
+    "length-bin-1": {
+      "failed_extraction": 0,
+      "invalid": 0,
+      "invalid_attempt_categories": {
+        "schema": 1
+      },
+      "mean_quote_count_per_accepted_extraction": 11.8,
+      "mean_quote_tokens_per_accepted_extraction": 1159.888,
+      "quotation_position_quartiles": [
+        766,
+        615,
+        73,
+        21
+      ],
+      "records": 125,
+      "records_with_out_of_order_quotes": 18,
+      "records_with_unpaired_calls": 52,
+      "records_with_unpaired_results": 63,
+      "successful_empty": 8
+    },
+    "length-bin-2": {
+      "failed_extraction": 3,
+      "invalid": 3,
+      "invalid_attempt_categories": {
+        "citation": 1,
+        "passage_index": 4,
+        "quotation_budget": 4,
+        "schema": 1,
+        "truncation": 2
+      },
+      "mean_quote_count_per_accepted_extraction": 11.604046242774567,
+      "mean_quote_tokens_per_accepted_extraction": 1101.5202312138729,
+      "quotation_position_quartiles": [
+        2392,
+        1317,
+        256,
+        50
+      ],
+      "records": 349,
+      "records_with_out_of_order_quotes": 44,
+      "records_with_unpaired_calls": 165,
+      "records_with_unpaired_results": 188,
+      "successful_empty": 35
+    },
+    "malware_execution": {
+      "failed_extraction": 0,
+      "invalid": 0,
+      "invalid_attempt_categories": {},
+      "mean_quote_count_per_accepted_extraction": 10.295652173913043,
+      "mean_quote_tokens_per_accepted_extraction": 1015.3565217391305,
+      "quotation_position_quartiles": [
+        578,
+        507,
+        91,
+        8
+      ],
+      "records": 115,
+      "records_with_out_of_order_quotes": 13,
+      "records_with_unpaired_calls": 63,
+      "records_with_unpaired_results": 50,
+      "successful_empty": 8
+    },
+    "privilege_escalation": {
+      "failed_extraction": 0,
+      "invalid": 0,
+      "invalid_attempt_categories": {
+        "passage_index": 2
+      },
+      "mean_quote_count_per_accepted_extraction": 8.930434782608696,
+      "mean_quote_tokens_per_accepted_extraction": 874.2347826086957,
+      "quotation_position_quartiles": [
+        387,
+        514,
+        85,
+        41
+      ],
+      "records": 115,
+      "records_with_out_of_order_quotes": 19,
+      "records_with_unpaired_calls": 32,
+      "records_with_unpaired_results": 67,
+      "successful_empty": 10
+    },
+    "secret_exfiltration": {
+      "failed_extraction": 0,
+      "invalid": 0,
+      "invalid_attempt_categories": {
+        "passage_index": 2
+      },
+      "mean_quote_count_per_accepted_extraction": 10.226086956521739,
+      "mean_quote_tokens_per_accepted_extraction": 966.8434782608696,
+      "quotation_position_quartiles": [
+        397,
+        617,
+        132,
+        30
+      ],
+      "records": 115,
+      "records_with_out_of_order_quotes": 16,
+      "records_with_unpaired_calls": 66,
+      "records_with_unpaired_results": 54,
+      "successful_empty": 7
+    }
+  },
+  "interpretation": "Citation retention and quotation overlap measure structure only.",
+  "mrt": {
+    "all": {
+      "accepted_states": 6307,
+      "branch_disagreements": 271,
+      "invalid_attempt_categories": {
+        "citation": 18,
+        "schema": 1
+      },
+      "mean_accepted_state_tokens": 112.25003963849692,
+      "records": 572,
+      "records_with_hierarchical_citation_loss": 406,
+      "records_with_sequential_citation_loss": 451,
+      "source_tool_pairs": 9482,
+      "states_above_90_percent_budget": 0,
+      "terminal_jointly_cited_tool_pairs": [
+        309,
+        275
+      ],
+      "terminal_score_counts": [
+        {
+          "1": 167,
+          "2": 6,
+          "3": 2,
+          "4": 191,
+          "5": 206
+        },
+        {
+          "1": 163,
+          "2": 3,
+          "3": 2,
+          "4": 161,
+          "5": 237,
+          "None": 6
+        }
+      ]
+    },
+    "attack": {
+      "accepted_states": 4046,
+      "branch_disagreements": 237,
+      "invalid_attempt_categories": {
+        "citation": 8
+      },
+      "mean_accepted_state_tokens": 120.0669797330697,
+      "records": 454,
+      "records_with_hierarchical_citation_loss": 318,
+      "records_with_sequential_citation_loss": 367,
+      "source_tool_pairs": 6178,
+      "states_above_90_percent_budget": 0,
+      "terminal_jointly_cited_tool_pairs": [
+        152,
+        208
+      ],
+      "terminal_score_counts": [
+        {
+          "1": 59,
+          "2": 6,
+          "3": 2,
+          "4": 187,
+          "5": 200
+        },
+        {
+          "1": 83,
+          "2": 3,
+          "3": 2,
+          "4": 145,
+          "5": 220,
+          "None": 1
+        }
+      ]
+    },
+    "benign": {
+      "accepted_states": 2261,
+      "branch_disagreements": 34,
+      "invalid_attempt_categories": {
+        "citation": 10,
+        "schema": 1
+      },
+      "mean_accepted_state_tokens": 98.26183104820876,
+      "records": 118,
+      "records_with_hierarchical_citation_loss": 88,
+      "records_with_sequential_citation_loss": 84,
+      "source_tool_pairs": 3304,
+      "states_above_90_percent_budget": 0,
+      "terminal_jointly_cited_tool_pairs": [
+        157,
+        67
+      ],
+      "terminal_score_counts": [
+        {
+          "1": 108,
+          "4": 4,
+          "5": 6
+        },
+        {
+          "1": 80,
+          "4": 16,
+          "5": 17,
+          "None": 5
+        }
+      ]
+    },
+    "firewall_disabling": {
+      "accepted_states": 944,
+      "branch_disagreements": 66,
+      "invalid_attempt_categories": {
+        "citation": 1
+      },
+      "mean_accepted_state_tokens": 114.47139830508475,
+      "records": 109,
+      "records_with_hierarchical_citation_loss": 80,
+      "records_with_sequential_citation_loss": 86,
+      "source_tool_pairs": 1466,
+      "states_above_90_percent_budget": 0,
+      "terminal_jointly_cited_tool_pairs": [
+        48,
+        42
+      ],
+      "terminal_score_counts": [
+        {
+          "1": 23,
+          "2": 4,
+          "4": 55,
+          "5": 27
+        },
+        {
+          "1": 17,
+          "3": 1,
+          "4": 59,
+          "5": 32
+        }
+      ]
+    },
+    "length-bin-0": {
+      "accepted_states": 678,
+      "branch_disagreements": 43,
+      "invalid_attempt_categories": {
+        "citation": 2
+      },
+      "mean_accepted_state_tokens": 113.9424778761062,
+      "records": 98,
+      "records_with_hierarchical_citation_loss": 51,
+      "records_with_sequential_citation_loss": 72,
+      "source_tool_pairs": 1049,
+      "states_above_90_percent_budget": 0,
+      "terminal_jointly_cited_tool_pairs": [
+        52,
+        41
+      ],
+      "terminal_score_counts": [
+        {
+          "1": 30,
+          "2": 1,
+          "3": 1,
+          "4": 39,
+          "5": 27
+        },
+        {
+          "1": 24,
+          "4": 37,
+          "5": 36,
+          "None": 1
+        }
+      ]
+    },
+    "length-bin-1": {
+      "accepted_states": 1072,
+      "branch_disagreements": 61,
+      "invalid_attempt_categories": {
+        "citation": 5
+      },
+      "mean_accepted_state_tokens": 112.59141791044776,
+      "records": 125,
+      "records_with_hierarchical_citation_loss": 77,
+      "records_with_sequential_citation_loss": 87,
+      "source_tool_pairs": 1649,
+      "states_above_90_percent_budget": 0,
+      "terminal_jointly_cited_tool_pairs": [
+        58,
+        64
+      ],
+      "terminal_score_counts": [
+        {
+          "1": 34,
+          "2": 1,
+          "4": 48,
+          "5": 42
+        },
+        {
+          "1": 30,
+          "2": 2,
+          "4": 44,
+          "5": 48,
+          "None": 1
+        }
+      ]
+    },
+    "length-bin-2": {
+      "accepted_states": 4557,
+      "branch_disagreements": 167,
+      "invalid_attempt_categories": {
+        "citation": 11,
+        "schema": 1
+      },
+      "mean_accepted_state_tokens": 111.91792846170726,
+      "records": 349,
+      "records_with_hierarchical_citation_loss": 278,
+      "records_with_sequential_citation_loss": 292,
+      "source_tool_pairs": 6784,
+      "states_above_90_percent_budget": 0,
+      "terminal_jointly_cited_tool_pairs": [
+        199,
+        170
+      ],
+      "terminal_score_counts": [
+        {
+          "1": 103,
+          "2": 4,
+          "3": 1,
+          "4": 104,
+          "5": 137
+        },
+        {
+          "1": 109,
+          "2": 1,
+          "3": 2,
+          "4": 80,
+          "5": 153,
+          "None": 4
+        }
+      ]
+    },
+    "malware_execution": {
+      "accepted_states": 1067,
+      "branch_disagreements": 52,
+      "invalid_attempt_categories": {
+        "citation": 3
+      },
+      "mean_accepted_state_tokens": 124.69728209934395,
+      "records": 115,
+      "records_with_hierarchical_citation_loss": 91,
+      "records_with_sequential_citation_loss": 100,
+      "source_tool_pairs": 1584,
+      "states_above_90_percent_budget": 0,
+      "terminal_jointly_cited_tool_pairs": [
+        43,
+        58
+      ],
+      "terminal_score_counts": [
+        {
+          "1": 9,
+          "2": 1,
+          "3": 1,
+          "4": 35,
+          "5": 69
+        },
+        {
+          "1": 24,
+          "2": 1,
+          "4": 16,
+          "5": 74
+        }
+      ]
+    },
+    "privilege_escalation": {
+      "accepted_states": 932,
+      "branch_disagreements": 67,
+      "invalid_attempt_categories": {},
+      "mean_accepted_state_tokens": 114.08905579399142,
+      "records": 115,
+      "records_with_hierarchical_citation_loss": 66,
+      "records_with_sequential_citation_loss": 80,
+      "source_tool_pairs": 1434,
+      "states_above_90_percent_budget": 0,
+      "terminal_jointly_cited_tool_pairs": [
+        29,
+        42
+      ],
+      "terminal_score_counts": [
+        {
+          "1": 14,
+          "2": 1,
+          "3": 1,
+          "4": 67,
+          "5": 32
+        },
+        {
+          "1": 19,
+          "2": 2,
+          "4": 45,
+          "5": 49
+        }
+      ]
+    },
+    "secret_exfiltration": {
+      "accepted_states": 1103,
+      "branch_disagreements": 52,
+      "invalid_attempt_categories": {
+        "citation": 4
+      },
+      "mean_accepted_state_tokens": 125.42792384406165,
+      "records": 115,
+      "records_with_hierarchical_citation_loss": 81,
+      "records_with_sequential_citation_loss": 101,
+      "source_tool_pairs": 1694,
+      "states_above_90_percent_budget": 0,
+      "terminal_jointly_cited_tool_pairs": [
+        32,
+        66
+      ],
+      "terminal_score_counts": [
+        {
+          "1": 13,
+          "4": 30,
+          "5": 72
+        },
+        {
+          "1": 23,
+          "3": 1,
+          "4": 25,
+          "5": 65,
+          "None": 1
+        }
+      ]
+    }
+  },
+  "original_freeze": "b86533ed57f70956b55d8a5e26eac1f833dc622ef92b36060e1f71382c70ae5d",
+  "quote_budget_tokens": 3000,
+  "scoring_aggregate_sha256": "731f6b1867a891e8038a31ced8b64a9c02594cc086cfbd2d2ed356ae3a1fd9c6",
+  "summary_budget_tokens": 512,
+  "tokenizer_revision": "6cee5e81ee83917806bbde320786a8fb61efebee"
+}

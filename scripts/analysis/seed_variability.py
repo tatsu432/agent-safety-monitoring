@@ -10,7 +10,7 @@ from agent_safety_monitoring.experiments.followup import nested_scores, validate
 from agent_safety_monitoring.io import atomic_json, digest, read_json
 
 
-def analyze(base):
+def analyze(base, output=None):
     selected = set(read_json(base / "screen-ids.json"))
     tables = load_split(base / "development", "development")[0]
     groups = {
@@ -93,7 +93,7 @@ def analyze(base):
         "Three seed settings on the same fixed development cohort; "
         "not independent datasets, not confidence intervals, and not a held-out tuning criterion."
     )
-    atomic_json(base / "seed-variability.json", result)
+    atomic_json(output if output is not None else base / "seed-variability.json", result)
     return result
 
 

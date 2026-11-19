@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "screen_size": 40,
+  "conditions": {
+    "think-hundred": {"scale": "hundred", "method": "think", "effort": "medium"},
+    "eae-hundred": {"scale": "hundred", "method": "eae", "quote_tokens": 3000},
+    "mrt-hundred": {"scale": "hundred", "method": "mrt"},
+    "mrt-five-5-512": {"scale": "five", "method": "mrt"},
+    "mrt-five-5-1024": {"scale": "five", "method": "mrt", "summary_tokens": 1024},
+    "mrt-five-10-512": {"scale": "five", "method": "mrt", "chunk_interactions": 10}
+  }
+}

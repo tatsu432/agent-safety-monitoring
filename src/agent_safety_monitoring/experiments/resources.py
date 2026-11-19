@@ -2,9 +2,26 @@
 
 import csv
 import io
+from itertools import batched
 from pathlib import Path
 
 from agent_safety_monitoring.io import atomic_json, read_json
+
+
+def reconciled_accounting(query, ledger, *, user, since, account=None):
+    """Merge the date window with exact ledger-job lookups, including older gaps."""
+    args = ["sacct", "-X", "--parsable2", "--format=JobID,State,ElapsedRaw,AllocTRES,Comment"]
+    window = args + ["-u", user, "-S", since]
+    if account:
+        window += ["-A", account]
+    records = query(window).strip().splitlines()
+    rows = {line.split("|", 1)[0]: line for line in records[1:]}
+    ids = sorted({str(entry["job_id"]) for entry in ledger if entry.get("job_id")})
+    for batch in batched(ids, 100):
+        result = query(args + ["-j", ",".join(batch)]).strip().splitlines()
+        direct = {line.split("|", 1)[0]: line for line in result[1:]}
+        rows.update({job_id: direct[job_id] for job_id in batch if job_id in direct})
+    return "\n".join([records[0], *rows.values()])
 
 
 def allocation_usage(sacct_text):

@@ -96,21 +96,24 @@ def histogram(rows, tasks, values):
     return result
 
 
-def comparison(calibration, test, replicates=2000, seed=20261028):
+def comparison(calibration, test, replicates=2000, seed=20261028, *, target=0.05, test_tasks=None):
     """Whole-task multiplicities, recalibration, identical paired draws for every metric."""
-    if replicates < 1:
-        raise ValueError("Positive replicate count required")
+    if replicates < 1 or not 0 < target < 1:
+        raise ValueError("Positive replicate count and an FPR target in (0, 1) required")
     validate_pairs({"calibration": calibration, "test": test})
     names = sorted(test)
     ct = sorted({r["task_id"] for r in calibration[names[0]]})
-    tt = sorted({r["task_id"] for r in test[names[0]]})
+    observed_tasks = {r["task_id"] for r in test[names[0]]}
+    tt = sorted(observed_tasks if test_tasks is None else set(test_tasks))
+    if not observed_tasks.issubset(tt):
+        raise ValueError("Test task universe omits observed tasks")
     packed, point = {}, {}
     for name in names:
         rows = calibration[name] + test[name]
         values = sorted({r["score"] for r in rows if r["score"] is not None}, reverse=True)
         c, t = histogram(calibration[name], ct, values), histogram(test[name], tt, values)
         packed[name] = c, t, values
-        point[name] = evaluate_counts(c[:, 0].sum(0), *t.sum(0), values)
+        point[name] = evaluate_counts(c[:, 0].sum(0), *t.sum(0), values, target)
     keys = ["tpr", "fpr", "auroc_valid", "roc_tpr_05", "roc_tpr_10", "pauc_00_10"]
     draws = {n: {k: np.full(replicates, np.nan) for k in keys} for n in names}
     infeasible = dict.fromkeys(names, 0)
@@ -123,7 +126,7 @@ def comparison(calibration, test, replicates=2000, seed=20261028):
             ch, th = cdraw @ c[:, 0], np.einsum("i,ijk->jk", tdraw, t)
             if not th[0].sum() or not th[1].sum():
                 continue
-            result = evaluate_counts(ch, *th, values)
+            result = evaluate_counts(ch, *th, values, target)
             infeasible[name] += not result["policy"]["feasible"]
             for key in keys:
                 if result[key] is not None:

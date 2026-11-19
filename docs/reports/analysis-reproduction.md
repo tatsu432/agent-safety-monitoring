@@ -290,3 +290,69 @@ controller writes `context-canonical.json` only after confirming this equivalenc
 It retains the original context audit, records its SHA-256, and preserves all prompt
 counts, coverage and overflow checks. This is serialization reconciliation, not
 permission to change model settings or mark an unvalidated runtime as accepted.
+
+## Strengthened scoring and evidence analysis
+
+Use the original prepared dataset and original completed study (above). Recover
+the continuation directory `runs/extra-check/` from the project-owned Yale
+checkout `agent-safety-monitoring-extra-check`. Keep source data, caches, receipts,
+and per-record outputs in ignored private paths. For the offline replay the
+`cache/` and `wandb/` subdirectories are unnecessary.
+
+```bash
+export ASM_FOLLOWUP=runs/recovered/extra-check
+export ASM_PRIVATE=runs/strengthen
+export ASM_RAW="$ASM_SOURCE/data/raw"
+export ASM_DATA="$ASM_SOURCE/data/prepared"
+mkdir -p "$ASM_PRIVATE"
+uv run --locked --extra data --extra tokenizer python scripts/analysis/strengthen_report.py \
+  --recovered "$ASM_FOLLOWUP" --original-freeze "$ASM_ORIGINAL" \
+  --original-repo "$ASM_SOURCE" --data "$ASM_DATA" --original-run "$ASM_RUN" \
+  --private-output "$ASM_PRIVATE" --output docs/reports/strengthened-scoring.json
+uv run --locked --extra data python -c \
+  'import os; from pathlib import Path as P; from agent_safety_monitoring.analysis.visibility import audit_visibility; audit_visibility(P(os.environ["ASM_RAW"]), P("docs/reports/trajectory-visibility.json"))'
+HF_HUB_OFFLINE=1 uv run --locked --extra tokenizer python -c \
+  'import os; from pathlib import Path as P; from agent_safety_monitoring.analysis.evidence_diagnostics import summarize_evidence; summarize_evidence(P(os.environ["ASM_DATA"]), P(os.environ["ASM_RUN"]), P(os.environ["ASM_ORIGINAL"]), P("docs/reports/strengthened-scoring.json"), P("docs/reports/strengthened-evidence.json"))'
+uv run --locked asm analysis followup-figures --source "$ASM_PRIVATE/scoring.json" \
+  --measurements "$ASM_FOLLOWUP/timing/measurements.json" --output docs/reports/figures
+uv run --locked python scripts/analysis/strengthen_figures.py \
+  --scoring docs/reports/strengthened-scoring.json \
+  --evidence docs/reports/strengthened-evidence.json --output docs/reports/figures
+uv run --locked --with reportlab==5.1.0 python scripts/analysis/render_report.py \
+  --source docs/reports/final-report.md --output output/pdf/monitoring-study.pdf \
+  --status 'Verified results and exploratory follow-up'
+pdftoppm -png output/pdf/monitoring-study.pdf tmp/pdfs/page
+```
+
+The aggregate replay checks both freezes and archived result digests, and
+compares historical values within absolute floating-point tolerance of 1e-12.
+It uses no inference backend. The quote and summary length analysis requires
+the frozen tokenizer revision `6cee5e81ee83917806bbde320786a8fb61efebee` in
+the local Hugging Face cache. Public outputs carry aggregate counts and
+input digests. W&B receives a fixed scalar allowlist via
+`scripts/analysis/publish_strengthened.py`.
+
+For a new development diagnostic, use the original pinned serving environment,
+the isolated source snapshot, `ASM_ACTION=development-diagnostic`,
+`ASM_DIAGNOSTIC_CONFIG=configs/followup/diagnostics.json`, and
+`ASM_DIAGNOSTIC_IDS="$ASM_FOLLOWUP/screen-ids.json"`. Set
+`ASM_DIAGNOSTIC_CONDITION` to one versioned condition and submit through
+`scripts/yale/submit.py` with the reconciled project ledger and cap. A
+previously validated Python environment may be mounted read-only by setting
+`ASM_CLIENT_PYTHON` after comparing `uv.lock` bytes. The launcher validates
+the runtime against the original freeze. Each condition records identity,
+validity, costs and decision latencies separately.
+
+Prepare the matched evidence-intervention packet on CPU:
+
+```bash
+uv run --locked python scripts/analysis/evidence_intervention.py \
+  --data "$ASM_DATA" --freeze "$ASM_ORIGINAL" --recovered "$ASM_FOLLOWUP" \
+  --original "$ASM_RUN" --packet "$ASM_PRIVATE/evidence-intervention-packet.json"
+```
+
+Stage that private packet and supply its path as `ASM_EVIDENCE_PACKET` with
+`ASM_ACTION=evidence-intervention`. The launcher records the private score
+for each highlighted-transcript review and an aggregate matched-case summary.
+The aggregate retains source-checked model provenance and the exploratory
+fixed EaE-policy interpretation.

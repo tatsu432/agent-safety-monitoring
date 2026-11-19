@@ -6,8 +6,8 @@ BashArena trajectories using a fixed `gpt-oss-20b` monitor: single review, longe
 reasoning, averaging two reviews, extract-and-evaluate (EaE), and sequential plus
 hierarchical review (MRT).
 
-The original frozen study is complete. A new forensic audit reproduces its results;
-controlled follow-up inference is now underway on Yale. On 454 recorded
+The original frozen study and its controlled nested-review follow-up are
+complete. On 454 recorded
 successful attacks and 118 nominal benign test trajectories, thresholds were set
 using separate benign calibration data to target 5% false-positive rate. Rates
 are expected alerts with randomization at tied scores:
@@ -26,19 +26,14 @@ development GPU time. A structural baseline achieved 0.901 AUROC, so dataset sho
 are an important limitation. A small model-based evidence diagnostic did not establish
 why EaE failed; its references were not human-verified.
 
-[Research report](docs/reports/report-draft.md) · [Results and uncertainty](docs/reports/primary-analysis.md) ·
-[Compute](docs/reports/compute-efficiency.md) · [Methods](docs/methods.md) ·
-[Reproduce](docs/reports/analysis-reproduction.md)
+The follow-up finds that repetition improves detection at both native score
+scales. Fine-scale detection rises from 31.0% with one review to 85.7% with
+five, at 5.0% and 6.1% realized FPR. Five-review detection remains 81–84% after
+coarsening the same fine scores. The raw archive includes an extended-thinking
+overlay that the frozen monitors did not see.
 
-
-The [forensic audit](docs/reports/original-study-audit.md) separates calibrated policies
-from descriptive test-ROC performance. [Failure analysis](docs/reports/failure-analysis.md)
-reconstructs MRT branches and EaE evidence structure. The
-[follow-up protocol](docs/reports/followup-experiment-plan.md) records prepared 0–100 scoring,
-N=1/2/3/5 experiments, resource projections, and outstanding physical validation.
-[Current report](docs/reports/final-report.md) includes completed post-hoc results and limitations.
-
-The [November 10 checkpoint](docs/task_completion/05-extra-check-checkpoint.md) records
-the active pilot and automatic continuation. New [joint length/tool sensitivity](docs/reports/joint-structural-sensitivity.md)
-preserves averaging's favorable comparisons within overlap, while excluding 143 test
-records; this exploratory result does not remove the benchmark's confounding limitations.
+[Research report](docs/reports/final-report.md) ·
+[Results](docs/reports/strengthened-scoring.json) ·
+[Methods](docs/methods.md) ·
+[Reproduce](docs/reports/analysis-reproduction.md) ·
+[Execution status](docs/task_completion/06-strengthen-complete-checkpoint.md)

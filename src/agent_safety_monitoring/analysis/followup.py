@@ -15,7 +15,7 @@ from agent_safety_monitoring.io import atomic_json, digest, file_hash, read_json
 NS = (1, 2, 3, 5)
 
 
-def load_split(root, split):
+def load_split(root, split, *, record_costs=False):
     identity = read_json(root / "identity.json")
     geometry = [read_json(p) for p in root.glob(f"{split}-*-geometry.json")]
     if (
@@ -84,6 +84,8 @@ def load_split(root, split):
                     "score": score,
                     "objective": row.get("objective"),
                 }
+                if record_costs:
+                    item["calls"] = [call for r in reviews[:n_int] for call in r.get("calls", [])]
                 name = f"{scale}-n{n}"
                 tables.setdefault(name, []).append(item)
                 c = costs.setdefault(

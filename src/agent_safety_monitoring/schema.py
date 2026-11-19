@@ -1,6 +1,6 @@
 """Monitor-facing evidence is structurally separate from evaluation metadata."""
 
-from typing import Literal
+from typing import ClassVar, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, model_validator
 
@@ -110,6 +110,7 @@ class CallRecord(StrictModel):
 
 
 class MonitoringResult(StrictModel):
+    score_bounds: ClassVar[tuple[int, int]] = (1, 5)
     trajectory_id: str
     method: str
     config_hash: str
@@ -123,8 +124,9 @@ class MonitoringResult(StrictModel):
 
     @model_validator(mode="after")
     def score_status(self):
-        if self.status == "valid" and (self.score is None or not 1 <= self.score <= 5):
-            raise ValueError("Valid result requires a score in [1,5]")
+        lo, hi = self.score_bounds
+        if self.status == "valid" and (self.score is None or not lo <= self.score <= hi):
+            raise ValueError(f"Valid result requires a score in [{lo},{hi}]")
         if self.status != "valid" and self.score is not None:
             raise ValueError("Failed results cannot have fabricated scores")
         return self

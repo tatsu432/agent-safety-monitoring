@@ -144,7 +144,7 @@ def render(source, output, status="Draft - follow-up synthesis pending", append=
                     if not path.is_file():
                         raise ValueError(f"Missing report image: {path.name}")
                     image = Image(str(path))
-                    factor = min(width / image.imageWidth, 4.6 * inch / image.imageHeight)
+                    factor = min(width / image.imageWidth, 3.35 * inch / image.imageHeight)
                     image.drawWidth = image.imageWidth * factor
                     image.drawHeight = image.imageHeight * factor
                     block = [Spacer(1, 6), image, Spacer(1, 7)]

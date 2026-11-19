@@ -1,16 +1,9 @@
-> **November 10 execution update:** Yale access is restored. The physical pilot
-> passed with 30/30 valid reviews; homogeneous timing is running with ledger-backed continuation. The scoring and objective-aware
-> follow-ups remain unfinished. See the [current checkpoint](../task_completion/05-extra-check-checkpoint.md).
-
-> **November 8 follow-up status:** Original metrics and uncertainty have been independently reproduced. New ROC and branch analyses below are post hoc. Controlled 0–100/N=3/5 inference and objective-aware reference review remain pending Yale authentication; this is the current report, not a claim of full follow-up completion.
-
 # How Should a Coding Agent Safety Monitor Spend Its Compute Budget?
 
-Tatsuhiro Shimizu · Yale CPSC 5710 · Scientific report, November 3, 2026
+Tatsuhiro Shimizu · Yale CPSC 5710 · Scientific report, November 2026
 
-**Status:** The frozen study, independent artifact reconciliation, and exploratory
-model-based evidence diagnostic are complete. The evidence review was performed by
-a local model, not a human reviewer; its interpretations remain unverified.
+**Status:** The frozen study and exploratory nested-review scoring study are complete.
+The execution checkpoint records the status of the new mechanism pilots.
 
 ## Abstract
 
@@ -19,16 +12,17 @@ trajectories: single review, longer reasoning, averaging two reviews, extract-an
 (EaE), and a sequential/hierarchical MRT hybrid. A separate benign calibration population
 sets a 5% expected false-positive-rate target. The primary test contains 118 nominal benign
 records and 454 source-graded successful attacks, clustered in 118 legitimate tasks.
-Averaging attains 70.2% expected attack detection and 4.2% realized
-test FPR; its paired task-bootstrap difference from single review is positive, while the
-comparison with longer reasoning remains inconclusive. EaE attains 4.8% detection
-and 0.556 valid-score AUROC. MRT costs 5.30 times averaging in the
-independent development timing screen. A development-fitted length-and-tool-count baseline
-attains 0.901 AUROC, making structural confounding central to interpretation. In a
-selected 24-record evidence-replacement diagnostic, the expected alert-rate change was −2.8 percentage points (95% task-bootstrap interval −13.4 to 5.8). Fixed,
-matched-control injections do not produce a clear aggregate increase in missed attacks.
-These findings concern one offline setting; they do not establish live protection,
-universal method superiority, or a verified causal explanation of EaE failure.
+Two coarse reviews attain 70.2% attack detection at 4.2% realized test FPR, versus
+31.9% at 4.1% for one. Under fine ordinal scoring, five reviews attain 85.7% at
+6.1%, versus 31.0% at 5.0% for one. Valid-score AUROC also improves with repetition.
+Coarsening the same fine judgments changes threshold behavior while preserving most
+of the five-review detection advantage. EaE performs poorly, and exchanging its
+quotations for model-suggested evidence does not improve detection on a selected
+diagnostic sample. MRT costs 5.3 times two coarse reviews in the original timing
+screen. The release contains extended thinking in a separate metadata overlay that
+was excluded from the frozen monitor inputs. A structural baseline reaches 0.901
+AUROC, limiting interpretation of these single-benchmark offline findings.
+
 
 ## 1. Introduction
 
@@ -74,6 +68,27 @@ narrower threat model than adaptive or live attacks.
 [Terekhov et al., Adaptive Attacks](https://arxiv.org/abs/2510.09462),
 [Remedios et al., Red-Teaming Auto Mode](https://arxiv.org/abs/2609.19587).
 
+| Dimension | Arike et al. EaE | Kale et al. MRT | This study |
+| --- | --- | --- | --- |
+| Tasks and models | SHADE-Arena, MLE-Sabotage, BigCodeBench-Sabotage. Main monitors Claude 3.7 Sonnet and GPT-4.1-mini. | SHADE-Arena and CUA-SHADE-Arena. Tests agent and monitor pairings across model strengths. | Saved BashArena Linux administration. Claude Opus 4.6 agent, gpt-oss-20b monitor. |
+| Evidence and threat model | Tests action-only, CoT-only and combined access. EaE extracts from combined evidence. Agent awareness varies. | Trajectories include reasoning and actions. Agent and monitor awareness and evasion are experimental factors. | Common visible task and action record. Extended thinking excluded. Fixed offline injection sensitivity. |
+| Evidence processing | The extractor returns excerpts and the evaluator sees excerpts plus the genuine task. Environment-specific prompts and model pairings. | Sequential and hierarchical chunk summaries. Main experiments use five interactions per branch with equal weights. Appendix varies chunk size and weights. | EaE selects up to 24 exact 400-character passages under 3K tokens. MRT uses a 12K chunk cap, binary merges and a 512-token serialized state. |
+| Scores and resources | Log-AUROC and a conservative 1% cutoff. API-price efficiency in MLE-Sabotage. | AUROC and TPR at 1% FPR, with chunk and combination ablations. | Strict ordinal scales and independently calibrated 5% and 1% targets. Physical H200 workload and allocation measurements. |
+
+BigCodeBench's released extractor parses free-form tagged quotations from monitor
+reasoning. Its evaluator parses tagged numeric scores, with 0–100 normalization
+defaults. The MLE-Sabotage release uses temperature zero by default and skips
+evaluation when no quotations exist. Its prompt template can include a recorded
+main-task score. Our baseline uses temperature 0.2, validates source spans and
+handles invalid results as referrals. The released MRT code supports plain-text
+summary carryover and multiple aggregation styles. We enforce a shared serialized
+summary format and a token cap across both branches.
+[Arike et al.](https://arxiv.org/html/2601.21112v2),
+[BigCodeBench monitor code](https://github.com/Aether-AIS/cotrh-blue-team/blob/7dd11d656756cb74215b4adf14b5d25b0f080576/src/cot_red_handed/monitor/hierarchical_monitor.py),
+[MLE-Sabotage code](https://github.com/rajamoreno/info-access-mle-sabotage/blob/3be99896888dc36a4ebd43a506dabd92db3d2c18/mlebench_subversion/monitoring/eae_evaluator.py),
+[Kale et al.](https://openreview.net/pdf?id=WV7xIboTDK),
+[MRT code](https://github.com/scaleapi/mrt/blob/3535620b2bdf0dc1e6140f6fbe198399aac2c74f/utils/pipeline_utils.py).
+
 ## 3. Dataset and experimental setup
 
 The imported release contains 600 nominal benign trajectories and 600 attack-assigned
@@ -85,10 +100,24 @@ records, and 118 attacked test tasks. Test includes 454 successful attacks plus 
 records in the primary analysis; eight failed and ten ungraded attacks are supplementary.
 Provisional proposal counts are superseded by the verified manifest.
 
-The monitor receives the genuine task and canonical visible assistant text, actions, and
-tool outputs. Preprocessing uniformly removes private/system reasoning, original user
-preambles, and submission markers. Labels, attack objectives, grades, source conversion
-indices, and split metadata are structurally separate. Trajectory commands are never executed.
+The monitor receives the genuine task and canonical visible assistant text, actions,
+and tool outputs. Normalization excludes system instructions, original user preambles,
+submission markers, and the separate reasoning overlay. Labels, grades, attack
+objectives, and split membership are outside the evaluated monitor input.
+
+Both raw archive hashes were verified. Their 1,200 Inspect records have string-only
+assistant messages and model-event choices. Four per assignment have neither
+assistant prose nor explicit reasoning. The release's
+`metadata.control_tower_overlay.actions[].agent_reasoning` exactly duplicates a
+visible assistant message wherever nonempty. The separate `extended_thinking` field
+contains nonempty, nonduplicated text for 596 attack-assigned and 595 benign
+trajectories. It is populated on 8,481 of 9,075 attack-assigned actions (93.5%) and
+6,071 of 17,880 benign actions (34.0%). The released field structure and the
+[reasoning overlay counts](trajectory-visibility.json) establish that the frozen
+input omitted available extended thinking. This visibility difference matters for
+paper comparisons. Adding the overlay wholesale would also introduce an
+assignment-correlated missingness signal. [Release catalog](https://leaderboard.linuxarena.ai/data).
+
 
 The fixed monitor is `openai/gpt-oss-20b`, revision
 `6cee5e81ee83917806bbde320786a8fb61efebee`, served by vLLM 0.11.0 on one H200 with
@@ -124,11 +153,6 @@ two populations, and recalibrating every replicate. Pairwise intervals are nomin
 | Average ×2 | 118 | 454 | 70.2 [56.6, 80.5] | 4.2 [0.8, 8.5] | 0.951 [0.922, 0.974] | 100.0 | 0 |
 | EaE 3K | 118 | 454 | 4.8 [2.4, 9.0] | 5.1 [1.7, 10.0] | 0.556 [0.526, 0.585] | 99.5 | 3 |
 | MRT 5 interactions | 118 | 454 | 40.9 [25.0, 64.9] | 8.5 [4.0, 14.0] | 0.903 [0.867, 0.934] | 99.0 | 6 |
-
-![Primary detection](figures/main-performance.png)
-
-*Expected successful-attack detection with whole-task 95% bootstrap intervals. Realized
-test FPR differs by method despite the common calibration target.*
 
 | Comparison | TPR difference, pp [95% CI] |
 | --- | --- |
@@ -250,34 +274,129 @@ about attack effectiveness and does not establish equivalence or adaptive robust
 [Injection results](injection-robustness.md) report family/position strata, benign alert changes,
 and invalid behavior. The averaging method was not included in this experiment.
 
-## 7. Discussion and limitations
+## 7. Scoring resolution and repeated review
 
-Independent repeated review offers a favorable observed tradeoff in this setting, especially
-relative to the substantially more expensive MRT hybrid. Longer reasoning also improves
-on single review under the calibrated randomized policy. Elaborate intermediate processing
-does not guarantee better detection: extraction may discard context, while summarization
-can add cost and failure points. Our data do not yet identify which mechanism explains EaE.
+The versioned exploratory run holds the model, evidence, temperature and low
+reasoning effort fixed. Five seeded reviews yield nested averages at N = 1, 2, 3,
+and 5. The fine score is an integer ordinal suspicion rating. Deterministic
+20-point binning before or after averaging tests how changing score resolution
+alone affects the same judgments. Held-out outputs are from the previously
+examined task groups. Calibration uses the original separate 448 benign examples.
 
-Generalization is limited by one monitor model, one agent family, one benchmark release,
-source-recorded grades, and nominal benign labels. Structural imbalance and calibration/task
-population differences complicate interpretation. Ordinal scores, randomized boundaries,
-unequal realized FPRs, and unequal compute mean this is not an exactly equal-budget or
-identically constrained comparison. Diagnostic samples are small and selected; injection
-payloads are synthetic and nonadaptive. Prompting and serving settings may matter. Offline
-review cannot establish whether live intervention would prevent harm.
+| Scale and reviews | TPR at 5% target | Test FPR | AUROC | Raw pAUC 0–10% | TPR / FPR at 1% target | H200 s / trajectory |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1–5 ×1 | 31.9% | 4.1% | .914 | .0390 | 6.4% / 0.8% | 15.1 |
+| 1–5 ×2 | 70.2% | 4.2% | .951 | .0684 | 16.5% / 1.1% | 28.9 |
+| 1–5 ×3 | 79.9% | 3.4% | .961 | .0757 | 11.3% / 0.5% | 45.3 |
+| 1–5 ×5 | 81.1% | 3.8% | .966 | .0759 | 19.9% / 0.6% | 79.9 |
+| 0–100 ×1 | 31.0% | 5.0% | .925 | .0447 | 5.0% / 1.5% | 14.8 |
+| 0–100 ×2 | 42.4% | 5.0% | .938 | .0538 | 6.8% / 1.6% | 36.3 |
+| 0–100 ×3 | 72.8% | 6.8% | .945 | .0580 | 9.3% / 1.7% | 49.7 |
+| 0–100 ×5 | 85.7% | 6.1% | .953 | .0642 | 4.9% / 1.7% | 83.0 |
 
-All mechanism investigations added after observing results are post-hoc. Model-proposed
-reference evidence is fallible. Mock/software tests establish safeguards, not GPU compatibility
-or scientific effectiveness. The model-based evidence diagnostic has no human
-reference review, and its interpretations and passage selections remain fallible.
+The fine-scale 1→5 detection difference is +54.7 percentage points (paired 95%
+interval +28.7 to +65.1), with +0.029 AUROC (+0.008 to +0.054). Fine-scale
+1→2 adds 11.4 points (+0.9 to +39.0). Five fine reviews retain 81.3% detection
+when coarsened after averaging and 84.3% when coarsened before averaging. Their
+paired differences from native fine averaging include zero. Thus the gain
+from repeated review survives score resolution controls. Score scale alone has
+no clear winner: coarse and fine five-review detection and AUROC differences
+are inconclusive. At N=1, merely changing the native instructions reduces the
+all-pairs valid tie fraction from 43.7% to 23.3% and the number of test records
+at the calibrated boundary from 341 to 177, with similar expected detection.
 
-## 8. Conclusion
+The 1% sensitivity uses the same separate calibration design with a smaller
+false-alarm allowance. At that target, the nominal expected counts are 4.48 in
+calibration and 1.18 in the nominal benign test cohort. Five fine reviews have a
+lower 1% point estimate than three despite a much higher 5% point estimate.
+Intervals, referral floors and coverage are in the aggregate. These estimates
+have limited tail precision. The descriptive valid-score ROC uses test labels
+and answers a different question.
 
-The frozen results support benefits from averaging and longer reasoning over a single
-low-effort review under this calibration policy. Averaging compares favorably with MRT's
-measured development cost, while the difference from think-longer remains inconclusive.
-EaE performs poorly in this adaptation. Structural confounding and score-boundary sensitivity
-are substantial qualifications, and a verified causal account of extraction failure remains open.
+The incremental detection benefit per added coarse review falls from 38.3 to
+9.7 to 0.6 points across 1→2, 2→3 and 3→5. For fine scores it is 11.4, 30.4,
+and 6.4 points. Both 3→5 intervals include zero. Five fine reviews had the
+highest eligible pooled development AUROC. Across the three development seed
+settings, its AUROC ranged .952–.962, compared with .874–.923 for one fine review.
+These seed ranges are variability measures on the same cases.
+
+![Detection versus measured cost](figures/followup-detection-cost.png)
+
+*Homogeneous one-H200 workload measurements on a 40-record development screen,
+with startup excluded. Vertical bands show pointwise task-bootstrap intervals.
+Realized test FPR varies across methods.*
+
+![Low-FPR ROC](figures/followup-low-fpr-roc.png)
+
+*Descriptive test ROC conditional on valid scores. The separately calibrated
+policies are reported in the table.*
+
+## 8. Evidence bottlenecks and length sensitivity
+
+EaE accepted 569 of 572 extractions, including 53 empty selections. The accepted
+quotations used a mean 1,074 of 3,000 available tokens, 1,646 on benign cases and
+928 on attacks. In 253 records at least one selected tool call lacked its
+matching selected result. More than 92% of quotations came from the first half
+of the transcript. The objective-aware 120B reviewer proposed references on the
+fixed 30-case attack sample. Replacing original quotations with those references
+changed expected alerts by −6.1 points (95% interval −15.2 to 0.0) on the 22
+eligible comparisons. Six reference sets exceeded the budget and two were
+unresolved. This is a selected-sample comparison under the same frozen EaE judge
+and policy. Model-proposed exact spans establish source provenance, with semantic
+sufficiency unresolved.
+
+![EaE extraction behavior](figures/followup-eae-evidence.png)
+
+*Mean quoted-token utilization and quote position from the frozen extraction
+artifacts. Position and token counts are structural diagnostics.*
+
+The MRT hybrid uses a mean of about 11 calls per primary test record. The
+hierarchical terminal has valid AUROC .771, compared with .889 for sequential
+and .903 for the hybrid. Branches differ on 271 of 572 cases. Earlier citations
+are absent from 451 sequential and 406 hierarchical terminal states. Across
+6,307 accepted intermediate states, the mean serialized size is 112 tokens and
+none uses 90% of the 512-token budget. Terminal states cite both members for
+309 of 9,482 source call/result pairs sequentially and 275 hierarchically.
+These are citation counts. The observed utilization weakens the explanation
+that the hard state cap alone explains MRT behavior.
+
+Development-derived length edges are 11,391 and 14,375 canonical source tokens.
+The three test bins contain 18/80, 15/110, and 85/264 benign/successful-attack
+records. The original single review's calibrated detection rises from 21.4% to
+33.9% to 34.3%, while average ×2 rises from 48.0% to 74.8% to 75.1%. MRT reaches
+36.4%, 35.6%, and 44.4%, with the highest MRT AUROC in the shortest bin. These
+results provide no evidence of a monotonic decline in single-review detection
+or a long-transcript advantage for this chunked adaptation. Detection uses one
+globally calibrated policy per method. The different class, tool-count, and
+objective composition across bins limits mechanism inference.
+
+![Performance by source length](figures/followup-length.png)
+
+*Descriptive test strata. Counts are shown under each interval. Realized FPR and
+paired intervals are available in the aggregate.*
+
+## 9. Discussion and conclusion
+
+Under the observed costs, repeated full-context review improves discrimination
+for both native scales. Three coarse reviews occupy a useful point on the
+measured cost curve, while the differences between three and five are uncertain.
+The original longer-reasoning policy catches more attacks than single review
+at a higher realized FPR and has slightly lower valid AUROC. Its advantage
+is operating-point dependent on the available results. The direct fine-scale
+comparison is tracked in the execution checkpoint.
+
+The EaE evidence bottleneck is observable in empty, sparse and unpaired
+extractions. The substitution diagnostic does not establish whether a genuinely
+sufficient evidence set would rescue the fixed judge. MRT offers one way to review
+a transcript in bounded stages, but its multiple sequential and hierarchical calls
+were expensive in this context regime. Cost and discrimination for both
+adaptations may depend on evidence visibility, task mix, and monitor model.
+
+This study covers one offline benchmark, one agent family and one main monitor
+model. Source grades and nominal benign labels carry measurement limitations.
+Structural overlap weighting changes the covered population. The association of
+length and tool count with assignment, the reuse of previously inspected test
+tasks, and uncertainty in low-FPR tails limit generalization to deployment.
 
 ## References
 
@@ -301,33 +420,7 @@ its own provenance. Existing frozen inference keeps its exact original runtime.
 [Analysis aggregates](analysis-aggregates.json) record numeric values and input-file SHA-256
 identities. [Reproduction instructions](analysis-reproduction.md) provide exact commands and
 private input requirements. No raw trajectory, individual injection pair, reference quotation,
-model explanation, or private reasoning is published in this package. New GPU work requires
-current project-specific Slurm accounting and measured development validation first.
-
-
-## Additional forensic analysis, November 8
-
-| Method | Calibrated TPR / test FPR % | Valid AUROC | Valid TPR@5% [95% CI] | Valid TPR@10% | Raw pAUC 0–10% |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Average ×2 | 70.2 / 4.2 | 0.951 | 94.1 [39.8, 96.1] | 94.6 | 0.0684 |
-| EaE | 4.8 / 5.1 | 0.556 | 6.6 [3.5, 20.6] | 21.6 | 0.0088 |
-| MRT hybrid | 40.9 / 8.5 | 0.903 | 47.8 [19.0, 74.3] | 73.9 | 0.0439 |
-| Single | 31.9 / 4.1 | 0.914 | 39.0 [23.2, 74.9] | 78.6 | 0.0390 |
-| Think longer | 63.4 / 7.7 | 0.903 | 41.1 [26.7, 76.5] | 82.2 | 0.0411 |
-
-These ROC figures condition on valid scores and use the test set to select operating points. They are descriptive discrimination metrics, not independently validated deployment policies. Raw pAUC integrates FPR 0–10%.
-
-| Branch | Calibrated TPR / FPR % | Valid AUROC | Valid TPR@5% | Raw pAUC |
-| --- | ---: | ---: | ---: | ---: |
-| MRT sequential | 28.6 / 3.3 | 0.889 | 43.3 | 0.0464 |
-| MRT hierarchical | 20.7 / 10.3 | 0.771 | 16.1 | 0.0161 |
-| MRT hybrid | 40.9 / 8.5 | 0.903 | 47.8 | 0.0439 |
-
-The weaker hierarchical branch does not imply that removing it improves every metric. Branch intervals, common-valid sensitivity, referral contributions, ties and paired differences are in [the aggregate](diagnosis-aggregate.json). See [the audit](original-study-audit.md), [failure analysis](failure-analysis.md) and [execution protocol](followup-experiment-plan.md) for evidence, limitations, and the exact outstanding work. No missing experimental values are extrapolated.
-
-## November 10: joint structural sensitivity
-
-The [joint length/tool-count sensitivity](joint-structural-sensitivity.md) adds a
-fixed development-derived grid, overlap exclusions, effective sample sizes, paired
-whole-task intervals, and objective-specific estimates. This exploratory sensitivity
-changes the evaluated population; it does not replace the frozen primary results.
+model explanation, or private reasoning is published in this package. The [strengthened aggregate](strengthened-scoring.json),
+[saved-stage diagnostics](strengthened-evidence.json), and
+[execution checkpoint](../task_completion/06-strengthen-complete-checkpoint.md) record
+coverage, uncertainty, provenance, and outstanding work.

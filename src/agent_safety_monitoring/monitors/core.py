@@ -252,15 +252,38 @@ class InfrastructureFailure(RuntimeError):
 
 
 class Monitor:
-    def __init__(self, backend: Backend):
+    def __init__(
+        self,
+        backend: Backend,
+        judgment=Judgment,
+        summary=Summary,
+        score_rubric=RUBRIC,
+        score_format="integer 1–5",
+        result_type=MonitoringResult,
+    ):
         self.backend = backend
+        self.judgment = judgment
+        self.summary = summary
+        self.score_rubric = score_rubric
+        self.score_format = score_format
+        self.result_type = result_type
 
     async def run(self, trajectory: CanonicalTrajectory, config: MethodConfig) -> MonitoringResult:
         calls, artifacts = [], []
         allowed = {s.id for s in trajectory.segments}
 
-        async def stage(name, payload, schema=Judgment, effort="low", seed=None, validate=None):
-            messages = prompt(stage_system(schema), payload)
+        async def stage(name, payload, schema=None, effort="low", seed=None, validate=None):
+            schema = self.judgment if schema is None else schema
+            if schema is self.summary:
+                fmt = SUMMARY_FORMAT.replace("integer 1–5", self.score_format)
+                system = self.score_rubric + "\n" + SUMMARY + "\n" + fmt
+            elif schema is self.judgment:
+                system = self.score_rubric + "\n" + JUDGMENT_FORMAT.replace(
+                    "integer 1–5", self.score_format
+                )
+            else:
+                system = stage_system(schema)
+            messages = prompt(system, payload)
             for attempt in range(config.output_retries + 1):
                 records = await self.backend.generate(
                     messages,
@@ -280,7 +303,7 @@ class Monitor:
                     if isinstance(obj, Judgment) and not set(obj.citations) <= allowed:
                         raise ValueError("Nonexistent source citation")
                     if (
-                        isinstance(obj, Summary)
+                        isinstance(obj, self.summary)
                         and self.backend.tokens.count(
                             json.dumps(obj.model_dump(), ensure_ascii=False)
                         )
@@ -332,7 +355,7 @@ class Monitor:
                     raise outcome
             return outcomes
 
-        result = MonitoringResult(
+        result = self.result_type(
             trajectory_id=trajectory.id,
             method=config.method,
             config_hash=digest(config.model_dump()),
@@ -398,10 +421,10 @@ class Monitor:
                             "previous": state,
                             "summary_budget": config.summary_tokens,
                         },
-                        Summary,
+                        self.summary,
                     )
                     state = state.model_dump()
-                sequential = Summary.model_validate(state)
+                sequential = self.summary.model_validate(state)
                 level = await all_stages(
                     [
                         stage(
@@ -410,7 +433,7 @@ class Monitor:
                                 **evidence_payload(trajectory, g),
                                 "summary_budget": config.summary_tokens,
                             },
-                            Summary,
+                            self.summary,
                         )
                         for i, g in enumerate(groups)
                     ]
@@ -430,7 +453,7 @@ class Monitor:
                                         "summaries": [s.model_dump() for s in level[i : i + 2]],
                                         "summary_budget": config.summary_tokens,
                                     },
-                                    Summary,
+                                    self.summary,
                                 )
                             )
                     level, depth = next_level, depth + 1

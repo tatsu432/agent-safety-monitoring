@@ -1,0 +1,88 @@
+{
+  "archives": {
+    "attack": {
+      "archive_members_by_prefix": {
+        "_journal": 2,
+        "header.json": 1,
+        "reductions.json": 1,
+        "samples": 600,
+        "summaries.json": 1
+      },
+      "assistant_content_shapes": {
+        "string": 9075
+      },
+      "control_tower_action_overlay": {
+        "actions": 9075,
+        "agent_reasoning_actions_exact_visible_match": 8481,
+        "agent_reasoning_actions_nonempty": 8481,
+        "agent_reasoning_actions_null": 594,
+        "agent_reasoning_actions_other_type": 0,
+        "agent_reasoning_samples_nonempty": 596,
+        "extended_thinking_actions_exact_visible_match": 0,
+        "extended_thinking_actions_nonempty": 8481,
+        "extended_thinking_actions_null": 594,
+        "extended_thinking_actions_other_type": 0,
+        "extended_thinking_samples_nonempty": 596
+      },
+      "counts": {
+        "no_assistant_prose_or_explicit_reasoning": 4,
+        "samples": 600,
+        "samples_with_reasoning_choice_blocks": 0,
+        "visible_assistant_text": 596
+      },
+      "model_event_choice_shapes": {
+        "string": 9075
+      },
+      "reasoning_like_metadata_fields": {
+        "sample_metadata.object.object.array.agent_reasoning": 596,
+        "sample_metadata.object.object.array.extended_thinking": 596,
+        "sample_metadata.object.object.array.object.array.extended_thinking": 596
+      },
+      "source_sha256": "99ee247941cc3e5cfdcffa0c0d31f7ac4b169a36e7ab8fb9e57a52f28d2b2915"
+    },
+    "honest": {
+      "archive_members_by_prefix": {
+        "_journal": 2,
+        "header.json": 1,
+        "reductions.json": 1,
+        "samples": 600,
+        "summaries.json": 1
+      },
+      "assistant_content_shapes": {
+        "string": 17880
+      },
+      "control_tower_action_overlay": {
+        "actions": 17880,
+        "agent_reasoning_actions_exact_visible_match": 15644,
+        "agent_reasoning_actions_nonempty": 15644,
+        "agent_reasoning_actions_null": 2236,
+        "agent_reasoning_actions_other_type": 0,
+        "agent_reasoning_samples_nonempty": 596,
+        "extended_thinking_actions_exact_visible_match": 0,
+        "extended_thinking_actions_nonempty": 6071,
+        "extended_thinking_actions_null": 11809,
+        "extended_thinking_actions_other_type": 0,
+        "extended_thinking_samples_nonempty": 595
+      },
+      "counts": {
+        "no_assistant_prose_or_explicit_reasoning": 4,
+        "samples": 600,
+        "samples_with_reasoning_choice_blocks": 0,
+        "visible_assistant_text": 596
+      },
+      "model_event_choice_shapes": {
+        "string": 17880
+      },
+      "reasoning_like_metadata_fields": {
+        "sample_metadata.object.object.array.agent_reasoning": 596,
+        "sample_metadata.object.object.array.extended_thinking": 596,
+        "sample_metadata.object.object.array.object.array.extended_thinking": 596
+      },
+      "source_sha256": "8db012217ba105a5d20b9d9932197672ad64a81be5c0ceaef811dae09052b36f"
+    }
+  },
+  "attachment_payloads_resolved": false,
+  "release": "BashArena/bashbench2_v1; Claude Opus 4.6",
+  "schema_version": 1,
+  "source_catalog": "https://control-leaderboard.redwoodresearch.org/data"
+}

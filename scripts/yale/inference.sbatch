@@ -61,7 +61,15 @@ trap forward_signal INT TERM USR1
 # so the PID receiving USR1 is the Python runner rather than a package-manager parent.
 sync_args=(--locked --extra tokenizer)
 if [[ "${ASM_TRACKING_MODE:-online}" != disabled ]]; then sync_args+=(--extra tracking); fi
-uv sync "${sync_args[@]}"
+diagnostic_python="$PWD/.venv/bin/python"
+action=${ASM_ACTION:-run}
+if [[ "$action" =~ ^(development-diagnostic|evidence-intervention)$ &&
+      -n "${ASM_CLIENT_PYTHON:-}" ]]; then
+    diagnostic_python="$ASM_CLIENT_PYTHON"
+    export PYTHONPATH="$PWD/src"
+else
+    uv sync "${sync_args[@]}"
+fi
 client="$PWD/.venv/bin/asm"
 python3 - "$output/jobs/$SLURM_JOB_ID-allocation.json" <<'PY'
 import json, os, sys
@@ -134,6 +142,18 @@ elif [[ "${ASM_ACTION:-run}" == followup-timing ]]; then
     "$client" experiment followup-timing "${args[@]}" \
       --original-freeze "${ASM_FREEZE:?}" --config "${ASM_FOLLOWUP_CONFIG:?}" \
       --ids "${ASM_TIMING_IDS:?}" --gpus "${ASM_GPUS:?}" &
+    client_pid=$!
+elif [[ "${ASM_ACTION:-run}" == development-diagnostic ]]; then
+    if [[ -n "${ASM_EVIDENCE_PACKET:-}" ]]; then
+        args+=(--evidence-packet "$ASM_EVIDENCE_PACKET")
+    fi
+    "$diagnostic_python" scripts/analysis/development_diagnostics.py "${args[@]}" \
+      --freeze "${ASM_FREEZE:?}" --config "${ASM_DIAGNOSTIC_CONFIG:?}" \
+      --ids "${ASM_DIAGNOSTIC_IDS:?}" --condition "${ASM_DIAGNOSTIC_CONDITION:?}" &
+    client_pid=$!
+elif [[ "${ASM_ACTION:-run}" == evidence-intervention ]]; then
+    "$diagnostic_python" scripts/analysis/evidence_intervention.py "${args[@]}" \
+      --freeze "${ASM_FREEZE:?}" --packet "${ASM_EVIDENCE_PACKET:?}" &
     client_pid=$!
 elif [[ "${ASM_ACTION:-run}" == followup ]]; then
     args+=(--original-freeze "${ASM_FREEZE:?}" --config "${ASM_FOLLOWUP_CONFIG:?}"
