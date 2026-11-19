@@ -3,7 +3,7 @@
 Tatsuhiro Shimizu · Yale CPSC 5710 · Scientific report, November 2026
 
 **Status:** The frozen study and exploratory nested-review scoring study are complete.
-The execution checkpoint records the status of the new mechanism pilots.
+The follow-up scoring and development diagnostics have completed.
 
 ## Abstract
 
@@ -397,9 +397,14 @@ for both native scales. Three coarse reviews occupy a useful point on the
 measured cost curve, while the differences between three and five are uncertain.
 The original longer-reasoning policy catches more attacks than single review
 at a higher realized FPR and has slightly lower valid AUROC. Its advantage
-is operating-point dependent on the available results. A 40-record development screen gives fine-scale medium-effort AUROC .939,
-compared with .899 for one low-effort fine review. A separately frozen held-out
-comparison remains pending.
+is operating-point dependent on the available results. With fine-scale scores, medium effort reaches 89.9% expected detection at
+10.5% realized FPR, compared with 31.0% at 5.0% for low effort. The paired
+detection difference is +58.9 points (95% interval +25.9 to +68.4). The
+corresponding AUROCs are .916 and .925, with an inconclusive paired difference.
+At the 1% calibration target, medium effort reaches 14.3% detection and 3.1%
+realized FPR. Five low-effort fine reviews have a higher AUROC than medium effort
+by .037 (95% interval .002 to .072). The policies have different realized FPRs
+and use unequal measured compute. The test was previously examined.
 
 The EaE evidence bottleneck is observable in empty, sparse and unpaired
 extractions. The substitution diagnostic does not establish whether a genuinely
@@ -436,7 +441,8 @@ its own provenance. Existing frozen inference keeps its exact original runtime.
 [Analysis aggregates](analysis-aggregates.json) record numeric values and input-file SHA-256
 identities. [Reproduction instructions](analysis-reproduction.md) provide exact commands and
 private input requirements. No raw trajectory, individual injection pair, reference quotation,
-model explanation, or private reasoning is published in this package. The [strengthened aggregate](strengthened-scoring.json),
+model explanation, or private reasoning is published in this package. The [medium-effort held-out aggregate](medium-holdout.json),
+[strengthened aggregate](strengthened-scoring.json),
 [saved-stage diagnostics](strengthened-evidence.json), and
 [execution checkpoint](../task_completion/06-strengthen-complete-checkpoint.md) record
 coverage, uncertainty, provenance, and outstanding work.

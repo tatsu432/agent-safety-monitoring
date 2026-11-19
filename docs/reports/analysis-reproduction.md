@@ -356,3 +356,21 @@ Stage that private packet and supply its path as `ASM_EVIDENCE_PACKET` with
 for each highlighted-transcript review and an aggregate matched-case summary.
 The aggregate retains source-checked model provenance and the exploratory
 fixed EaE-policy interpretation.
+
+The medium-effort held-out inference is an additional, separately frozen
+exploratory study. Recover its private `runs/strengthen/heldout/` directory and
+the accepted `think-heldout-freeze-v2.json`, then run:
+
+```bash
+uv run --locked python scripts/analysis/medium_holdout_report.py \
+  --root runs/strengthen/heldout \
+  --plan runs/strengthen/think-heldout-freeze-v2.json \
+  --data "$ASM_DATA" --followup "$ASM_FOLLOWUP/scoring" \
+  --original "$ASM_RUN" --output docs/reports/medium-holdout.json
+```
+
+The replay validates both split identities, exact result coverage, freeze-bound
+source hashes, invalid counts, and 2,000 paired task bootstraps at each target.
+The original allocation checkpointed six reviews short. Its successful retry
+reused the completed records. Workload durations in the final split summaries
+describe the retry invocation and must not be treated as full-cohort GPU time.

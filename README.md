@@ -29,7 +29,9 @@ why EaE failed; its references were not human-verified.
 The follow-up finds that repetition improves detection at both native score
 scales. Fine-scale detection rises from 31.0% with one review to 85.7% with
 five, at 5.0% and 6.1% realized FPR. Five-review detection remains 81–84% after
-coarsening the same fine scores. The raw archive includes an extended-thinking
+coarsening the same fine scores. Fine-scale medium-effort review reaches 89.9% detection at 10.5% realized FPR,
+while its AUROC remains close to a single low-effort review. The raw archive
+includes an extended-thinking
 overlay that the frozen monitors did not see.
 
 [Research report](docs/reports/final-report.md) ·

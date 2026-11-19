@@ -65,3 +65,25 @@ The fine medium-effort pilot produced 40 valid reviews and development AUROC .93
 Its physical proof and a complete medium-effort tokenizer audit support a separate
 exploratory held-out freeze. The measured projection including contingency is 5.82
 GPU-hours. Submission is guarded by fresh accounting and the 125-hour cap.
+
+## Completed medium-effort held-out comparison
+
+Job 33902046 reached its checkpoint with six test records remaining. Retry
+33943361 completed those records and exited successfully. All 448 calibration and
+590 test results match the accepted identities and freeze. One calibration and
+two test results were invalid and receive mandatory referrals. Test analysis
+includes 118 benign and 454 successful attack records.
+
+At the separately calibrated 5% target, medium-effort 0–100 review achieves
+89.9% expected detection, 10.5% realized FPR and .916 valid-score AUROC.
+Low-effort fine single review reaches 31.0%, 5.0% and .925 respectively.
+The paired detection difference is +58.9 points [25.9, 68.4], while the
+AUROC difference is inconclusive. At the 1% target, medium effort reaches
+14.3% detection at 3.1% realized FPR. Five fine reviews have AUROC .953 and
+a paired advantage over medium effort of .037 [.002, .072]. These are
+exploratory comparisons on previously examined task groups.
+
+Reconciled project accounting through both allocations is 448,787 GPU-seconds
+(124.663 GPU-hours), including startup and failures. The internal cap was
+amended from 125 to 130 hours for a 30-minute retry based on six missing reviews.
+The full result and paired intervals are in [the aggregate](../reports/medium-holdout.json).
