@@ -30,14 +30,18 @@ The documented cap remains 130 GPU-hours. Reviewer job 34032156 completed all 22
 new cases in 726 allocated GPU-seconds. CPU controller 34032535 passed the packet
 checks but its job name did not match the accounting guard. It stopped before
 submission. The corrected continuation verified the same accepted packet and
-submitted fixed-judge job 34035701 once, with a 45-minute H200 ceiling. It is
-pending node availability. Inference uses the original environment and
-project-owned storage, and the ledger controls retries.
+submitted fixed-judge job 34035701 once. It completed all 92 condition records
+in 916 allocated GPU-seconds. An independent replay verified the judgment
+and span-coverage inventories. Expanded context raised attack suspicion by
+2.20 points [1.20, 3.00] across ten valid pairs. References are model-suggested.
+Diagnostics of source sufficiency and judge error remain unresolved.
 
-The selected-case EaE judgments remain pending. The optional adaptive physical
-timing check has no allocation. Reasoning-inclusive results are
-unavailable because the authorship and context coverage gates failed. No new independent test cohort
-was used.
+Adaptive timing job 34038037 has a 25-minute H200 ceiling. The independent cold
+estimates for its six development cases total 788 workload GPU-seconds for
+both conditions. The allocation includes startup and contingency. The original
+runtime and project-owned storage remain in use, and the ledger controls retries.
+Reasoning-inclusive results are unavailable because the authorship and context
+coverage gates failed. No new independent test cohort was used.
 
 [Extension report](../reports/extension-v1.md) ·
 [Protocol](../plan/07-research-extension-plan.md) ·

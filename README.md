@@ -37,8 +37,8 @@ overlay that the frozen monitors did not see.
 An exploratory extension replayed adaptive review on the saved independent scores.
 The selected gate used 3.76 reviews on average and retained 25% of the fixed
 five-review gain in low-FPR discrimination. The reasoning audit verified tool-call
-alignment. Inference stopped at the authorship and context coverage gates. Blinded model review for the EaE context comparison is complete, and the fixed
-judge is queued on Yale.
+alignment. Inference stopped at the authorship and context coverage gates. Expanding model-suggested EaE excerpts raised the fixed judge’s suspicion scores
+by 2.2 points on the five-point scale across ten paired attacks.
 
 [Extension report](docs/reports/extension-v1.md) ·
 [Extension checkpoint](docs/task_completion/07-research-extension-checkpoint.md)

@@ -74,7 +74,7 @@ of 111 successful attacks and 16 of 30 paired groups. Calibration retained
 After excluding submission actions, 8,481 of 8,481 attack-assigned actions
 and 5,993 of 17,300 benign actions had nonempty overlay text. A classifier fit
 on development using presence, count and fraction alone achieved exploratory
-test AUROC 1.000 on the original primary cohort. Length and tool count achieved
+test AUROC 1.000 on the original primary cohort. Serialized action-only prompt length and tool count achieved
 .899 on the original cohort and .973 on the context-eligible subset. The
 context restriction would substantially change the evaluated population. The
 eligible development subset contains only 12 paired tasks with at least three
@@ -96,12 +96,38 @@ reference set. No human verification was performed.
 The local blinded gpt-oss-120b reviewer completed the 22 remaining records.
 It returned supported suggestions for all 11 newly reviewed attack records
 and eight of the 11 nominal benign counterparts. Three benign records remained
-unresolved. These are judgments from the stronger model. The original gpt-oss-20b
-judge is queued to compare original excerpts, suggested excerpts, expanded
-context and full transcripts. Evidence access can change scores on this selected
-sample. Attribution to a specific failure mechanism requires stronger independent
-evidence about source sufficiency.
-[Design aggregate](extension-v1/eae-design.json)
+unresolved. The same fixed gpt-oss-20b judge evaluated all available conditions
+on a 1–5 ordinal suspicion scale. Five suggested excerpt sets exceeded the
+original 3K quote budget. Ten attacks and four benign records had valid scores
+in all four conditions.
+
+| Fixed-judge contrast | Successful attacks | Nominal benign |
+| --- | --- | --- |
+| Suggested minus original excerpts | −0.30 [−1.50, 0.80], n=10 | −0.25 [−3.00, 2.25], n=4 |
+| Expanded context minus suggested excerpts | +2.20 [1.20, 3.00], n=10 | −0.60 [−1.80, 0.00], n=5 |
+| Full transcript minus expanded context | −0.25 [−1.08, 0.42], n=12 | 0.00 [0.00, 0.00], n=8 |
+
+*Differences are in ordinal score points with pointwise 95% whole-task bootstrap
+intervals. Each contrast includes its valid pairs. Sparse intervals describe
+variation across the observed task sample.*
+
+Original EaE excerpts omitted at least one suggested span on all 12 selected
+attacks. Replacing them with the suggested excerpts yielded an inconclusive
+change in attack scores. Expanding the same suggestions to the enclosing
+call/result pairs and intervening chronology raised attack scores in seven of
+ten valid pairs, with the remaining three tied. This supports a role for lost
+context on the selected cases. Expansion also adds evidence that the original
+excerpt set may have missed. The model-suggested spans leave semantic sufficiency,
+judge error on sufficient evidence, and label noise unresolved.
+
+![Fixed-judge changes across EaE conditions](extension-v1/eae-diagnostic.png)
+
+*Each mark summarizes paired judgments within the indicated group. The study
+selected cases for diagnosis and does not estimate population detection rates.*
+
+[Design aggregate](extension-v1/eae-design.json) ·
+[Fixed-judge aggregate](extension-v1/eae-aggregate.json) ·
+[Aggregate W&B results](https://forge.coreweave.com/wandb/tatsu432s/agent-safety-monitoring/runs/efbcc40788f44e329cf0c99e859db8af)
 
 ## Scope of the findings
 

@@ -1,0 +1,163 @@
+{
+  "classes": {
+    "benign": {
+      "cases_with_at_least_one_suggested_span_absent": 7,
+      "cases_with_resolved_reference_and_original_extraction": 7,
+      "complete_cases": 4,
+      "coverage": {
+        "expanded_context": {
+          "unresolved": 3,
+          "valid": 8
+        },
+        "full_transcript": {
+          "valid": 11
+        },
+        "original_excerpts": {
+          "unresolved": 1,
+          "valid": 10
+        },
+        "suggested_excerpts": {
+          "quote_budget": 3,
+          "unresolved": 3,
+          "valid": 5
+        }
+      },
+      "paired": {
+        "expanded_context_minus_suggested_excerpts": {
+          "equal": 4,
+          "higher": 0,
+          "lower": 1,
+          "mean": -0.6,
+          "n": 5,
+          "task_bootstrap_ci95": [
+            -1.8,
+            0.0
+          ],
+          "tasks": 5
+        },
+        "full_transcript_minus_expanded_context": {
+          "equal": 8,
+          "higher": 0,
+          "lower": 0,
+          "mean": 0.0,
+          "n": 8,
+          "task_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "tasks": 8
+        },
+        "suggested_excerpts_minus_original_excerpts": {
+          "equal": 2,
+          "higher": 1,
+          "lower": 1,
+          "mean": -0.25,
+          "n": 4,
+          "task_bootstrap_ci95": [
+            -3.0,
+            2.25
+          ],
+          "tasks": 4
+        }
+      },
+      "suggested_reference_span_coverage": {
+        "absent": 466,
+        "full": 3,
+        "partial": 8
+      }
+    },
+    "successful_attack": {
+      "cases_with_at_least_one_suggested_span_absent": 12,
+      "cases_with_resolved_reference_and_original_extraction": 12,
+      "complete_cases": 10,
+      "coverage": {
+        "expanded_context": {
+          "valid": 12
+        },
+        "full_transcript": {
+          "valid": 12
+        },
+        "original_excerpts": {
+          "valid": 12
+        },
+        "suggested_excerpts": {
+          "quote_budget": 2,
+          "valid": 10
+        }
+      },
+      "paired": {
+        "expanded_context_minus_suggested_excerpts": {
+          "equal": 3,
+          "higher": 7,
+          "lower": 0,
+          "mean": 2.2,
+          "n": 10,
+          "task_bootstrap_ci95": [
+            1.2,
+            3.0
+          ],
+          "tasks": 10
+        },
+        "full_transcript_minus_expanded_context": {
+          "equal": 7,
+          "higher": 3,
+          "lower": 2,
+          "mean": -0.25,
+          "n": 12,
+          "task_bootstrap_ci95": [
+            -1.0833333333333333,
+            0.4166666666666667
+          ],
+          "tasks": 11
+        },
+        "suggested_excerpts_minus_original_excerpts": {
+          "equal": 6,
+          "higher": 2,
+          "lower": 2,
+          "mean": -0.3,
+          "n": 10,
+          "task_bootstrap_ci95": [
+            -1.5,
+            0.8
+          ],
+          "tasks": 10
+        }
+      },
+      "suggested_reference_span_coverage": {
+        "absent": 126,
+        "full": 1,
+        "partial": 1
+      }
+    }
+  },
+  "sample": {
+    "attacks": 12,
+    "benign": 11,
+    "human_verified": 0,
+    "objectives": {
+      "firewall_disabling": {
+        "attacks": 3,
+        "full_flags_eae_misses": 2
+      },
+      "malware_execution": {
+        "attacks": 3,
+        "full_flags_eae_misses": 2
+      },
+      "privilege_escalation": {
+        "attacks": 3,
+        "full_flags_eae_misses": 2
+      },
+      "secret_exfiltration": {
+        "attacks": 3,
+        "full_flags_eae_misses": 2
+      }
+    },
+    "original_extractions_available": 22,
+    "original_extractions_empty": 4,
+    "reused_model_suggested": 1,
+    "source": "b86533ed57f70956b55d8a5e26eac1f833dc622ef92b36060e1f71382c70ae5d",
+    "tasks": 11
+  },
+  "status": "exploratory model-suggested evidence",
+  "version": "extension-eae-v1"
+}

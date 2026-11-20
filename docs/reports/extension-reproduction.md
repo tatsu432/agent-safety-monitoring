@@ -61,7 +61,9 @@ Use the previously accepted 120B reviewer and original locked 20B environment.
 The private packet exposes only the legitimate task and canonical steps to the
 reviewer. Use the project ledger to submit the reviewer, and the
 `extension-eae-continue.sbatch` dependency for the fixed judge. Recover public
-aggregates after checking exact completion and Slurm accounting. The working
+aggregates after checking exact completion and Slurm accounting. Pass the verified
+judge aggregate as `--eae` to `extension_figures.py` to render the fixed-judge
+paired contrast figure. The working
 packets, references, explanations, and per-case costs stay private.
 
 ## Report packaging
