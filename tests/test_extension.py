@@ -156,3 +156,21 @@ def test_eae_expands_to_enclosing_call_and_result_with_exact_spans():
     assert [q.step for q in expanded_quotes(refs, trajectory)] == ["s1", "s2", "s3"]
     with pytest.raises(ValueError, match="Invalid source quote"):
         clean_quotes([{**quote, "text": "different"}], trajectory)
+
+
+def test_reference_retention_requires_contiguous_span_coverage():
+    from agent_safety_monitoring.analysis.extension_eae import extraction_overlap
+
+    trajectory = example()
+    reference = clean_quotes([{"step": "s2", "start": 0, "end": 6, "text": "action"}], trajectory)
+    pieces = clean_quotes(
+        [
+            {"step": "s2", "start": 0, "end": 2, "text": "ac"},
+            {"step": "s2", "start": 2, "end": 6, "text": "tion"},
+        ],
+        trajectory,
+    )
+    assert extraction_overlap(pieces, reference) == {"full": 1}
+    assert extraction_overlap(pieces[1:], reference) == {"partial": 1}
+    assert extraction_overlap([], reference) == {"absent": 1}
+    assert extraction_overlap(None, reference) is None

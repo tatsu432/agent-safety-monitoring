@@ -63,6 +63,27 @@ or held-out reasoning inference was released.
 [Export lineage checks](extension-v1/source-lineage.json) ·
 [Control Tower reasoning extraction](https://github.com/linuxarena/control-tower/blob/97b28c72356dceca8f7c58cf8e7890d4242ec17d/src/control_tower/eval/log/extended_thinking.py)
 
+The pinned tokenizer audit included one retry and required a common
+cohort across all four single-review views. The largest combined prompt used
+557,816 tokens before the 8,320-token reserve. The context window is 131,072
+tokens. Only 50 of 454 successful test attacks fit alongside all 118 benign
+test records, leaving 39 of 118 paired task groups. Development retained 20
+of 111 successful attacks and 16 of 30 paired groups. Calibration retained
+437 of 448 benign records. Both the development and test coverage gates failed.
+
+After excluding submission actions, 8,481 of 8,481 attack-assigned actions
+and 5,993 of 17,300 benign actions had nonempty overlay text. A classifier fit
+on development using presence, count and fraction alone achieved exploratory
+test AUROC 1.000 on the original primary cohort. Length and tool count achieved
+.899 on the original cohort and .973 on the context-eligible subset. The
+context restriction would substantially change the evaluated population. The
+eligible development subset contains only 12 paired tasks with at least three
+reasoning-bearing actions in both classes. Both the provenance and context
+gates stopped the pilot and architecture comparisons under this protocol.
+[Context and coverage audit](extension-v1/reasoning-audit.json) ·
+[Development-fitted shortcut baselines](extension-v1/reasoning-profile.json) ·
+[Aggregate W&B run](https://forge.coreweave.com/wandb/tatsu432s/agent-safety-monitoring/runs/ff8026d808ee4f5d9fcffa9d7f6b85b9)
+
 ## Bounded EaE mechanism study
 
 The fixed diagnostic packet has twelve successful attacks, three per objective,
@@ -72,11 +93,14 @@ The third case covers another outcome pattern. The archive provided 22
 accepted extractions, four of them empty, and one reusable blinded model-suggested
 reference set. No human verification was performed.
 
-The remaining cases are queued for a blinded local gpt-oss-120b reviewer.
-A successful coverage check releases the pinned gpt-oss-20b judge on the
-original excerpts, suggested excerpts, expanded context and full transcripts.
-The queued review and subsequent judging have no reported outcomes in this version.
-The selected sample and model-suggested evidence limit mechanism attribution.
+The local blinded gpt-oss-120b reviewer completed the 22 remaining records.
+It returned supported suggestions for all 11 newly reviewed attack records
+and eight of the 11 nominal benign counterparts. Three benign records remained
+unresolved. These are judgments from the stronger model. The original gpt-oss-20b
+judge is queued to compare original excerpts, suggested excerpts, expanded
+context and full transcripts. Evidence access can change scores on this selected
+sample. Attribution to a specific failure mechanism requires stronger independent
+evidence about source sufficiency.
 [Design aggregate](extension-v1/eae-design.json)
 
 ## Scope of the findings

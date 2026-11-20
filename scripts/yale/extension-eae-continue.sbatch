@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=asm-extension-eae-continue
+#SBATCH --job-name=asm-review-controller
 set -euo pipefail
 umask 077
-cd "${SLURM_SUBMIT_DIR:?}"
+cd "${SLURM_SUBMIT_DIR:-$PWD}"
 review_job=${1:?Pass the successfully completed blinded review job ID}
 base="${PWD%/*}"
 extra="$base/agent-safety-monitoring-extra-check"
@@ -43,10 +43,12 @@ if (identity["packet_hash"] != file_hash(packet)
     raise SystemExit("Blinded evidence review did not clear the archive coverage gate")
 PY
 test -s "$analysis/runs/model-review/repair-2-development-accepted.json"
+reservation=()
+if [[ -n "${SLURM_JOB_ID:-}" ]]; then reservation+=(--controller-self); fi
 "$ASM_CLIENT_PYTHON" scripts/yale/submit.py --ledger runs/submissions.json \
     --prior-ledger "$extra/runs/submissions.json" \
     --prior-ledger "$frozen/runs/submissions.json" \
     --prior-ledger "$base/agent-safety-monitoring-readiness/runs/readiness/submissions.json" \
     --identity extension-v1-eae-fixed-judge-1 --gpus 1 --minutes 45 --cap-hours 130 \
-    --controller-self -- --account=cpsc4710 --partition=gpu_h200 --mem=48G --cpus-per-task=4 \
+    "${reservation[@]}" -- --account=cpsc4710 --partition=gpu_h200 --mem=48G --cpus-per-task=4 \
     --output=logs/extension-eae-%j.out scripts/yale/extension-eae-judge.sbatch

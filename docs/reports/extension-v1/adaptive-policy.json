@@ -1,0 +1,44 @@
+{
+  "bands": [
+    [
+      0.0,
+      95.49999999999997
+    ],
+    [
+      29.375,
+      92.74999999999999
+    ],
+    [
+      32.5,
+      79.49999999999994
+    ],
+    [
+      25.0,
+      73.875
+    ]
+  ],
+  "cost_model": {
+    "cold_call_artifacts_sha256": "b4500521a5ae65a723390807f20655e7549f12ddd2820e100d9f2f554e14d120",
+    "estimated_gpu_seconds_per_call": [
+      12.59329652142744,
+      17.247516941911563,
+      14.642421289698703
+    ],
+    "fixed_measured_gpu_seconds_per_trajectory": {
+      "1": 14.77188370777294,
+      "2": 36.32207766511711,
+      "3": 49.70456883673323,
+      "5": 83.04783618582879
+    },
+    "measurements_sha256": "7cbd1a19294a9693841935cc0b95641f11327041a1f15a112728df2e2e896f4b",
+    "prompt_token_edges": [
+      18138.0,
+      26611.0
+    ]
+  },
+  "development_selection_sha256": "1f18528b02922cfdcf9c4e00a178f7a0b8175db5d1c7c36275daf81a308e7ca8",
+  "mode": "gate-5",
+  "original_freeze": "b86533ed57f70956b55d8a5e26eac1f833dc622ef92b36060e1f71382c70ae5d",
+  "scoring_freeze": "3019cfb4fea942b667dc310ddcfc1f59ae957f92463ecd3ad01ed358907d7671",
+  "version": 1
+}

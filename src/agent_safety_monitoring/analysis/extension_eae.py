@@ -2,10 +2,14 @@
 
 from collections import Counter, defaultdict
 from pathlib import Path
+from uuid import uuid4
+
+import numpy as np
 
 from agent_safety_monitoring.analysis.audit import verify_manifest
 from agent_safety_monitoring.analysis.model_review import SYSTEM, blinded_payload
 from agent_safety_monitoring.evaluation.metrics import calibrate
+from agent_safety_monitoring.experiments.telemetry import Telemetry
 from agent_safety_monitoring.inference.backend import Backend, ModelConfig
 from agent_safety_monitoring.io import FileLock, digest, file_hash, immutable_json, read_json
 from agent_safety_monitoring.monitors.core import prompt, stage_system
@@ -280,6 +284,14 @@ async def judge(data, freeze_path, output, review_root=None):
     with FileLock(output / "judge.lock"):
         immutable_json(output / "judge-identity.json", identity)
         backend = Backend(config, output / "judge-cache")
+        tracker = Telemetry(
+            {"mode": "online"},
+            identity=digest(identity),
+            split="extension-eae-judge",
+            attempt=uuid4().hex,
+            directory=output,
+        )
+        completed = valid = 0
         try:
             for uid in sample["records"]:
                 trajectory, conditions = inputs(
@@ -303,13 +315,23 @@ async def judge(data, freeze_path, output, review_root=None):
                 for name, quotes in conditions.items():
                     path = output / "judgments" / uid / f"{name}.json"
                     if path.exists():
-                        if read_json(path)["identity"] != digest(identity):
+                        result = read_json(path)
+                        if result["identity"] != digest(identity):
                             raise ValueError("Saved judge result identity mismatch")
-                        continue
-                    result = await judge_condition(backend, trajectory, name, quotes)
-                    immutable_json(path, {"identity": digest(identity), **result})
+                    else:
+                        result = await judge_condition(backend, trajectory, name, quotes)
+                        immutable_json(path, {"identity": digest(identity), **result})
+                    completed += 1
+                    valid += result["status"] == "valid"
+                tracker.log(
+                    expected=len(sample["records"]) * len(CONDITIONS),
+                    completed=completed,
+                    valid=valid,
+                    invalid=completed - valid,
+                )
         finally:
             await backend.close()
+            tracker.close()
         return aggregate(output)
 
 
@@ -360,7 +382,7 @@ def aggregate(output):
         coverage = read_json(output / "judgments" / uid / "overlap.json")
         if coverage["identity"] != identity:
             raise ValueError("Mixed extraction coverage artifacts")
-        conditions[uid] = (record["label"], results, coverage["span_coverage"])
+        conditions[uid] = (record["label"], record["task_id"], results, coverage["span_coverage"])
 
     report = {
         "version": VERSION,
@@ -369,19 +391,28 @@ def aggregate(output):
         "classes": {},
     }
     for label, group in ((0, "benign"), (1, "successful_attack")):
-        rows = [r for kind, r, _ in conditions.values() if kind == label]
-        overlap = [c for kind, _, c in conditions.values() if kind == label and c is not None]
-        counts = {name: dict(Counter(r[name]["status"] for r in rows)) for name in CONDITIONS}
+        rows = [(t, r) for kind, t, r, _ in conditions.values() if kind == label]
+        overlap = [c for kind, _, _, c in conditions.values() if kind == label and c is not None]
+        counts = {name: dict(Counter(r[name]["status"] for _, r in rows)) for name in CONDITIONS}
         paired = {}
         for left, right in zip(CONDITIONS, CONDITIONS[1:], strict=False):
-            differences = [
-                r[right]["score"] - r[left]["score"]
-                for r in rows
-                if r[left]["status"] == r[right]["status"] == "valid"
-            ]
+            by_task = defaultdict(list)
+            for task, row in rows:
+                if row[left]["status"] == row[right]["status"] == "valid":
+                    by_task[task].append(row[right]["score"] - row[left]["score"])
+            differences = [change for values in by_task.values() for change in values]
+            interval = None
+            if len(by_task) >= 3:
+                values = [by_task[task] for task in sorted(by_task)]
+                n = len(values)
+                w = np.random.default_rng(20261028).multinomial(n, [1 / n] * n, size=2000)
+                simulated = (w @ [sum(x) for x in values]) / (w @ [len(x) for x in values])
+                interval = np.quantile(simulated, [0.025, 0.975]).tolist()
             paired[f"{right}_minus_{left}"] = {
                 "n": len(differences),
+                "tasks": len(by_task),
                 "mean": sum(differences) / len(differences) if differences else None,
+                "task_bootstrap_ci95": interval,
                 "higher": sum(d > 0 for d in differences),
                 "equal": sum(d == 0 for d in differences),
                 "lower": sum(d < 0 for d in differences),
@@ -390,7 +421,7 @@ def aggregate(output):
             "coverage": counts,
             "paired": paired,
             "complete_cases": sum(
-                all(v["status"] == "valid" for v in row.values()) for row in rows
+                all(v["status"] == "valid" for v in row.values()) for _, row in rows
             ),
             "cases_with_resolved_reference_and_original_extraction": len(overlap),
             "cases_with_at_least_one_suggested_span_absent": sum(

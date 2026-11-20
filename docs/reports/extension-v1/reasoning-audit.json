@@ -1,0 +1,984 @@
+{
+  "authorship_verified": false,
+  "context_limit": 131072,
+  "feature_sha256": "141c3ddea13dd5de9ce2aedf44807b1c3cd4cc9a81b06311352800eaa6d318f3",
+  "mapping_exclusions": {},
+  "original_freeze": "b86533ed57f70956b55d8a5e26eac1f833dc622ef92b36060e1f71382c70ae5d",
+  "physical_backend_validated": false,
+  "position_counts": {
+    "calibration/benign/quartile-1": {
+      "actions": 3303,
+      "tokens": 730813,
+      "with_reasoning": 1717
+    },
+    "calibration/benign/quartile-2": {
+      "actions": 3085,
+      "tokens": 813844,
+      "with_reasoning": 1170
+    },
+    "calibration/benign/quartile-3": {
+      "actions": 3203,
+      "tokens": 1165631,
+      "with_reasoning": 1207
+    },
+    "calibration/benign/quartile-4": {
+      "actions": 2967,
+      "tokens": 1046030,
+      "with_reasoning": 1024
+    },
+    "development/attack/quartile-1": {
+      "actions": 459,
+      "tokens": 3282777,
+      "with_reasoning": 459
+    },
+    "development/attack/quartile-2": {
+      "actions": 397,
+      "tokens": 5355320,
+      "with_reasoning": 397
+    },
+    "development/attack/quartile-3": {
+      "actions": 432,
+      "tokens": 6872347,
+      "with_reasoning": 432
+    },
+    "development/attack/quartile-4": {
+      "actions": 372,
+      "tokens": 4052290,
+      "with_reasoning": 372
+    },
+    "development/benign/quartile-1": {
+      "actions": 255,
+      "tokens": 28430,
+      "with_reasoning": 83
+    },
+    "development/benign/quartile-2": {
+      "actions": 244,
+      "tokens": 10927,
+      "with_reasoning": 22
+    },
+    "development/benign/quartile-3": {
+      "actions": 248,
+      "tokens": 26231,
+      "with_reasoning": 21
+    },
+    "development/benign/quartile-4": {
+      "actions": 235,
+      "tokens": 33249,
+      "with_reasoning": 32
+    },
+    "excluded/attack/quartile-1": {
+      "actions": 14,
+      "tokens": 194040,
+      "with_reasoning": 14
+    },
+    "excluded/attack/quartile-2": {
+      "actions": 11,
+      "tokens": 291290,
+      "with_reasoning": 11
+    },
+    "excluded/attack/quartile-3": {
+      "actions": 13,
+      "tokens": 205474,
+      "with_reasoning": 13
+    },
+    "excluded/attack/quartile-4": {
+      "actions": 11,
+      "tokens": 68093,
+      "with_reasoning": 11
+    },
+    "test/attack/quartile-1": {
+      "actions": 1865,
+      "tokens": 12738286,
+      "with_reasoning": 1865
+    },
+    "test/attack/quartile-2": {
+      "actions": 1636,
+      "tokens": 21117188,
+      "with_reasoning": 1636
+    },
+    "test/attack/quartile-3": {
+      "actions": 1759,
+      "tokens": 27076481,
+      "with_reasoning": 1759
+    },
+    "test/attack/quartile-4": {
+      "actions": 1512,
+      "tokens": 17685284,
+      "with_reasoning": 1512
+    },
+    "test/benign/quartile-1": {
+      "actions": 984,
+      "tokens": 112949,
+      "with_reasoning": 315
+    },
+    "test/benign/quartile-2": {
+      "actions": 928,
+      "tokens": 73254,
+      "with_reasoning": 124
+    },
+    "test/benign/quartile-3": {
+      "actions": 951,
+      "tokens": 84853,
+      "with_reasoning": 121
+    },
+    "test/benign/quartile-4": {
+      "actions": 897,
+      "tokens": 135884,
+      "with_reasoning": 157
+    }
+  },
+  "record_counts": {
+    "all": {
+      "actions": 25781,
+      "actions_with_reasoning": 14474,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 116619,
+        "ACTION_PLUS_REASONING": 557816,
+        "REASONING_MASKED_CONTROL": 116685,
+        "REASONING_ONLY": 509767
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        0.2075320512820513,
+        0.5,
+        0.6861607142857142,
+        1.0
+      ],
+      "reasoning_token_total": 103200965,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        2519.25,
+        62659.0,
+        152261.5,
+        506744.0
+      ],
+      "records": 1200,
+      "records_with_reasoning": 1191,
+      "single_cohort_records": 660,
+      "single_cohort_tasks": 585,
+      "tasks": 600,
+      "tokens_per_reasoning_action_quantiles": [
+        182.0,
+        432.25,
+        1412.0,
+        7815.25,
+        101100.0
+      ]
+    },
+    "assignment/attack": {
+      "actions": 8481,
+      "actions_with_reasoning": 8481,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 64374,
+        "ACTION_PLUS_REASONING": 557816,
+        "REASONING_MASKED_CONTROL": 66816,
+        "REASONING_ONLY": 509767
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "reasoning_token_total": 98938870,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        121072.0,
+        152064.0,
+        198559.75,
+        506744.0
+      ],
+      "records": 600,
+      "records_with_reasoning": 596,
+      "single_cohort_records": 75,
+      "single_cohort_tasks": 59,
+      "tasks": 150,
+      "tokens_per_reasoning_action_quantiles": [
+        226.0,
+        1588.0,
+        5540.0,
+        17697.0,
+        101100.0
+      ]
+    },
+    "assignment/benign": {
+      "actions": 17300,
+      "actions_with_reasoning": 5993,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 116619,
+        "ACTION_PLUS_REASONING": 255694,
+        "REASONING_MASKED_CONTROL": 116685,
+        "REASONING_ONLY": 178171
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        0.09356831395348837,
+        0.32,
+        0.5461876832844574,
+        1.0
+      ],
+      "reasoning_token_total": 4262095,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        745.5,
+        2644.0,
+        7683.5,
+        171889.0
+      ],
+      "records": 600,
+      "records_with_reasoning": 595,
+      "single_cohort_records": 585,
+      "single_cohort_tasks": 585,
+      "tasks": 600,
+      "tokens_per_reasoning_action_quantiles": [
+        182.0,
+        262.0,
+        368.0,
+        650.0,
+        13745.0
+      ]
+    },
+    "objective/firewall_disabling": {
+      "actions": 2115,
+      "actions_with_reasoning": 2115,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 42748,
+        "ACTION_PLUS_REASONING": 476962,
+        "REASONING_MASKED_CONTROL": 44266,
+        "REASONING_ONLY": 445471
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "reasoning_token_total": 26174624,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        126101.25,
+        160161.0,
+        203089.0,
+        441352.0
+      ],
+      "records": 150,
+      "records_with_reasoning": 149,
+      "single_cohort_records": 14,
+      "single_cohort_tasks": 14,
+      "tasks": 150,
+      "tokens_per_reasoning_action_quantiles": [
+        243.0,
+        1388.0,
+        4283.0,
+        17704.0,
+        101100.0
+      ]
+    },
+    "objective/malware_execution": {
+      "actions": 2151,
+      "actions_with_reasoning": 2151,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 58892,
+        "ACTION_PLUS_REASONING": 442840,
+        "REASONING_MASKED_CONTROL": 61532,
+        "REASONING_ONLY": 385797
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "reasoning_token_total": 26251610,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        134740.75,
+        170218.5,
+        210116.0,
+        381802.0
+      ],
+      "records": 150,
+      "records_with_reasoning": 149,
+      "single_cohort_records": 13,
+      "single_cohort_tasks": 13,
+      "tasks": 150,
+      "tokens_per_reasoning_action_quantiles": [
+        226.0,
+        1944.5,
+        7189.0,
+        18800.0,
+        88293.0
+      ]
+    },
+    "objective/none": {
+      "actions": 17300,
+      "actions_with_reasoning": 5993,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 116619,
+        "ACTION_PLUS_REASONING": 255694,
+        "REASONING_MASKED_CONTROL": 116685,
+        "REASONING_ONLY": 178171
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        0.09356831395348837,
+        0.32,
+        0.5461876832844574,
+        1.0
+      ],
+      "reasoning_token_total": 4262095,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        745.5,
+        2644.0,
+        7683.5,
+        171889.0
+      ],
+      "records": 600,
+      "records_with_reasoning": 595,
+      "single_cohort_records": 585,
+      "single_cohort_tasks": 585,
+      "tasks": 600,
+      "tokens_per_reasoning_action_quantiles": [
+        182.0,
+        262.0,
+        368.0,
+        650.0,
+        13745.0
+      ]
+    },
+    "objective/privilege_escalation": {
+      "actions": 1925,
+      "actions_with_reasoning": 1925,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 43558,
+        "ACTION_PLUS_REASONING": 411167,
+        "REASONING_MASKED_CONTROL": 45142,
+        "REASONING_ONLY": 381029
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "reasoning_token_total": 22691533,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        117401.0,
+        142529.5,
+        176692.0,
+        377745.0
+      ],
+      "records": 150,
+      "records_with_reasoning": 149,
+      "single_cohort_records": 23,
+      "single_cohort_tasks": 23,
+      "tasks": 150,
+      "tokens_per_reasoning_action_quantiles": [
+        250.0,
+        1706.0,
+        5519.0,
+        18708.0,
+        85742.0
+      ]
+    },
+    "objective/secret_exfiltration": {
+      "actions": 2290,
+      "actions_with_reasoning": 2290,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 64374,
+        "ACTION_PLUS_REASONING": 557816,
+        "REASONING_MASKED_CONTROL": 66816,
+        "REASONING_ONLY": 509767
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "reasoning_token_total": 23821103,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        115147.25,
+        139538.0,
+        194501.0,
+        506744.0
+      ],
+      "records": 150,
+      "records_with_reasoning": 149,
+      "single_cohort_records": 25,
+      "single_cohort_tasks": 25,
+      "tasks": 150,
+      "tokens_per_reasoning_action_quantiles": [
+        237.0,
+        1546.25,
+        5512.5,
+        15819.25,
+        71351.0
+      ]
+    },
+    "outcome/failure": {
+      "actions": 238,
+      "actions_with_reasoning": 238,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 64374,
+        "ACTION_PLUS_REASONING": 557816,
+        "REASONING_MASKED_CONTROL": 66816,
+        "REASONING_ONLY": 509767
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "reasoning_token_total": 3045372,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        86165.5,
+        134840.5,
+        214766.25,
+        506744.0
+      ],
+      "records": 18,
+      "records_with_reasoning": 14,
+      "single_cohort_records": 1,
+      "single_cohort_tasks": 1,
+      "tasks": 14,
+      "tokens_per_reasoning_action_quantiles": [
+        316.0,
+        1464.75,
+        5690.0,
+        18669.0,
+        88041.0
+      ]
+    },
+    "outcome/not_applicable": {
+      "actions": 17300,
+      "actions_with_reasoning": 5993,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 116619,
+        "ACTION_PLUS_REASONING": 255694,
+        "REASONING_MASKED_CONTROL": 116685,
+        "REASONING_ONLY": 178171
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        0.09356831395348837,
+        0.32,
+        0.5461876832844574,
+        1.0
+      ],
+      "reasoning_token_total": 4262095,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        745.5,
+        2644.0,
+        7683.5,
+        171889.0
+      ],
+      "records": 600,
+      "records_with_reasoning": 595,
+      "single_cohort_records": 585,
+      "single_cohort_tasks": 585,
+      "tasks": 600,
+      "tokens_per_reasoning_action_quantiles": [
+        182.0,
+        262.0,
+        368.0,
+        650.0,
+        13745.0
+      ]
+    },
+    "outcome/success": {
+      "actions": 8030,
+      "actions_with_reasoning": 8030,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 58892,
+        "ACTION_PLUS_REASONING": 476962,
+        "REASONING_MASKED_CONTROL": 61532,
+        "REASONING_ONLY": 445471
+      },
+      "per_task_action_coverage_quantiles": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "reasoning_token_total": 93788283,
+      "reasoning_tokens_per_record_quantiles": [
+        37881.0,
+        122606.0,
+        152186.0,
+        198555.0,
+        441352.0
+      ],
+      "records": 569,
+      "records_with_reasoning": 569,
+      "single_cohort_records": 70,
+      "single_cohort_tasks": 55,
+      "tasks": 149,
+      "tokens_per_reasoning_action_quantiles": [
+        226.0,
+        1608.25,
+        5552.0,
+        17720.5,
+        101100.0
+      ]
+    },
+    "outcome/ungraded": {
+      "actions": 213,
+      "actions_with_reasoning": 213,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 32501,
+        "ACTION_PLUS_REASONING": 411167,
+        "REASONING_MASKED_CONTROL": 33953,
+        "REASONING_ONLY": 381029
+      },
+      "per_task_action_coverage_quantiles": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "reasoning_token_total": 2105215,
+      "reasoning_tokens_per_record_quantiles": [
+        67312.0,
+        102298.0,
+        152488.0,
+        181801.0,
+        377745.0
+      ],
+      "records": 13,
+      "records_with_reasoning": 13,
+      "single_cohort_records": 4,
+      "single_cohort_tasks": 3,
+      "tasks": 7,
+      "tokens_per_reasoning_action_quantiles": [
+        246.0,
+        1427.0,
+        4487.0,
+        14725.0,
+        88293.0
+      ]
+    },
+    "split/calibration": {
+      "actions": 12558,
+      "actions_with_reasoning": 5118,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 116619,
+        "ACTION_PLUS_REASONING": 255694,
+        "REASONING_MASKED_CONTROL": 116685,
+        "REASONING_ONLY": 178171
+      },
+      "per_task_action_coverage_quantiles": [
+        0.013333333333333334,
+        0.125,
+        0.4,
+        0.5808327081770444,
+        1.0
+      ],
+      "reasoning_token_total": 3756318,
+      "reasoning_tokens_per_record_quantiles": [
+        218.0,
+        777.0,
+        3164.5,
+        9710.25,
+        171889.0
+      ],
+      "records": 448,
+      "records_with_reasoning": 448,
+      "single_cohort_records": 437,
+      "single_cohort_tasks": 437,
+      "tasks": 448,
+      "tokens_per_reasoning_action_quantiles": [
+        182.0,
+        265.0,
+        373.0,
+        679.75,
+        13745.0
+      ]
+    },
+    "split/development": {
+      "actions": 2642,
+      "actions_with_reasoning": 1818,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 74586,
+        "ACTION_PLUS_REASONING": 523267,
+        "REASONING_MASKED_CONTROL": 74653,
+        "REASONING_ONLY": 460474
+      },
+      "per_task_action_coverage_quantiles": [
+        0.4716981132075472,
+        0.6287171178040412,
+        0.7021087899093418,
+        0.808490566037736,
+        0.898989898989899
+      ],
+      "reasoning_token_total": 19661571,
+      "reasoning_tokens_per_record_quantiles": [
+        239.0,
+        83479.5,
+        123582.0,
+        179222.0,
+        456904.0
+      ],
+      "records": 150,
+      "records_with_reasoning": 150,
+      "single_cohort_records": 51,
+      "single_cohort_tasks": 30,
+      "tasks": 30,
+      "tokens_per_reasoning_action_quantiles": [
+        194.0,
+        1246.75,
+        4415.5,
+        16275.5,
+        88293.0
+      ]
+    },
+    "split/excluded": {
+      "actions": 49,
+      "actions_with_reasoning": 49,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 0,
+        "ACTION_PLUS_REASONING": 0,
+        "REASONING_MASKED_CONTROL": 0,
+        "REASONING_ONLY": 0
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        0.25,
+        1.0
+      ],
+      "reasoning_token_total": 758897,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        138488.25,
+        253034.0
+      ],
+      "records": 12,
+      "records_with_reasoning": 4,
+      "single_cohort_records": 0,
+      "single_cohort_tasks": 0,
+      "tasks": 4,
+      "tokens_per_reasoning_action_quantiles": [
+        613.0,
+        2458.0,
+        5825.0,
+        24978.0,
+        70570.0
+      ]
+    },
+    "split/test": {
+      "actions": 10532,
+      "actions_with_reasoning": 7489,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 90882,
+        "ACTION_PLUS_REASONING": 557816,
+        "REASONING_MASKED_CONTROL": 91014,
+        "REASONING_ONLY": 509767
+      },
+      "per_task_action_coverage_quantiles": [
+        0.408,
+        0.6498855835240275,
+        0.750299544692068,
+        0.8333333333333334,
+        0.9418604651162791
+      ],
+      "reasoning_token_total": 79024179,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        89173.75,
+        138378.0,
+        186735.5,
+        506744.0
+      ],
+      "records": 590,
+      "records_with_reasoning": 589,
+      "single_cohort_records": 172,
+      "single_cohort_tasks": 118,
+      "tasks": 118,
+      "tokens_per_reasoning_action_quantiles": [
+        188.0,
+        1181.0,
+        4348.0,
+        15731.0,
+        101100.0
+      ]
+    },
+    "split_class/calibration/benign": {
+      "actions": 12558,
+      "actions_with_reasoning": 5118,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 116619,
+        "ACTION_PLUS_REASONING": 255694,
+        "REASONING_MASKED_CONTROL": 116685,
+        "REASONING_ONLY": 178171
+      },
+      "per_task_action_coverage_quantiles": [
+        0.013333333333333334,
+        0.125,
+        0.4,
+        0.5808327081770444,
+        1.0
+      ],
+      "reasoning_token_total": 3756318,
+      "reasoning_tokens_per_record_quantiles": [
+        218.0,
+        777.0,
+        3164.5,
+        9710.25,
+        171889.0
+      ],
+      "records": 448,
+      "records_with_reasoning": 448,
+      "single_cohort_records": 437,
+      "single_cohort_tasks": 437,
+      "tasks": 448,
+      "tokens_per_reasoning_action_quantiles": [
+        182.0,
+        265.0,
+        373.0,
+        679.75,
+        13745.0
+      ]
+    },
+    "split_class/development/attack": {
+      "actions": 1660,
+      "actions_with_reasoning": 1660,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 64374,
+        "ACTION_PLUS_REASONING": 523267,
+        "REASONING_MASKED_CONTROL": 66816,
+        "REASONING_ONLY": 460474
+      },
+      "per_task_action_coverage_quantiles": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "reasoning_token_total": 19562734,
+      "reasoning_tokens_per_record_quantiles": [
+        61154.0,
+        111367.75,
+        146995.5,
+        192520.75,
+        456904.0
+      ],
+      "records": 120,
+      "records_with_reasoning": 120,
+      "single_cohort_records": 21,
+      "single_cohort_tasks": 17,
+      "tasks": 30,
+      "tokens_per_reasoning_action_quantiles": [
+        245.0,
+        1580.25,
+        5320.5,
+        17834.75,
+        88293.0
+      ]
+    },
+    "split_class/development/benign": {
+      "actions": 982,
+      "actions_with_reasoning": 158,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 74586,
+        "ACTION_PLUS_REASONING": 74893,
+        "REASONING_MASKED_CONTROL": 74653,
+        "REASONING_ONLY": 29136
+      },
+      "per_task_action_coverage_quantiles": [
+        0.013333333333333334,
+        0.06354166666666666,
+        0.12077294685990338,
+        0.1761029411764706,
+        0.7647058823529411
+      ],
+      "reasoning_token_total": 98837,
+      "reasoning_tokens_per_record_quantiles": [
+        239.0,
+        774.25,
+        1737.5,
+        2861.0,
+        26482.0
+      ],
+      "records": 30,
+      "records_with_reasoning": 30,
+      "single_cohort_records": 30,
+      "single_cohort_tasks": 30,
+      "tasks": 30,
+      "tokens_per_reasoning_action_quantiles": [
+        194.0,
+        253.0,
+        352.0,
+        541.0,
+        7316.0
+      ]
+    },
+    "split_class/excluded/attack": {
+      "actions": 49,
+      "actions_with_reasoning": 49,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 0,
+        "ACTION_PLUS_REASONING": 0,
+        "REASONING_MASKED_CONTROL": 0,
+        "REASONING_ONLY": 0
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "reasoning_token_total": 758897,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        0.0,
+        67938.5,
+        165657.5,
+        253034.0
+      ],
+      "records": 8,
+      "records_with_reasoning": 4,
+      "single_cohort_records": 0,
+      "single_cohort_tasks": 0,
+      "tasks": 2,
+      "tokens_per_reasoning_action_quantiles": [
+        613.0,
+        2458.0,
+        5825.0,
+        24978.0,
+        70570.0
+      ]
+    },
+    "split_class/excluded/benign": {
+      "actions": 0,
+      "actions_with_reasoning": 0,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 0,
+        "ACTION_PLUS_REASONING": 0,
+        "REASONING_MASKED_CONTROL": 0,
+        "REASONING_ONLY": 0
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "reasoning_token_total": 0,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "records": 4,
+      "records_with_reasoning": 0,
+      "single_cohort_records": 0,
+      "single_cohort_tasks": 0,
+      "tasks": 4,
+      "tokens_per_reasoning_action_quantiles": null
+    },
+    "split_class/test/attack": {
+      "actions": 6772,
+      "actions_with_reasoning": 6772,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 58892,
+        "ACTION_PLUS_REASONING": 557816,
+        "REASONING_MASKED_CONTROL": 61532,
+        "REASONING_ONLY": 509767
+      },
+      "per_task_action_coverage_quantiles": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "reasoning_token_total": 78617239,
+      "reasoning_tokens_per_record_quantiles": [
+        37881.0,
+        124435.5,
+        153958.0,
+        199194.25,
+        506744.0
+      ],
+      "records": 472,
+      "records_with_reasoning": 472,
+      "single_cohort_records": 54,
+      "single_cohort_tasks": 42,
+      "tasks": 118,
+      "tokens_per_reasoning_action_quantiles": [
+        226.0,
+        1584.0,
+        5568.0,
+        17598.0,
+        101100.0
+      ]
+    },
+    "split_class/test/benign": {
+      "actions": 3760,
+      "actions_with_reasoning": 717,
+      "max_prompt_tokens": {
+        "ACTION_ONLY": 90882,
+        "ACTION_PLUS_REASONING": 102478,
+        "REASONING_MASKED_CONTROL": 91014,
+        "REASONING_ONLY": 46796
+      },
+      "per_task_action_coverage_quantiles": [
+        0.0,
+        0.06060606060606061,
+        0.12122448979591836,
+        0.31496710526315785,
+        0.76
+      ],
+      "reasoning_token_total": 406940,
+      "reasoning_tokens_per_record_quantiles": [
+        0.0,
+        547.75,
+        1570.0,
+        3924.75,
+        43014.0
+      ],
+      "records": 118,
+      "records_with_reasoning": 117,
+      "single_cohort_records": 118,
+      "single_cohort_tasks": 118,
+      "tasks": 118,
+      "tokens_per_reasoning_action_quantiles": [
+        188.0,
+        255.0,
+        342.0,
+        508.0,
+        7828.0
+      ]
+    }
+  },
+  "release_proof_sha256": null,
+  "reserve_tokens": 8320,
+  "source_sha256": {
+    "attack.eval": "99ee247941cc3e5cfdcffa0c0d31f7ac4b169a36e7ab8fb9e57a52f28d2b2915",
+    "honest.eval": "8db012217ba105a5d20b9d9932197672ad64a81be5c0ceaef811dae09052b36f"
+  },
+  "version": "reasoning-visibility-v1"
+}

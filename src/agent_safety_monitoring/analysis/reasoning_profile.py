@@ -58,23 +58,34 @@ def evaluate(private, audit, replicates=2000):
     if digest(blob) != proof["feature_sha256"]:
         raise ValueError("Private features do not match the audit")
     features = blob["features"]
-    cohort = cohort_acceptance(features)
-    splits = {
+    primary = {
         k: [
             r
             for r in features
             if r["split"] == k
-            and r["single_cohort"]
+            and "ACTION_ONLY" in r["context"]
             and (r["assignment"] == "benign" or r["outcome"] == "success")
         ]
         for k in ("development", "calibration", "test")
     }
+    common = {k: [r for r in rows if r["single_cohort"]] for k, rows in primary.items()}
+    return {
+        "version": 1,
+        "status": "exploratory feature-only discrimination using archived field",
+        "cohort": cohort_acceptance(features),
+        "input_audit_digest": digest(proof),
+        "original_primary": feature_analysis(primary, replicates),
+        "common_context": feature_analysis(common, replicates),
+    }
+
+
+def feature_analysis(splits, replicates):
     if any(not rows for rows in splits.values()):
-        return {"cohort": cohort, "status": "insufficient common cohort"}
+        return {"status": "insufficient common cohort"}
     mats = {k: np.array([feature_vector(r) for r in rows]) for k, rows in splits.items()}
     labels = {k: [int(r["assignment"] == "attack") for r in rows] for k, rows in splits.items()}
     if len(set(labels["development"])) < 2 or len(set(labels["test"])) < 2:
-        return {"cohort": cohort, "status": "insufficient class overlap"}
+        return {"status": "insufficient class overlap"}
     tables = {s: {} for s in ("calibration", "test")}
     columns = {
         "availability_count": [0, 1, 2],
@@ -122,10 +133,6 @@ def evaluate(private, audit, replicates=2000):
             "median_tool_calls": float(np.median(np.expm1(primary[:, 5]))),
         }
     return {
-        "version": 1,
-        "status": "exploratory feature-only discrimination using archived field",
-        "cohort": cohort,
-        "input_audit_digest": digest(proof),
         "coverage_overlap": dict(overlap),
         "paired_tasks_with_at_least_three_actions": matched,
         "benign_shift": shift,

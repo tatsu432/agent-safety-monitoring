@@ -22,6 +22,14 @@ The runner checks the accepted scoring identity, exact review inventories, and t
 cold timing identity. Development folds determine routing. Benign calibration
 determines threshold ties and their randomization. Held-out results are exploratory.
 
+For a cold physical check, bind the development routing cutoffs from
+[the policy receipt](extension-v1/adaptive-policy.json) as `ASM_POLICY`.
+Run `scripts/yale/extension-adaptive-cold.sbatch` through the reconciled ledger
+with the pinned original runtime. It times six development trajectories, using
+fresh caches for the selected gate and fixed five. Hold the model server, inputs,
+and temperature fixed. Store costs separately from scientific score outputs.
+Timing excludes server startup, while allocation accounting includes startup.
+
 ## Reasoning field audit
 
 ```bash

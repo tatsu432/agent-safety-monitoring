@@ -24,14 +24,25 @@ def route(scores, mode, bands=()):
         if score is None:
             return None, limit if mode.startswith("fixed-") else count
         mean = sum(scores[:count]) / count
-        if mode.startswith("fixed-") or count == limit:
-            continue
-        if mode.startswith("gate-") and count > 1:
-            continue
-        lo, hi = bands[count - 1]
-        if not lo <= mean <= hi:
+        if not continue_review(scores[:count], mode, bands):
             break
     return mean, count
+
+
+def continue_review(prefix, mode, bands):
+    """Decide from the same observed prefix in replay and in the cold timing check."""
+    count = len(prefix)
+    limit = int(mode.rsplit("-", 1)[1])
+    if count >= limit:
+        return False
+    if mode.startswith("fixed-"):
+        return True
+    if None in prefix:
+        return False
+    if mode.startswith("gate-") and count > 1:
+        return True
+    lo, hi = bands[count - 1]
+    return lo <= sum(prefix) / count <= hi
 
 
 def thresholds(rows, quantiles):
