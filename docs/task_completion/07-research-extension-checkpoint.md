@@ -36,10 +36,12 @@ and span-coverage inventories. Expanded context raised attack suspicion by
 2.20 points [1.20, 3.00] across ten valid pairs. References are model-suggested.
 Diagnostics of source sufficiency and judge error remain unresolved.
 
-Adaptive timing job 34038037 has a 25-minute H200 ceiling. The independent cold
-estimates for its six development cases total 788 workload GPU-seconds for
-both conditions. The allocation includes startup and contingency. The original
-runtime and project-owned storage remain in use, and the ledger controls retries.
+Adaptive timing job 34038037 completed in 1,169 allocated GPU-seconds.
+The matched cold review archive contains all six development trajectories per
+condition, with 22 adaptive and 30 fixed-five calls and zero cache hits or
+invalid results. Measured workload time was 69.7 versus 114.3 H200 seconds per
+trajectory, with startup excluded. Reconciled project accounting totals
+451,598 GPU-seconds (125.444 GPU-hours), and no extension jobs remain active.
 Reasoning-inclusive results are unavailable because the authorship and context
 coverage gates failed. No new independent test cohort was used.
 

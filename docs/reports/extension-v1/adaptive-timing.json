@@ -1,0 +1,27 @@
+{
+  "identity": "3ab4ce2b50f22310e8451d564eaa5db905b2303f915ee605ea7aa559416bb94d",
+  "job_id": "34038037",
+  "methods": {
+    "fixed-5": {
+      "invalid_reviews": 0,
+      "physical_calls_with_retries": 30,
+      "records": 6,
+      "reviews": 30,
+      "seconds_per_trajectory": 114.25613705146436,
+      "simulated_seconds_per_trajectory": 76.30963763190688,
+      "workload_h200_seconds": 685.5368223087862
+    },
+    "gate-5": {
+      "invalid_reviews": 0,
+      "physical_calls_with_retries": 22,
+      "records": 6,
+      "reviews": 22,
+      "seconds_per_trajectory": 69.68067593337037,
+      "simulated_seconds_per_trajectory": 55.04967881083337,
+      "workload_h200_seconds": 418.0840556002222
+    }
+  },
+  "status": "cold matched development timing",
+  "version": 1,
+  "workload_excludes_startup": true
+}

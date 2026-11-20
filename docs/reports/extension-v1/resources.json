@@ -1,0 +1,30 @@
+{
+  "allocated_gpu_hours": 125.44388888888889,
+  "allocated_gpu_seconds": 451598,
+  "extension_gpu_allocations": [
+    {
+      "elapsed_seconds": 726,
+      "gpu_seconds": 726,
+      "gpus": 1,
+      "job_id": "34032156",
+      "state": "COMPLETED"
+    },
+    {
+      "elapsed_seconds": 916,
+      "gpu_seconds": 916,
+      "gpus": 1,
+      "job_id": "34035701",
+      "state": "COMPLETED"
+    },
+    {
+      "elapsed_seconds": 1169,
+      "gpu_seconds": 1169,
+      "gpus": 1,
+      "job_id": "34038037",
+      "state": "COMPLETED"
+    }
+  ],
+  "prior_allocated_gpu_seconds": 448787,
+  "project_cap_gpu_hours": 130,
+  "version": 1
+}

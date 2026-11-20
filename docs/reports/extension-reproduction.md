@@ -37,7 +37,8 @@ HF_HUB_OFFLINE=1 uv run --locked --extra data --extra tokenizer asm data \
   reasoning-visibility-audit --raw data/raw --data data/prepared \
   --frozen runs/readiness/study-freeze.json --output runs/extension-v1/reasoning
 uv run --locked asm analysis reasoning-profile \
-  --root runs/extension-v1/reasoning --output runs/extension-v1/reasoning-profile.json
+  --root runs/extension-v1/reasoning --archive "$ASM_FOLLOWUP" \
+  --output runs/extension-v1/reasoning-profile.json
 ```
 
 Keep `features.json` private. Only the aggregate audit and profile are publishable.

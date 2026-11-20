@@ -97,12 +97,57 @@
     },
     "metrics": {
       "infeasible_calibration_replicates": {
+        "archived_action_only": 0,
         "availability_count": 0,
         "availability_count_tokens": 0,
         "joint": 0,
         "visible_length_tools": 0
       },
       "intervals": {
+        "archived_action_only": {
+          "auroc_valid": {
+            "ci95": [
+              0.8257159938044255,
+              0.9349659090909092
+            ],
+            "usable_replicates": 2000
+          },
+          "fpr": {
+            "ci95": [
+              0.017389335715424264,
+              0.1017087679269882
+            ],
+            "usable_replicates": 2000
+          },
+          "pauc_00_10": {
+            "ci95": [
+              0.015643674985808126,
+              0.0678566624090611
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_05": {
+            "ci95": [
+              0.14249371980676329,
+              0.8593972733795742
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_10": {
+            "ci95": [
+              0.34997881355932214,
+              0.95
+            ],
+            "usable_replicates": 2000
+          },
+          "tpr": {
+            "ci95": [
+              0.1697378923160173,
+              0.5058225383373687
+            ],
+            "usable_replicates": 2000
+          }
+        },
         "availability_count": {
           "auroc_valid": {
             "ci95": [
@@ -288,6 +333,182 @@
         "uncertainty": "task sampling and recalibration; not inference-seed variation"
       },
       "paired_differences": {
+        "archived_action_only - availability_count": {
+          "auroc_valid": {
+            "ci95": [
+              -0.1742840061955745,
+              -0.06503409090909086
+            ],
+            "usable_replicates": 2000
+          },
+          "fpr": {
+            "ci95": [
+              0.015423287429378534,
+              0.1017087679269882
+            ],
+            "usable_replicates": 2000
+          },
+          "pauc_00_10": {
+            "ci95": [
+              -0.08435632501419188,
+              -0.03214333759093891
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_05": {
+            "ci95": [
+              -0.8575062801932367,
+              -0.1406027266204258
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_10": {
+            "ci95": [
+              -0.6500211864406779,
+              -0.050000000000000044
+            ],
+            "usable_replicates": 2000
+          },
+          "tpr": {
+            "ci95": [
+              -0.8302621076839827,
+              -0.4941774616626313
+            ],
+            "usable_replicates": 2000
+          }
+        },
+        "archived_action_only - availability_count_tokens": {
+          "auroc_valid": {
+            "ci95": [
+              -0.1742840061955745,
+              -0.06503409090909086
+            ],
+            "usable_replicates": 2000
+          },
+          "fpr": {
+            "ci95": [
+              0.013453813559322035,
+              0.09926208590138673
+            ],
+            "usable_replicates": 2000
+          },
+          "pauc_00_10": {
+            "ci95": [
+              -0.08435632501419188,
+              -0.032143337590938896
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_05": {
+            "ci95": [
+              -0.8575062801932367,
+              -0.1406027266204258
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_10": {
+            "ci95": [
+              -0.6500211864406779,
+              -0.050000000000000044
+            ],
+            "usable_replicates": 2000
+          },
+          "tpr": {
+            "ci95": [
+              -0.8302621076839827,
+              -0.4941774616626313
+            ],
+            "usable_replicates": 2000
+          }
+        },
+        "archived_action_only - joint": {
+          "auroc_valid": {
+            "ci95": [
+              -0.1742840061955745,
+              -0.06503409090909086
+            ],
+            "usable_replicates": 2000
+          },
+          "fpr": {
+            "ci95": [
+              0.00511542957334892,
+              0.09302038372460258
+            ],
+            "usable_replicates": 2000
+          },
+          "pauc_00_10": {
+            "ci95": [
+              -0.08435632501419188,
+              -0.03214333759093891
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_05": {
+            "ci95": [
+              -0.8575062801932367,
+              -0.1406027266204258
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_10": {
+            "ci95": [
+              -0.6500211864406779,
+              -0.050000000000000044
+            ],
+            "usable_replicates": 2000
+          },
+          "tpr": {
+            "ci95": [
+              -0.8302621076839827,
+              -0.4941774616626313
+            ],
+            "usable_replicates": 2000
+          }
+        },
+        "archived_action_only - visible_length_tools": {
+          "auroc_valid": {
+            "ci95": [
+              -0.15282152489782433,
+              -0.03085917580541213
+            ],
+            "usable_replicates": 2000
+          },
+          "fpr": {
+            "ci95": [
+              -0.02780650603049785,
+              0.07947689669087972
+            ],
+            "usable_replicates": 2000
+          },
+          "pauc_00_10": {
+            "ci95": [
+              -0.06915924943870182,
+              0.002091921595065684
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_05": {
+            "ci95": [
+              -0.8043672052154195,
+              0.09385559006211158
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_10": {
+            "ci95": [
+              -0.6277814465408805,
+              0.01946550530549856
+            ],
+            "usable_replicates": 2000
+          },
+          "tpr": {
+            "ci95": [
+              -0.6715946612349915,
+              -0.11052848330914439
+            ],
+            "usable_replicates": 2000
+          }
+        },
         "availability_count - availability_count_tokens": {
           "auroc_valid": {
             "ci95": [
@@ -554,6 +775,29 @@
         }
       },
       "point": {
+        "archived_action_only": {
+          "auroc_valid": 0.8840170940170939,
+          "fpr": 0.052648305084745765,
+          "fpr_from_invalid": 0.00847457627118644,
+          "invalid_attack": 0,
+          "invalid_benign": 1,
+          "n_attacks": 50,
+          "n_benign": 118,
+          "pauc_00_10": 0.03878005698005699,
+          "policy": {
+            "achieved_fpr": 0.05,
+            "boundary_probability": 0.86875,
+            "cutoff": 100.0,
+            "feasible": true,
+            "target_fpr": 0.05
+          },
+          "referral_roc_tpr_05": 0.27766666666666673,
+          "referral_roc_tpr_10": 0.8506666666666667,
+          "roc_tpr_05": 0.3315000000000001,
+          "roc_tpr_10": 0.8626666666666667,
+          "tpr": 0.295375,
+          "tpr_from_invalid": 0.0
+        },
         "availability_count": {
           "auroc_valid": 1.0,
           "fpr": 0.0,
@@ -712,12 +956,57 @@
     },
     "metrics": {
       "infeasible_calibration_replicates": {
+        "archived_action_only": 0,
         "availability_count": 0,
         "availability_count_tokens": 0,
         "joint": 0,
         "visible_length_tools": 0
       },
       "intervals": {
+        "archived_action_only": {
+          "auroc_valid": {
+            "ci95": [
+              0.8850643309804697,
+              0.9564995747210456
+            ],
+            "usable_replicates": 2000
+          },
+          "fpr": {
+            "ci95": [
+              0.0181271186440678,
+              0.09905910473707084
+            ],
+            "usable_replicates": 2000
+          },
+          "pauc_00_10": {
+            "ci95": [
+              0.01888479913394137,
+              0.074542639923278
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_05": {
+            "ci95": [
+              0.18818816144087294,
+              0.9567528597364975
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_10": {
+            "ci95": [
+              0.42418612859948585,
+              0.970497555378891
+            ],
+            "usable_replicates": 2000
+          },
+          "tpr": {
+            "ci95": [
+              0.21692203182043418,
+              0.502478106977317
+            ],
+            "usable_replicates": 2000
+          }
+        },
         "availability_count": {
           "auroc_valid": {
             "ci95": [
@@ -903,6 +1192,182 @@
         "uncertainty": "task sampling and recalibration; not inference-seed variation"
       },
       "paired_differences": {
+        "archived_action_only - availability_count": {
+          "auroc_valid": {
+            "ci95": [
+              -0.11493566901953038,
+              -0.04350042527895442
+            ],
+            "usable_replicates": 2000
+          },
+          "fpr": {
+            "ci95": [
+              0.017535538545653366,
+              0.09905910473707084
+            ],
+            "usable_replicates": 2000
+          },
+          "pauc_00_10": {
+            "ci95": [
+              -0.08111520086605863,
+              -0.025457360076722006
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_05": {
+            "ci95": [
+              -0.811811838559127,
+              -0.0432471402635025
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_10": {
+            "ci95": [
+              -0.5758138714005142,
+              -0.02950244462110892
+            ],
+            "usable_replicates": 2000
+          },
+          "tpr": {
+            "ci95": [
+              -0.7830779681795659,
+              -0.497521893022683
+            ],
+            "usable_replicates": 2000
+          }
+        },
+        "archived_action_only - availability_count_tokens": {
+          "auroc_valid": {
+            "ci95": [
+              -0.11493566901953038,
+              -0.04350042527895442
+            ],
+            "usable_replicates": 2000
+          },
+          "fpr": {
+            "ci95": [
+              0.01754764508318363,
+              0.09905910473707084
+            ],
+            "usable_replicates": 2000
+          },
+          "pauc_00_10": {
+            "ci95": [
+              -0.08111520086605863,
+              -0.025457360076722006
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_05": {
+            "ci95": [
+              -0.811811838559127,
+              -0.0432471402635025
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_10": {
+            "ci95": [
+              -0.5758138714005142,
+              -0.02950244462110892
+            ],
+            "usable_replicates": 2000
+          },
+          "tpr": {
+            "ci95": [
+              -0.7830779681795659,
+              -0.497521893022683
+            ],
+            "usable_replicates": 2000
+          }
+        },
+        "archived_action_only - joint": {
+          "auroc_valid": {
+            "ci95": [
+              -0.11493566901953038,
+              -0.04350042527895441
+            ],
+            "usable_replicates": 2000
+          },
+          "fpr": {
+            "ci95": [
+              0.003743383883437408,
+              0.09383821263482278
+            ],
+            "usable_replicates": 2000
+          },
+          "pauc_00_10": {
+            "ci95": [
+              -0.08111520086605863,
+              -0.025457360076722006
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_05": {
+            "ci95": [
+              -0.811811838559127,
+              -0.0432471402635025
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_10": {
+            "ci95": [
+              -0.5758138714005142,
+              -0.02950244462110892
+            ],
+            "usable_replicates": 2000
+          },
+          "tpr": {
+            "ci95": [
+              -0.7830779681795659,
+              -0.497521893022683
+            ],
+            "usable_replicates": 2000
+          }
+        },
+        "archived_action_only - visible_length_tools": {
+          "auroc_valid": {
+            "ci95": [
+              -0.026614060611814868,
+              0.07530083847620052
+            ],
+            "usable_replicates": 2000
+          },
+          "fpr": {
+            "ci95": [
+              -0.03993442292171105,
+              0.07457627118644068
+            ],
+            "usable_replicates": 2000
+          },
+          "pauc_00_10": {
+            "ci95": [
+              -0.03190719829191804,
+              0.03543604051283354
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_05": {
+            "ci95": [
+              -0.4172886112175936,
+              0.5652620267260577
+            ],
+            "usable_replicates": 2000
+          },
+          "roc_tpr_10": {
+            "ci95": [
+              -0.27561992649408756,
+              0.44605835445612035
+            ],
+            "usable_replicates": 2000
+          },
+          "tpr": {
+            "ci95": [
+              -0.22430334317395628,
+              0.16366809601935622
+            ],
+            "usable_replicates": 2000
+          }
+        },
         "availability_count - availability_count_tokens": {
           "auroc_valid": {
             "ci95": [
@@ -1169,6 +1634,29 @@
         }
       },
       "point": {
+        "archived_action_only": {
+          "auroc_valid": 0.9246112428931812,
+          "fpr": 0.05032594524119948,
+          "fpr_from_invalid": 0.00847457627118644,
+          "invalid_attack": 0,
+          "invalid_benign": 1,
+          "n_attacks": 454,
+          "n_benign": 118,
+          "pauc_00_10": 0.04469567754810046,
+          "policy": {
+            "achieved_fpr": 0.05,
+            "boundary_probability": 0.8230769230769232,
+            "cutoff": 100.0,
+            "feasible": true,
+            "target_fpr": 0.05
+          },
+          "referral_roc_tpr_05": 0.30759911894273134,
+          "referral_roc_tpr_10": 0.9511013215859031,
+          "roc_tpr_05": 0.3672356828193833,
+          "roc_tpr_10": 0.9530837004405287,
+          "tpr": 0.3100135547272111,
+          "tpr_from_invalid": 0.0
+        },
         "availability_count": {
           "auroc_valid": 1.0,
           "fpr": 0.0,

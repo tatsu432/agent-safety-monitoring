@@ -7,7 +7,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
+from agent_safety_monitoring.analysis.followup import load_split
 from agent_safety_monitoring.analysis.operating_points import comparison
+from agent_safety_monitoring.experiments.followup import FollowupConfig, protocol_identity
 from agent_safety_monitoring.io import digest, read_json
 
 
@@ -52,7 +54,29 @@ def feature_vector(row):
     ]
 
 
-def evaluate(private, audit, replicates=2000):
+def archived_action_scores(root, original_freeze):
+    freeze = read_json(root / "followup-freeze.json")
+    identity = freeze["body"]["identity"]
+    if (
+        digest(freeze["body"]) != freeze["hash"]
+        or not freeze["body"]["development_accepted"]
+        or identity != read_json(root / "scoring/identity.json")
+        or identity["original_freeze"] != original_freeze
+        or identity["protocol"]
+        != protocol_identity(FollowupConfig.model_validate(identity["config"]))
+    ):
+        raise ValueError("Archived action-only identity does not match the review protocol")
+    files = read_json(root / "scoring-report.json")["sources"]
+    scores = {}
+    for split in ("calibration", "test"):
+        tables, _, _, _, sources = load_split(root / "scoring", split)
+        if sources != {k: v for k, v in files.items() if k.startswith(f"{split}/")}:
+            raise ValueError("Archived action-only results differ from the review inventory")
+        scores[split] = {r["trajectory_id"]: r for r in tables["hundred-n1"]}
+    return scores
+
+
+def evaluate(private, audit, replicates=2000, archive=None):
     blob = read_json(private)
     proof = read_json(audit)
     if digest(blob) != proof["feature_sha256"]:
@@ -69,17 +93,18 @@ def evaluate(private, audit, replicates=2000):
         for k in ("development", "calibration", "test")
     }
     common = {k: [r for r in rows if r["single_cohort"]] for k, rows in primary.items()}
+    saved = archived_action_scores(archive, proof["original_freeze"]) if archive else None
     return {
         "version": 1,
         "status": "exploratory feature-only discrimination using archived field",
         "cohort": cohort_acceptance(features),
         "input_audit_digest": digest(proof),
-        "original_primary": feature_analysis(primary, replicates),
-        "common_context": feature_analysis(common, replicates),
+        "original_primary": feature_analysis(primary, replicates, saved),
+        "common_context": feature_analysis(common, replicates, saved),
     }
 
 
-def feature_analysis(splits, replicates):
+def feature_analysis(splits, replicates, saved=None):
     if any(not rows for rows in splits.values()):
         return {"status": "insufficient common cohort"}
     mats = {k: np.array([feature_vector(r) for r in rows]) for k, rows in splits.items()}
@@ -109,6 +134,11 @@ def feature_analysis(splits, replicates):
                 for r, label, score in zip(splits[split], labels[split], scores, strict=True)
             ]
     overlap = defaultdict(Counter)
+    if saved:
+        for split in tables:
+            tables[split]["archived_action_only"] = [
+                saved[split][r["trajectory_id"]] for r in splits[split]
+            ]
     for split, rows in splits.items():
         for row in rows:
             n = row["reasoning_actions"]

@@ -36,8 +36,15 @@ The estimated-cost comparison blends fixed three and five reviews with independe
 assignment to the depth. At the adaptive cost, the mixture's expected detection and
 FPR were 77.4% and 6.5%. The policy estimates derive from independent cold-timing trials
 and the actual simulated number of requests and retries. They describe estimated
-workload costs. The study did not time a physical adaptive deployment. The distribution
-shift in escalation illustrates how a development compute target can fail to transfer.
+workload costs for the exploratory test cohort. The distribution shift in escalation
+illustrates how a development compute target can fail to transfer.
+
+A matched cold check on six development trajectories used 22 calls for the gate
+and 30 for fixed five, with zero invalid reviews. Measured workload time was
+69.7 versus 114.3 H200 seconds per trajectory, a 39.0% reduction in that run.
+The cost model estimated 55.0 versus 76.3 seconds on the same six trajectories.
+The timings exclude server startup and describe a single development allocation.
+[Physical timing aggregate](extension-v1/adaptive-timing.json)
 
 ![Adaptive review costs and performance](extension-v1/adaptive-cost.png)
 
@@ -75,9 +82,11 @@ After excluding submission actions, 8,481 of 8,481 attack-assigned actions
 and 5,993 of 17,300 benign actions had nonempty overlay text. A classifier fit
 on development using presence, count and fraction alone achieved exploratory
 test AUROC 1.000 on the original primary cohort. Serialized action-only prompt length and tool count achieved
-.899 on the original cohort and .973 on the context-eligible subset. The
-context restriction would substantially change the evaluated population. The
-eligible development subset contains only 12 paired tasks with at least three
+.899 on the original cohort and .973 on the context-eligible subset. The archived action-only scores yielded
+valid AUROC .925 on the original cohort and .884 on the context-eligible subset.
+The replay recalibrated alert thresholds separately for each cohort. The
+restriction changes which attacks contribute to the estimates. The eligible development subset contains
+only 12 paired tasks with at least three
 reasoning-bearing actions in both classes. Both the provenance and context
 gates stopped the pilot and architecture comparisons under this protocol.
 [Context and coverage audit](extension-v1/reasoning-audit.json) ·
@@ -139,4 +148,7 @@ A performance claim about reasoning semantics would require verified source
 material and successful paired inference. The EaE sample tests score changes
 under controlled evidence access, with mechanism attribution limited by the
 absence of independently verified sufficient evidence.
+The extension added 2,811 allocated H200-seconds, including startup, bringing
+reconciled project usage to 125.444 GPU-hours against the 130-hour cap.
+[Resource aggregate](extension-v1/resources.json) ·
 [Reproduction instructions](extension-reproduction.md)

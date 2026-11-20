@@ -715,12 +715,13 @@ def extension_eae_judge(
 def reasoning_profile(
     root: Annotated[Path, typer.Option()],
     output: Annotated[Path, typer.Option()],
+    archive: Path | None = None,
 ):
     """Fit development-only availability and structural feature baselines."""
     from agent_safety_monitoring.analysis.reasoning_profile import evaluate
     from agent_safety_monitoring.io import immutable_json
 
-    result = evaluate(root / "features.json", root / "audit.json")
+    result = evaluate(root / "features.json", root / "audit.json", archive=archive)
     immutable_json(output, result)
     show({"output": str(output), "status": result["status"]})
 
