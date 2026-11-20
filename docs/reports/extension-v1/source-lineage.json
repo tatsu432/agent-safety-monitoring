@@ -1,0 +1,41 @@
+{
+  "archives": {
+    "attack.eval": {
+      "identical_overlay_content_sequences": 149,
+      "release_counts": {
+        "independent_model_reasoning_blocks": 0,
+        "nonempty_overlay_actions": 8481,
+        "samples": 600
+      },
+      "release_sha256": "99ee247941cc3e5cfdcffa0c0d31f7ac4b169a36e7ab8fb9e57a52f28d2b2915",
+      "shared_nonempty_sequences": 149,
+      "upstream_counts": {
+        "independent_model_reasoning_blocks": 0,
+        "nonempty_overlay_actions": 2290,
+        "samples": 150
+      },
+      "upstream_run": "ed64e4e857de9f578fca148b3c18ef11",
+      "upstream_sha256": "54d84db9d4164ca5babf10a93af125d3e83462a764fee205c519591a58ff2bff"
+    },
+    "honest.eval": {
+      "identical_overlay_content_sequences": 595,
+      "release_counts": {
+        "independent_model_reasoning_blocks": 0,
+        "nonempty_overlay_actions": 6071,
+        "samples": 600
+      },
+      "release_sha256": "8db012217ba105a5d20b9d9932197672ad64a81be5c0ceaef811dae09052b36f",
+      "shared_nonempty_sequences": 595,
+      "upstream_counts": {
+        "independent_model_reasoning_blocks": 0,
+        "nonempty_overlay_actions": 6071,
+        "samples": 600
+      },
+      "upstream_run": "92e62b8bcb2700bd654d48770e0ec92d",
+      "upstream_sha256": "abb19b800459fec422faf2783e3a860647b682f2ef72f23a3b77f00b2c2fe141"
+    }
+  },
+  "independent_evidence_of_authorship": false,
+  "matches_establish_export_lineage": true,
+  "version": 1
+}

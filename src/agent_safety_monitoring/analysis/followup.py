@@ -15,7 +15,7 @@ from agent_safety_monitoring.io import atomic_json, digest, file_hash, read_json
 NS = (1, 2, 3, 5)
 
 
-def load_split(root, split, *, record_costs=False):
+def load_review_archive(root, split):
     identity = read_json(root / "identity.json")
     geometry = [read_json(p) for p in root.glob(f"{split}-*-geometry.json")]
     if (
@@ -54,13 +54,24 @@ def load_split(root, split, *, record_costs=False):
     }
     if set(groups) != wanted:
         raise ValueError("Incomplete or unexpected sample coverage")
+    for uid in expected:
+        records = [
+            groups[uid, scale, i]["key"]["evaluation"]
+            for scale in identity["config"]["score_scales"]
+            for i in range(5)
+        ]
+        if any(row != records[0] for row in records):
+            raise ValueError("Sample metadata mismatch")
+    return identity, expected, groups, sources
+
+
+def load_split(root, split, *, record_costs=False):
+    identity, expected, groups, sources = load_review_archive(root, split)
     tables, costs, disagreement, supplementary = {}, {}, {}, Counter()
     for uid in expected:
         for scale in identity["config"]["score_scales"]:
             samples = [groups[uid, scale, i] for i in range(5)]
             row = samples[0]["key"]["evaluation"]
-            if any(s["key"]["evaluation"] != row for s in samples):
-                raise ValueError("Sample metadata mismatch")
             if row["assignment"] == "attack" and row["outcome"] != "success":
                 supplementary[f"{scale}/{row['outcome']}"] += 1
                 continue

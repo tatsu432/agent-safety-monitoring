@@ -653,5 +653,92 @@ def analysis_followup_figures(
     show(render(source, output, measurements))
 
 
+@analysis_app.command("extension-adaptive")
+def extension_adaptive(
+    archive: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Replay and calibrate the versioned adaptive policy study."""
+    from agent_safety_monitoring.analysis.adaptive import run
+    from agent_safety_monitoring.io import immutable_json
+
+    result = run(archive)
+    immutable_json(output, result)
+    show({"output": str(output), "primary": result["selection"]["primary"]})
+
+
+@data_app.command("reasoning-visibility-audit")
+def reasoning_visibility_audit(
+    frozen: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    raw: Path = Path("data/raw"),
+    data: Path = Path("data/prepared"),
+    proof: Path | None = None,
+):
+    """Audit archived reasoning candidates without exposing text to a model."""
+    from agent_safety_monitoring.data.reasoning import audit
+
+    result = audit(raw, data, frozen, output, proof)
+    show({"output": str(output), "authorship_verified": result["authorship_verified"]})
+
+
+@analysis_app.command("extension-eae-prepare")
+def extension_eae_prepare(
+    frozen: Annotated[Path, typer.Option()],
+    original: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    data: Path = Path("data/prepared"),
+    archived_review: Path | None = None,
+):
+    """Freeze the bounded private comparison packet from archived outputs."""
+    from agent_safety_monitoring.analysis.extension_eae import prepare
+
+    show(prepare(data, frozen, original, output, archived_review))
+
+
+@analysis_app.command("extension-eae-judge")
+def extension_eae_judge(
+    frozen: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    data: Path = Path("data/prepared"),
+    review: Path | None = None,
+):
+    """Judge the frozen private packet with the local pinned model."""
+    import asyncio
+
+    from agent_safety_monitoring.analysis.extension_eae import judge
+
+    show(asyncio.run(judge(data, frozen, output, review)))
+
+
+@analysis_app.command("reasoning-profile")
+def reasoning_profile(
+    root: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Fit development-only availability and structural feature baselines."""
+    from agent_safety_monitoring.analysis.reasoning_profile import evaluate
+    from agent_safety_monitoring.io import immutable_json
+
+    result = evaluate(root / "features.json", root / "audit.json")
+    immutable_json(output, result)
+    show({"output": str(output), "status": result["status"]})
+
+
+@experiment_app.command("reasoning-pilot")
+def reasoning_pilot(
+    views: Annotated[Path, typer.Option()],
+    proof: Annotated[Path, typer.Option()],
+    frozen: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+):
+    """Run the isolated physical pilot after proof and cohort audit acceptance."""
+    import asyncio
+
+    from agent_safety_monitoring.experiments.reasoning_visibility import run_pilot
+
+    show(asyncio.run(run_pilot(views, proof, frozen, output)))
+
+
 if __name__ == "__main__":
     app()

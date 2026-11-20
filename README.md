@@ -34,6 +34,15 @@ while its AUROC remains close to a single low-effort review. The raw archive
 includes an extended-thinking
 overlay that the frozen monitors did not see.
 
+An exploratory extension replayed adaptive review on the saved independent scores.
+The selected gate used 3.76 reviews on average and retained 25% of the fixed
+five-review gain in low-FPR discrimination. The reasoning audit verified tool-call
+alignment and stopped inference at the authorship gate. A controlled EaE
+context comparison is queued on Yale using blinded model-suggested evidence.
+
+[Extension report](docs/reports/extension-v1.md) ·
+[Extension checkpoint](docs/task_completion/07-research-extension-checkpoint.md)
+
 [Research report](docs/reports/final-report.md) ·
 [Results](docs/reports/strengthened-scoring.json) ·
 [Methods](docs/methods.md) ·
